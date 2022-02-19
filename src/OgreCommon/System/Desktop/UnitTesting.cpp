@@ -42,6 +42,7 @@ THE SOFTWARE.
 #include "OgreTextureGpuManager.h"
 #include "OgreWindow.h"
 
+#if 1
 #if !OGRE_NO_JSON
 #    include "rapidjson/document.h"
 #    include "rapidjson/error/en.h"
@@ -732,3 +733,4 @@ namespace Demo
         return 0;
     }
 }  // namespace Demo
+#endif
