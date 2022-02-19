@@ -52,7 +52,7 @@ namespace Demo
         int         mWarpY;
         bool        mWarpCompensate;
 
-        void updateMouseSettings(void);
+        void updateMouseSettings();
 
         void handleWindowEvent( const SDL_Event& evt );
 

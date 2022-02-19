@@ -205,7 +205,7 @@ namespace Demo
         updateMouseSettings();
     }
     //-----------------------------------------------------------------------------------
-    void SdlInputHandler::updateMouseSettings(void)
+    void SdlInputHandler::updateMouseSettings()
     {
         mGrabPointer = mWantMouseGrab && mMouseInWindow && mWindowHasFocus;
         SDL_SetWindowGrab( mSdlWindow, mGrabPointer ? SDL_TRUE : SDL_FALSE );
