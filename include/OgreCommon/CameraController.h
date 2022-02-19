@@ -9,15 +9,17 @@ namespace Demo
 {
     class CameraController
     {
-        bool                mUseSceneNode;
-
-        bool                mSpeedMofifier;
-        bool                mWASD[4];
-        bool                mSlideUpDown[2];
-        float               mCameraYaw;
-        float               mCameraPitch;
-        public: float       mCameraBaseSpeed;
-        public: float       mCameraSpeedBoost;
+        bool        mUseSceneNode;
+        bool        mSpeed1;
+        bool        mSpeed2;
+        bool        mWASD[4];
+        bool        mSlideUpDown[2];
+        float       mCameraYaw;
+        float       mCameraPitch;
+    public:
+        float       mCameraBaseSpeed;
+        float       mCameraSpeed1;
+        float       mCameraSpeed2;
 
     private:
         GraphicsSystem      *mGraphicsSystem;
