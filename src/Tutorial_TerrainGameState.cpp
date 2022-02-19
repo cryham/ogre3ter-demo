@@ -55,109 +55,138 @@ THE SOFTWARE.
 #include "OgreGpuProgramManager.h"
 
 #include "OgreItem.h"
+#include "OgreLogManager.h"
+#include "OgreMesh.h"
+#include "OgreMeshManager.h"
+#include "OgreMesh2.h"
+#include "OgreMeshManager2.h"
+
 
 using namespace Demo;
+using namespace Ogre;
+
+#define LogO(s)  LogManager::getSingleton().logMessage(s)
+
 
 namespace Demo
 {
-    Tutorial_TerrainGameState::Tutorial_TerrainGameState( const Ogre::String &helpDescription ) :
+    Tutorial_TerrainGameState::Tutorial_TerrainGameState( const String &helpDescription ) :
         TutorialGameState( helpDescription ),
         mLockCameraToGround( false ),
-        mTimeOfDay( Ogre::Math::PI * /*0.25f*//*0.55f*/0.1f ),
+        mTimeOfDay( Math::PI * 0.55f ),  // par
         mAzimuth( 0 ),
         mTerra( 0 ),
         mSunLight( 0 ),
         mHlmsPbsTerraShadows( 0 )
     {
     }
+
+    
     //-----------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::createScene01(void)
+    void Tutorial_TerrainGameState::createScene01()
     {
-        Ogre::Root *root = mGraphicsSystem->getRoot();
-        Ogre::SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        Root *root = mGraphicsSystem->getRoot();
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
 
         // Render terrain after most objects, to improve performance by taking advantage of early Z
-        mTerra = new Ogre::Terra( Ogre::Id::generateNewId<Ogre::MovableObject>(),
-                                  &sceneManager->_getEntityMemoryManager( Ogre::SCENE_STATIC ),
+        mTerra = new Terra( Id::generateNewId<MovableObject>(),
+                                  &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
                                   sceneManager, 11u, root->getCompositorManager2(),
                                   mGraphicsSystem->getCamera(), false );
         mTerra->setCastShadows( false );
 
-        //mTerra->load( "Heightmap.png", Ogre::Vector3::ZERO, Ogre::Vector3( 256.0f, 1.0f, 256.0f ), false );
-        //mTerra->load( "Heightmap.png", Ogre::Vector3( 64.0f, 0, 64.0f ), Ogre::Vector3( 128.0f, 5.0f, 128.0f ), false );
-        //mTerra->load( "Heightmap.png", Ogre::Vector3( 64.0f, 0, 64.0f ), Ogre::Vector3( 1024.0f, 5.0f, 1024.0f ), false );
-        //mTerra->load( "Heightmap.png", Ogre::Vector3( 64.0f, 0, 64.0f ), Ogre::Vector3( 4096.0f * 4, 15.0f * 64.0f*4, 4096.0f * 4 ), false );
-        mTerra->load( "Heightmap.png", Ogre::Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Ogre::Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
-        //mTerra->load( "Heightmap.png", Ogre::Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Ogre::Vector3( 14096.0f, 14096.0f, 14096.0f ), false );
+        LogO("---- Terra load");
 
-        Ogre::SceneNode *rootNode = sceneManager->getRootSceneNode( Ogre::SCENE_STATIC );
-        Ogre::SceneNode *sceneNode = rootNode->createChildSceneNode( Ogre::SCENE_STATIC );
+        //  Heightmap  ------------------------------------------------
+        //  64 flat
+        //mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
+        //  1k  600 fps  (2 tex)
+        mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
+
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
         sceneNode->attachObject( mTerra );
 
-        Ogre::HlmsManager *hlmsManager = root->getHlmsManager();
-        Ogre::HlmsDatablock *datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
-//        Ogre::HlmsDatablock *datablock = hlmsManager->getHlms( Ogre::HLMS_USER3 )->getDefaultDatablock();
-//        Ogre::HlmsMacroblock macroblock;
-//        macroblock.mPolygonMode = Ogre::PM_WIREFRAME;
-        //datablock->setMacroblock( macroblock );
+        LogO("---- Terra attach");
+
+        HlmsManager *hlmsManager = root->getHlmsManager();
+        HlmsDatablock *datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
+        #if 0  //** terrain wireframe
+            datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
+            HlmsMacroblock macroblock;
+            macroblock.mPolygonMode = PM_WIREFRAME;
+            datablock->setMacroblock( macroblock );
+        #endif
         mTerra->setDatablock( datablock );
 
         {
-            mHlmsPbsTerraShadows = new Ogre::HlmsPbsTerraShadows();
+            mHlmsPbsTerraShadows = new HlmsPbsTerraShadows();
             mHlmsPbsTerraShadows->setTerra( mTerra );
             //Set the PBS listener so regular objects also receive terrain shadows
-            Ogre::Hlms *hlmsPbs = root->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
+            Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
             hlmsPbs->setListener( mHlmsPbsTerraShadows );
         }
 
-        mSunLight = sceneManager->createLight();
-        Ogre::SceneNode *lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( mSunLight );
-        mSunLight->setPowerScale( Ogre::Math::PI );
-        mSunLight->setType( Ogre::Light::LT_DIRECTIONAL );
-        mSunLight->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
+        LogO("---- new light");
 
-        sceneManager->setAmbientLight( Ogre::ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
-                                       Ogre::ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
-                                       Ogre::Vector3::UNIT_Y );
+        //  Light  ------------------------------------------------
+        mSunLight = sceneManager->createLight();
+        SceneNode *lightNode = rootNode->createChildSceneNode();
+        lightNode->attachObject( mSunLight );
+        mSunLight->setPowerScale( Math::PI );
+        mSunLight->setType( Light::LT_DIRECTIONAL );
+        mSunLight->setDirection( Vector3( -1, -1, -1 ).normalisedCopy() );
+
+        sceneManager->setAmbientLight( ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
+                                       ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
+                                       Vector3::UNIT_Y );
 
         mCameraController = new CameraController( mGraphicsSystem, false );
         mGraphicsSystem->getCamera()->setFarClipDistance( 100000.0f );
         mGraphicsSystem->getCamera()->setPosition( -10.0f, 80.0f, 10.0f );
 
 
-        MeshUtils::importV1Mesh( "tudorhouse.mesh",
-                                 Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME );
+#if 1
+        //  Mesh  ------------------------------------------------
+        LogO("---- new mesh");
+        auto name = 
+            "tudorhouse.mesh";
+            //"Blob.mesh";
+            //"knot.mesh";
+            //"sphere.mesh";
+        MeshUtils::importV1Mesh( name,
+                                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME );
 
         //Create some meshes to show off terrain shadows.
-        Ogre::Item *item = sceneManager->createItem( "tudorhouse.mesh",
-                                                     Ogre::ResourceGroupManager::
-                                                     AUTODETECT_RESOURCE_GROUP_NAME,
-                                                     Ogre::SCENE_STATIC );
-        Ogre::Vector3 objPos( 3.5f, 4.5f, -2.0f );
+        Item *item = sceneManager->createItem( name
+            ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+        Vector3 objPos( 3.5f, 4.5f, -2.0f );
         mTerra->getHeightAt( objPos );
-        objPos.y += -std::min( item->getLocalAabb().getMinimum().y, Ogre::Real(0.0f) ) * 0.01f - 0.5f;
-        sceneNode = rootNode->createChildSceneNode( Ogre::SCENE_STATIC, objPos );
+        objPos.y += -std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * 0.01f - 0.5f;
+        sceneNode = rootNode->createChildSceneNode( SCENE_STATIC, objPos );
         sceneNode->scale( 0.01f, 0.01f, 0.01f );
         sceneNode->attachObject( item );
 
-        item = sceneManager->createItem( "tudorhouse.mesh",
-                                         Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
-                                         Ogre::SCENE_STATIC );
-        objPos = Ogre::Vector3( -3.5f, 4.5f, -2.0f );
+        item = sceneManager->createItem( name
+            ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+        objPos = Vector3( -3.5f, 4.5f, -2.0f );
         mTerra->getHeightAt( objPos );
-        objPos.y += -std::min( item->getLocalAabb().getMinimum().y, Ogre::Real(0.0f) ) * 0.01f - 0.5f;
-        sceneNode = rootNode->createChildSceneNode( Ogre::SCENE_STATIC, objPos );
+        objPos.y += -std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * 0.01f - 0.5f;
+        sceneNode = rootNode->createChildSceneNode( SCENE_STATIC, objPos );
         sceneNode->scale( 0.01f, 0.01f, 0.01f );
         sceneNode->attachObject( item );
+#endif
 
         TutorialGameState::createScene01();
     }
+
+
     //-----------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::destroyScene(void)
+    void Tutorial_TerrainGameState::destroyScene()
     {
-        Ogre::Root *root = mGraphicsSystem->getRoot();
-        Ogre::Hlms *hlmsPbs = root->getHlmsManager()->getHlms( Ogre::HLMS_PBS );
+        LogO("---- destroyScene");
+        Root *root = mGraphicsSystem->getRoot();
+        Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
 
         //Unset the PBS listener and destroy it
         if( hlmsPbs->getListener() == mHlmsPbsTerraShadows )
@@ -170,22 +199,26 @@ namespace Demo
         delete mTerra;
         mTerra = 0;
 
+        LogO("---- tutorial destroyScene");
+
         TutorialGameState::destroyScene();
     }
+
+
     //-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::update( float timeSinceLast )
     {
-        mSunLight->setDirection( Ogre::Quaternion( Ogre::Radian(mAzimuth), Ogre::Vector3::UNIT_Y ) *
-                                 Ogre::Vector3( cosf( mTimeOfDay ), -sinf( mTimeOfDay ), 0.0 ).normalisedCopy() );
+        mSunLight->setDirection( Quaternion( Radian(mAzimuth), Vector3::UNIT_Y ) *
+                                 Vector3( cosf( mTimeOfDay ), -sinf( mTimeOfDay ), 0.0 ).normalisedCopy() );
 
         //Do not call update() while invisible, as it will cause an assert because the frames
         //are not advancing, but we're still mapping the same GPU region over and over.
-        if( mGraphicsSystem->getRenderWindow()->isVisible() )
+        if (mTerra && mGraphicsSystem->getRenderWindow()->isVisible() )
         {
             //Force update the shadow map every frame to avoid the feeling we're "cheating" the
             //user in this sample with higher framerates than what he may encounter in many of
             //his possible uses.
-            const float lightEpsilon = 0.0f;
+            const float lightEpsilon = 0.0001f;  //** 0.f slow
             mTerra->update( mSunLight->getDerivedDirectionUpdated(), lightEpsilon );
         }
 
@@ -193,13 +226,15 @@ namespace Demo
 
         //Camera must be locked to ground *after* we've moved it. Otherwise
         //fast motion may go below the terrain for 1 or 2 frames.
-        Ogre::Camera *camera = mGraphicsSystem->getCamera();
-        Ogre::Vector3 camPos = camera->getPosition();
+        Camera *camera = mGraphicsSystem->getCamera();
+        Vector3 camPos = camera->getPosition();
         if( mLockCameraToGround && mTerra->getHeightAt( camPos ) )
-            camera->setPosition( camPos + Ogre::Vector3::UNIT_Y * 10.0f );
+            camera->setPosition( camPos + Vector3::UNIT_Y * 10.0f );
     }
+
+
     //-----------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::generateDebugText( float timeSinceLast, Ogre::String &outText )
+    void Tutorial_TerrainGameState::generateDebugText( float timeSinceLast, String &outText )
     {
         TutorialGameState::generateDebugText( timeSinceLast, outText );
 
@@ -210,41 +245,54 @@ namespace Demo
         else if( mDisplayHelpMode == 1 )
         {
             char tmp[128];
-            Ogre::LwString str( Ogre::LwString::FromEmptyPointer(tmp, sizeof(tmp)) );
-            Ogre::Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
+            LwString str( LwString::FromEmptyPointer(tmp, sizeof(tmp)) );
+            Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
 
             using namespace Ogre;
 
-            outText += "\nF2 Lock Camera to Ground: [";
+            RenderSystem *renderSystem = mGraphicsSystem->getRoot()->getRenderSystem();  //**
+            const RenderingMetrics& rm = renderSystem->getMetrics();
+            outText +=
+                " b " + StringConverter::toString( rm.mBatchCount ) + 
+                " f " + StringConverter::toString( rm.mFaceCount/1000 ) + 
+                "k v " + StringConverter::toString( rm.mVertexCount/1000 ) + 
+                "k d " + StringConverter::toString( rm.mDrawCount ) + 
+                " i " + StringConverter::toString( rm.mInstanceCount ) + "\n";
+
+            outText += "\nF2 Lock Ground: [";
             outText += mLockCameraToGround ? "Yes]" : "No]";
-            outText += "\n+/- to change time of day. [";
-            outText += StringConverter::toString( mTimeOfDay * 180.0f / Math::PI ) + "]";
-            outText += "\n9/6 to change azimuth. [";
-            outText += StringConverter::toString( mAzimuth * 180.0f / Math::PI ) + "]";
+
+            outText += "\n+ - Pitch  ";
+            outText += StringConverter::toString( mTimeOfDay * 180.0f / Math::PI );
+            outText += "\n/ * Yaw ";
+            outText += StringConverter::toString( mAzimuth * 180.0f / Math::PI );
+            
             outText += "\n\nCamera: ";
-            str.a( "[", LwString::Float( camPos.x, 2, 2 ), ", ",
-                        LwString::Float( camPos.y, 2, 2 ), ", ",
-                        LwString::Float( camPos.z, 2, 2 ), "]" );
+            str.a( "", LwString::Float( camPos.x, 2, 2 ), " ",
+                       LwString::Float( camPos.y, 2, 2 ), " ",
+                       LwString::Float( camPos.z, 2, 2 ), "" );
             outText += str.c_str();
             outText += "\nLightDir: ";
             str.clear();
-            str.a( "[", LwString::Float( mSunLight->getDirection().x, 2, 2 ), ", ",
-                        LwString::Float( mSunLight->getDirection().y, 2, 2 ), ", ",
-                        LwString::Float( mSunLight->getDirection().z, 2, 2 ), "]" );
+            str.a( "", LwString::Float( mSunLight->getDirection().x, 2, 2 ), " ",
+                       LwString::Float( mSunLight->getDirection().y, 2, 2 ), " ",
+                       LwString::Float( mSunLight->getDirection().z, 2, 2 ), "" );
             outText += str.c_str();
         }
     }
+
+
     //-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::keyReleased( const SDL_KeyboardEvent &arg )
     {
         if( arg.keysym.sym == SDLK_F4 && (arg.keysym.mod & (KMOD_LCTRL|KMOD_RCTRL)) )
         {
             //Hot reload of Terra shaders.
-            Ogre::Root *root = mGraphicsSystem->getRoot();
-            Ogre::HlmsManager *hlmsManager = root->getHlmsManager();
+            Root *root = mGraphicsSystem->getRoot();
+            HlmsManager *hlmsManager = root->getHlmsManager();
 
-            Ogre::Hlms *hlms = hlmsManager->getHlms( Ogre::HLMS_USER3 );
-            Ogre::GpuProgramManager::getSingleton().clearMicrocodeCache();
+            Hlms *hlms = hlmsManager->getHlms( HLMS_USER3 );
+            GpuProgramManager::getSingleton().clearMicrocodeCache();
             hlms->reloadFrom( hlms->getDataFolder() );
         }
         else if( (arg.keysym.mod & ~(KMOD_NUM|KMOD_CAPS)) != 0 )
@@ -256,7 +304,7 @@ namespace Demo
         if( arg.keysym.scancode == SDL_SCANCODE_KP_PLUS )
         {
             mTimeOfDay += 0.1f;
-            mTimeOfDay = std::min( mTimeOfDay, (float)Ogre::Math::PI );
+            mTimeOfDay = std::min( mTimeOfDay, (float)Math::PI );
         }
         else if( arg.keysym.scancode == SDL_SCANCODE_MINUS ||
                  arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
@@ -268,14 +316,14 @@ namespace Demo
         if( arg.keysym.scancode == SDL_SCANCODE_KP_9 )
         {
             mAzimuth += 0.1f;
-            mAzimuth = fmodf( mAzimuth, Ogre::Math::TWO_PI );
+            mAzimuth = fmodf( mAzimuth, Math::TWO_PI );
         }
         else if( arg.keysym.scancode == SDL_SCANCODE_KP_6 )
         {
             mAzimuth -= 0.1f;
-            mAzimuth = fmodf( mAzimuth, Ogre::Math::TWO_PI );
+            mAzimuth = fmodf( mAzimuth, Math::TWO_PI );
             if( mAzimuth < 0 )
-                mAzimuth = Ogre::Math::TWO_PI + mAzimuth;
+                mAzimuth = Math::TWO_PI + mAzimuth;
         }
 
         if( arg.keysym.scancode == SDL_SCANCODE_F2 )

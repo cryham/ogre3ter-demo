@@ -95,7 +95,7 @@ namespace Ogre
                                                bool casterPass, bool dualParaboloid,
                                                SceneManager *sceneManager, Hlms *hlms )
     {
-        if( !casterPass )
+        if( !casterPass && mTerra )
         {
 #if OGRE_DEBUG_MODE
             mSceneManager = sceneManager;
@@ -141,7 +141,6 @@ namespace Ogre
             *passBufferPtr++ = terrainXZInvDim.y;
             *passBufferPtr++ = 1.0f;
         }
-
         return passBufferPtr;
     }
     //-----------------------------------------------------------------------------------
