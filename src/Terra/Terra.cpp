@@ -606,7 +606,11 @@ namespace Ogre
 
             cellSize.x <<= 1u;
             cellSize.z <<= 1u;
-            ++currentLod;
+            
+            #if 1  //**  0 for all at lod0, max tris
+            if (currentLod < 3)  //**  par lod max
+            	++currentLod;
+            #endif
 
             //Row 0
             {
