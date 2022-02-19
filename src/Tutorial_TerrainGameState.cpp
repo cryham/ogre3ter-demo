@@ -175,12 +175,8 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::update( float timeSinceLast )
     {
-        static float accumTime = 0;
-        //mSunLight->setDirection( Ogre::Vector3( cosf( mTimeOfDay ), -sinf( mTimeOfDay ), -1.0 ).normalisedCopy() );
-        //mSunLight->setDirection( Ogre::Vector3( 0, -sinf( mTimeOfDay ), -1.0 ).normalisedCopy() );
         mSunLight->setDirection( Ogre::Quaternion( Ogre::Radian(mAzimuth), Ogre::Vector3::UNIT_Y ) *
                                  Ogre::Vector3( cosf( mTimeOfDay ), -sinf( mTimeOfDay ), 0.0 ).normalisedCopy() );
-        //mSunLight->setDirection( -Ogre::Vector3::UNIT_Y );
 
         //Do not call update() while invisible, as it will cause an assert because the frames
         //are not advancing, but we're still mapping the same GPU region over and over.
@@ -283,12 +279,8 @@ namespace Demo
         }
 
         if( arg.keysym.scancode == SDL_SCANCODE_F2 )
-        {
             mLockCameraToGround = !mLockCameraToGround;
-        }
         else
-        {
             TutorialGameState::keyReleased( arg );
-        }
     }
 }

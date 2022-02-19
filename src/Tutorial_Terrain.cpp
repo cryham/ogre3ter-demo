@@ -60,7 +60,7 @@ namespace Demo
     {
         Ogre::TerraWorkspaceListener *mTerraWorkspaceListener;
 
-        virtual void stopCompositor( void )
+        virtual void stopCompositor()
         {
             if( mWorkspace )
                 mWorkspace->removeListener( mTerraWorkspaceListener );
@@ -88,7 +88,7 @@ namespace Demo
             return workspace;
         }
 
-        virtual void setupResources(void)
+        virtual void setupResources()
         {
             GraphicsSystem::setupResources();
 
@@ -102,23 +102,25 @@ namespace Demo
             else if( *(originalDataFolder.end() - 1) != '/' )
                 originalDataFolder += "/";
 
-            const char *c_locations[5] =
+            const int count = 6;
+            const char *c_locations[count] =
             {
                 "2.0/scripts/materials/Tutorial_Terrain",
                 "2.0/scripts/materials/Tutorial_Terrain/GLSL",
                 "2.0/scripts/materials/Tutorial_Terrain/HLSL",
                 "2.0/scripts/materials/Tutorial_Terrain/Metal",
-                "2.0/scripts/materials/Postprocessing/SceneAssets"
+                "2.0/scripts/materials/Postprocessing/SceneAssets",
+                "2.0/scripts/materials/PbsMaterials"
             };
 
-            for( size_t i=0; i<5; ++i )
+            for( size_t i=0; i < count; ++i )
             {
                 Ogre::String dataFolder = originalDataFolder + c_locations[i];
                 addResourceLocation( dataFolder, getMediaReadArchiveType(), "General" );
             }
         }
 
-        virtual void registerHlms(void)
+        virtual void registerHlms()
         {
             GraphicsSystem::registerHlms();
 
@@ -197,6 +199,7 @@ namespace Demo
             GraphicsSystem( gameState ),
             mTerraWorkspaceListener( 0 )
         {
+            mResourcePath = "./";
         }
     };
 
@@ -206,19 +209,9 @@ namespace Demo
                                          LogicSystem **outLogicSystem )
     {
         Tutorial_TerrainGameState *gfxGameState = new Tutorial_TerrainGameState(
-        "--- !!! NOTE: THIS SAMPLE IS A WORK IN PROGRESS !!! ---\n"
-        "This is an advanced tutorial that shows several things working together:\n"
         "   * Own Hlms implementation to render the terrain\n"
         "   * Vertex buffer-less rendering: The terrain is generated purely using SV_VertexID "
-        "tricks and a heightmap texture\n"
         "   * Hlms customizations to PBS to make terrain shadows affect regular objects\n"
-        "   * Compute Shaders to generate terrain shadows every frame\n"
-        "   * Common terrain functionality such as loading the heightmap, generating normals, LOD.\n"
-        "The Terrain system is called 'Terra' and has been isolated under the Terra folder like\n"
-        "a component for easier copy-pasting into your own projects.\n\n"
-        "Because every project has its own needs regarding terrain rendering, we're not providing\n"
-        "Terra as an official Component, but rather as a tutorial; where users can copy paste our\n"
-        "implementation and use it as is, or make their own tweaks or enhancements.\n\n"
         "This sample depends on the media files:\n"
         "   * Samples/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor\n"
         "   * Samples/Media/2.0/materials/Tutorial_Terrain/*.*\n"
@@ -244,9 +237,9 @@ namespace Demo
         delete graphicsGameState;
     }
 
-    const char* MainEntryPoints::getWindowTitle(void)
+    const char* MainEntryPoints::getWindowTitle()
     {
-        return "Tutorial: Terrain";
+        return "Terrain Demo";
     }
 }
 
