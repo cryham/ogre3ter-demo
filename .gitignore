@@ -1,0 +1,22 @@
+syntax: glob
+*.dll
+#*.vcxproj
+#*.filters
+*.vcxproj.user
+*.pdb
+*.ilk
+*.tlog
+*.obj
+*.rule
+*.sdf
+bin/*
+build/*
+Dependencies/*
+
+.DS_Store
+iOSDependencies
+AndroidBuild/
+AndroidDependencies/
+Build/
+EmscriptenDependencies
+EmscriptenBuild
