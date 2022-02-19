@@ -43,8 +43,10 @@ namespace Demo
     class Tutorial_TerrainGameState : public TutorialGameState
     {
         bool mLockCameraToGround;
-        float mTimeOfDay;
-        float mAzimuth;
+        float mPitch;
+        float mYaw;
+        int mKeys[4] = {0,0,0,0};
+
         Ogre::Terra *mTerra;
         Ogre::Light *mSunLight;
 
@@ -61,6 +63,7 @@ namespace Demo
 
         virtual void update( float timeSinceLast );
 
+        virtual void keyPressed( const SDL_KeyboardEvent &arg );
         virtual void keyReleased( const SDL_KeyboardEvent &arg );
     };
 }
