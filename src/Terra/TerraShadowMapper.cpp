@@ -196,8 +196,9 @@ namespace Ogre
         else
             setGaussianFilterParams( 8, 0.5f );
     }
+
     //-----------------------------------------------------------------------------------
-    void ShadowMapper::destroyShadowMap(void)
+    void ShadowMapper::destroyShadowMap()
     {
         m_heightMapTex = 0;
 
@@ -229,6 +230,7 @@ namespace Ogre
             m_shadowMapTex = 0;
         }
     }
+
     //-----------------------------------------------------------------------------------
     inline size_t ShadowMapper::getStartsPtrCount( int32 *starts, int32 *startsBase )
     {
@@ -253,6 +255,7 @@ namespace Ogre
         const double newErrorAtX = ceil(accumulatedError / dx) * dx - accumulatedError;
         return static_cast<float>( newErrorAtX );
     }
+
     //-----------------------------------------------------------------------------------
     void ShadowMapper::updateShadowMap( const Vector3 &lightDir, const Vector2 &xzDimensions,
                                         float heightScale )
@@ -452,6 +455,7 @@ namespace Ogre
         if( m_minimizeMemoryConsumption )
             destroyCompositorWorkspace();
     }
+
     //-----------------------------------------------------------------------------------
     void ShadowMapper::fillUavDataForCompositorChannel( TextureGpu **outChannel ) const
     {
@@ -494,6 +498,7 @@ namespace Ogre
                 destroyCompositorWorkspace();
         }
     }
+
     //-----------------------------------------------------------------------------------
     void ShadowMapper::setGaussianFilterParams( HlmsComputeJob *job, uint8 kernelRadius,
                                                 float gaussianDeviationFactor )
