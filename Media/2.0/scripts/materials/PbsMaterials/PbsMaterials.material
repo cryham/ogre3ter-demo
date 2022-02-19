@@ -4,10 +4,10 @@ hlms AllSettings pbs
 {
 	//Note: Internally the diffuse colour is divided by PI.
 	diffuse		1 1 1
-
 	specular	1 1 1
 
-	emissive 0.2 0.1 0.05
+	//emissive 0.2 0.1 0.05
+	emissive 0 0 0
 
 	//Valid values are in range (0; inf]; but the range (0; 1] is physically correct.
 	//Note: Values extremely close to zero could cause NaNs and
@@ -26,44 +26,131 @@ hlms AllSettings pbs
 	//Directly set the "F0" term, instead of using IOR, separate per RGB component
 	//fresnel_coeff	0.1 0.1 0.2
 	
-	diffuse_map		Rocks_Diffuse.tga
-	normal_map		Rocks_Normal.tga
-	roughness_map	Rocks_Spec.tga
-	specular_map	Rocks_Diffuse.tga
+	//diffuse_map		Rocks_Diffuse.tga
+	//normal_map		Rocks_Normal.tga
+	//roughness_map	Rocks_Spec.tga
+	//specular_map	Rocks_Diffuse.tga
 	
-	detail_map0			1d_debug.png
-	detail_blend_mode0	Multiply2x
+	//detail_map0			1d_debug.png
+	//detail_blend_mode0	Multiply2x
 	//detail_normal_map0	NMBumpsOut.png
 	
-	detail_map1			MRAMOR6X6.jpg
-	detail_blend_mode1	Overlay
+	//detail_map1			MRAMOR6X6.jpg
+	//detail_blend_mode1	Overlay
 	//detail_normal_map1	NMBumpsOut.png
-	detail_offset_scale1 0 0 5 5
+	//detail_offset_scale1 0 0 5 5
 	
-	detail_map2			nm_bk.png
-	detail_blend_mode2	Add
-	detail_normal_map2	NMBumpsOut.png
+	//detail_map2			nm_bk.png
+	//detail_blend_mode2	Add
+	//detail_normal_map2	NMBumpsOut.png
 	
-	detail_map3			MtlPlat2.jpg
-	detail_blend_mode3	Overlay
-	detail_normal_map3	NMBalls.png
+	//detail_map3			MtlPlat2.jpg
+	//detail_blend_mode3	Overlay
+	//detail_normal_map3	NMBalls.png
 
 	//Red	channel controls the masks on detail_map0 and detail_normal_map0
 	//Green	channel controls the masks on detail_map1 and detail_normal_map1
 	//Blue	channel controls the masks on detail_map2 and detail_normal_map2
 	//Alpha	channel controls the masks on detail_map3 and detail_normal_map3
-	detail_weight_map	nm_up.png
+	//detail_weight_map	nm_up.png
 }
 
-hlms Rocks pbs
+
+hlms pine2norm pbs
 {
-	roughness	0.4
-	fresnel		1.33
+	diffuse_map  pine_norm_gr1.png
+	normal_map   pine_norm_norm.jpg
+	roughness_map	mntn_dark_s.jpg
+	metalness_map	mntn_dark_s.jpg
+	//fresnel	0.0
+	fresnel_coeff 0.0
+	roughness 0.1
+	metalness 0.1
+
+    two_sided_lighting true
+	cull_mode none
+    depth_write off
+    //transparency 0.5
+	transparency_mode transparent
+
+	//alpha_test 0.5
+	//alpha_test_threshold 0.4
+    //alpha_from_textures true
+    
+   	//diffuse	1 1 1
+	//specular	1 1 1
+}
+
+hlms jungle_tree pbs
+{
+	diffuse_map  jungle_tree.png
+	roughness_map	mntn_dark_s.png
+	metalness_map	mntn_dark_s.png
+	//fresnel		0.0
+	fresnel_coeff 0.0
+	roughness 0.1
+	metalness 0.1
 	
-	diffuse_map		Rocks_Diffuse.tga
-	normal_map		Rocks_Normal.tga
-	roughness_map	Rocks_Spec.tga
-	specular_map	Rocks_Diffuse.tga
+    //cull_mode none
+    //depth_write off
+    //transparency 0.5
+    
+	//alpha_test 0.5
+	//alpha_test_threshold 0.4
+    //alpha_from_textures true
+    
+	//diffuse 0.7 0.7 0.7
+	//specular 0.5 0.5 0.5
+	
+	//depth_write off
+	transparency_mode transparent
+	//transparency 0.5  // Play with this value
+	//roughness 0.0   // This matters a lot for glass
+
+   	//diffuse		1 1 1
+	//specular	1 1 1
+}
+
+hlms palm2 pbs
+{
+	diffuse_map  palm2_diffuse.png
+	normal_map   palm2_normal.png
+	specular_map palm2_specular.png
+	fresnel_coeff 0.0
+	roughness	0.1
+	
+    cull_mode none
+    //depth_write off
+    //transparency 1
+    //alpha_test 0.5
+    //alpha_from_textures true
+	transparency_mode transparent
+    
+	diffuse		1 1 1
+	specular	1 1 1
+}
+
+hlms rock1 pbs
+{
+	diffuse_map  rock1.png
+	normal_map   rock1_normal.png
+	roughness_map  rock1.png
+	metalness_map  rock1.png
+
+	roughness 0.1
+	metalness 0.1
+}
+
+hlms Ground pbs
+{
+	diffuse_map  grass_ground_d.jpg
+	normal_map   grass_ground_n.jpg
+	roughness_map  grass_ground_h.jpg
+	metalness_map  grass_ground_s.jpg
+
+	//diffuse		0.7 0.7 0.7
+	roughness 0.2
+	metalness 0.2
 }
 
 hlms Marble pbs
