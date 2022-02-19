@@ -1,0 +1,18 @@
+{
+	"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    
+	"files.exclude": {
+        ".vscode": false,
+        "CMake/": true,
+        "build/": true,
+        "Dependencies/": true,
+        //"**/Hlms/*": true,
+        "bin*/": true,
+        //"data/": true,
+        "**/Plugins/": true,
+        "**/*.bin": true,
+        "**/*.so*": true,
+        "**/*.cache": true,
+        "**/*.zip": true,
+    },
+}
