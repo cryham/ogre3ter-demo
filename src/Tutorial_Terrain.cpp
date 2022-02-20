@@ -73,8 +73,11 @@ namespace Demo
             using namespace Ogre;
             CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
 
+            //+ pbs
             CompositorWorkspace *workspace = compositorManager->addWorkspace(
-                mSceneManager, mRenderWindow->getTexture(), mCamera, "Tutorial_TerrainWorkspace", true );
+                mSceneManager, mRenderWindow->getTexture(), mCamera,
+                "PbsMaterialsWorkspace", true );
+                //"Tutorial_TerrainWorkspace", true );
 
             if( !mTerraWorkspaceListener )
             {

@@ -53,6 +53,7 @@ THE SOFTWARE.
 
 #include "OgreLwString.h"
 #include "OgreGpuProgramManager.h"
+#include "OgreHlmsPbsDatablock.h"
 
 #include "OgreItem.h"
 #include "OgreLogManager.h"
@@ -73,8 +74,8 @@ namespace Demo
     Tutorial_TerrainGameState::Tutorial_TerrainGameState( const String &helpDescription ) :
         TutorialGameState( helpDescription ),
         mLockCameraToGround( false ),
-        mTimeOfDay( Math::PI * 0.55f ),  // par
-        mAzimuth( 0 ),
+        mPitch( Math::PI * 0.55f ),  // par
+        mYaw( 0 ),
         mTerra( 0 ),
         mSunLight( 0 ),
         mHlmsPbsTerraShadows( 0 )
@@ -87,8 +88,22 @@ namespace Demo
     {
         Root *root = mGraphicsSystem->getRoot();
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        HlmsManager *hlmsManager = root->getHlmsManager();
+        HlmsDatablock *datablock = 0;
+        HlmsMacroblock macroblockWire;
+        macroblockWire.mPolygonMode = PM_WIREFRAME;
 
+        LogO("---- createScene");
+
+        RenderSystem *renderSystem = root->getRenderSystem();  //**
+        renderSystem->setMetricsRecordingEnabled( true );
+
+        LogO("---- new Terra");
+
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
         // Render terrain after most objects, to improve performance by taking advantage of early Z
+
+    #if 0  //** 1 terrain
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
                                   &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
                                   sceneManager, 11u, root->getCompositorManager2(),
@@ -102,20 +117,20 @@ namespace Demo
         //mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
         //  1k  600 fps  (2 tex)
         mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
+        //  2k  260 fps
+        //mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
+        //  4k  93 fps
+        //mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
 
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
         SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
         sceneNode->attachObject( mTerra );
 
         LogO("---- Terra attach");
 
-        HlmsManager *hlmsManager = root->getHlmsManager();
-        HlmsDatablock *datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
+        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
         #if 0  //** terrain wireframe
             datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
-            HlmsMacroblock macroblock;
-            macroblock.mPolygonMode = PM_WIREFRAME;
-            datablock->setMacroblock( macroblock );
+            datablock->setMacroblock( macroblockWire );
         #endif
         mTerra->setDatablock( datablock );
 
@@ -126,6 +141,35 @@ namespace Demo
             Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
             hlmsPbs->setListener( mHlmsPbsTerraShadows );
         }
+    #else  // Plane
+        v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane( "Plane v1",
+            ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            Plane( Vector3::UNIT_Y, 1.0f ), 2000.0f, 2000.0f,
+            10, 10, true, 1, 40.0f, 40.0f, Vector3::UNIT_Z,
+            v1::HardwareBuffer::HBU_STATIC, v1::HardwareBuffer::HBU_STATIC );
+
+        MeshPtr planeMesh = MeshManager::getSingleton().createByImportingV1(
+            "Plane", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            planeMeshV1.get(), true, true, true );
+        {
+            Item *item = sceneManager->createItem( planeMesh, SCENE_DYNAMIC );
+            item->setDatablock( "Ground" );
+            //item->setDatablock( "Marble" );
+            SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_DYNAMIC );
+            sceneNode->setPosition( 0, 0, 0 );
+            sceneNode->attachObject( item );
+
+            //Change the addressing mode of the roughness map to wrap via code.
+            assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
+            HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(item->getSubItem(0)->getDatablock() );
+            //Make a hard copy of the sampler block
+            HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_ROUGHNESS ) );
+            samplerblock.mU = TAM_WRAP;
+            samplerblock.mV = TAM_WRAP;
+            samplerblock.mW = TAM_WRAP;
+            datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
+        }
+    #endif
 
         LogO("---- new light");
 
@@ -133,49 +177,96 @@ namespace Demo
         mSunLight = sceneManager->createLight();
         SceneNode *lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( mSunLight );
-        mSunLight->setPowerScale( Math::PI );
+        mSunLight->setPowerScale( Math::PI *4 );  //** par!
         mSunLight->setType( Light::LT_DIRECTIONAL );
-        mSunLight->setDirection( Vector3( -1, -1, -1 ).normalisedCopy() );
+        mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );
 
-        sceneManager->setAmbientLight( ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
-                                       ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
-                                       Vector3::UNIT_Y );
+        //  ambient
+        sceneManager->setAmbientLight(
+            ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
+            ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
+            Vector3::UNIT_Y );
 
+
+        //  camera  ------------------------------------------------
         mCameraController = new CameraController( mGraphicsSystem, false );
-        mGraphicsSystem->getCamera()->setFarClipDistance( 100000.0f );
-        mGraphicsSystem->getCamera()->setPosition( -10.0f, 80.0f, 10.0f );
+        mGraphicsSystem->getCamera()->setFarClipDistance( 100000.f );  // far
+
+        //Vector3 camPos(-10.f, 80.f, 10.f );
+        //Vector3 camPos(-2005.f, 40.f, -929.f);
+        Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
+        //camPos.y += mTerra->getHeightAt( camPos );
+        mGraphicsSystem->getCamera()->setPosition( camPos );
+        mGraphicsSystem->getCamera()->lookAt( camPos + Vector3(0.f, -0.5f, -1.f) );
+        Vector3 objPos;
 
 
 #if 1
-        //  Mesh  ------------------------------------------------
-        LogO("---- new mesh");
-        auto name = 
-            "tudorhouse.mesh";
-            //"Blob.mesh";
-            //"knot.mesh";
-            //"sphere.mesh";
-        MeshUtils::importV1Mesh( name,
-                                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME );
+        //  Mesh v2  ------------------------------------------------
+    #if 1
+        HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
+        pbsdatablock->setTwoSidedLighting( true );  //?
+        //pbsdatablock->setMacroblock( macroblockWire );
+    #endif
 
-        //Create some meshes to show off terrain shadows.
-        Item *item = sceneManager->createItem( name
-            ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
-        Vector3 objPos( 3.5f, 4.5f, -2.0f );
-        mTerra->getHeightAt( objPos );
-        objPos.y += -std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * 0.01f - 0.5f;
-        sceneNode = rootNode->createChildSceneNode( SCENE_STATIC, objPos );
-        sceneNode->scale( 0.01f, 0.01f, 0.01f );
-        sceneNode->attachObject( item );
+        const int all = 3, use = 1, ofs = 1;
+        //const int all = 3, use = 3, ofs = 0;  // all 3
+        const String strMesh[all] =
+        {   //  meshTool -v2 -l 10 -d 100 -p 11 jungle_tree.mesh
+            "jungle_tree-lod10.mesh",
+            //  meshTool -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
+            "pine2_tall_norm-lod10.mesh",  // 10,9, 11,5
+            "palm2-lod10.mesh",
+        };
+        const Real scales[all] = { 1.f, 0.8, 2.5f};
 
-        item = sceneManager->createItem( name
-            ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
-        objPos = Vector3( -3.5f, 4.5f, -2.0f );
-        mTerra->getHeightAt( objPos );
-        objPos.y += -std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * 0.01f - 0.5f;
-        sceneNode = rootNode->createChildSceneNode( SCENE_STATIC, objPos );
-        sceneNode->scale( 0.01f, 0.01f, 0.01f );
-        sceneNode->attachObject( item );
+		//const int dim = 46;  // 8650
+		//const int dim = 26;  // 2800
+		const int dim = 12;  // 625
+        const float step = 45.f;
+		
+        for (int i=-dim; i<=dim; ++i)
+        {
+            for (int j=-dim; j<=dim; ++j)
+            {
+                int n = rand() % use + ofs;
+                //int n = abs(i+j) % all;
+				Item *item = sceneManager->createItem(
+                    strMesh[n],
+					ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
+					SCENE_STATIC );
+                //item->setDatablock( "pine2norm" );
+
+				SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
+				sceneNode->attachObject( item );
+                
+                //  scale
+                Real s = (rand()%1000*0.001f * 2.f + 3.f) * scales[n];
+				sceneNode->scale( s, s, s );
+                
+                //  pos
+				objPos = Vector3( i*step, 0.f, j*step );
+            #if 1
+				objPos += Vector3(
+					(rand()%1000-1000)*0.001f*step,
+                    !mTerra ? 0.f :  // plane
+                    (rand()%1000-1000)*0.001f*step, // h
+					(rand()%1000-1000)*0.001f*step);
+            #endif
+                if (mTerra)
+                    mTerra->getHeightAt( objPos );
+                objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f - 0.1f;  // par
+                sceneNode->setPosition( objPos );
+                
+                //  rot
+                Degree k( (rand()%3600) * 0.1f );
+                Quaternion q;  q.FromAngleAxis( k, Vector3::UNIT_Y );
+                sceneNode->setOrientation( q );
+			}
+		}
 #endif
+
+        LogO("---- tutorial createScene");
 
         TutorialGameState::createScene01();
     }
@@ -208,8 +299,24 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::update( float timeSinceLast )
     {
-        mSunLight->setDirection( Quaternion( Radian(mAzimuth), Vector3::UNIT_Y ) *
-                                 Vector3( cosf( mTimeOfDay ), -sinf( mTimeOfDay ), 0.0 ).normalisedCopy() );
+        int d = mKeys[0] - mKeys[1];
+        if (d)
+        {
+            mPitch += d * 0.6f * timeSinceLast;
+            mPitch = std::max( 0.f, std::min( mPitch, (float)Math::PI ) );
+        }
+
+        d = mKeys[2] - mKeys[3];
+        if (d)
+        {
+            mYaw += d * 1.5f * timeSinceLast;
+            mYaw = fmodf( mYaw, Math::TWO_PI );
+            if( mYaw < 0.f )
+                mYaw = Math::TWO_PI + mYaw;
+        }
+
+        mSunLight->setDirection( Quaternion( Radian(mYaw), Vector3::UNIT_Y ) *
+            Vector3( cosf( mPitch ), -sinf( mPitch ), 0.0 ).normalisedCopy() );
 
         //Do not call update() while invisible, as it will cause an assert because the frames
         //are not advancing, but we're still mapping the same GPU region over and over.
@@ -250,22 +357,22 @@ namespace Demo
 
             using namespace Ogre;
 
-            RenderSystem *renderSystem = mGraphicsSystem->getRoot()->getRenderSystem();  //**
-            const RenderingMetrics& rm = renderSystem->getMetrics();
+            RenderSystem *renderSystem = mGraphicsSystem->getRoot()->getRenderSystem();
+            const RenderingMetrics& rm = renderSystem->getMetrics();  //**
             outText +=
-                " b " + StringConverter::toString( rm.mBatchCount ) + 
                 " f " + StringConverter::toString( rm.mFaceCount/1000 ) + 
                 "k v " + StringConverter::toString( rm.mVertexCount/1000 ) + 
                 "k d " + StringConverter::toString( rm.mDrawCount ) + 
-                " i " + StringConverter::toString( rm.mInstanceCount ) + "\n";
+                " i " + StringConverter::toString( rm.mInstanceCount ) + 
+                " b " + StringConverter::toString( rm.mBatchCount ) + "\n";
 
             outText += "\nF2 Lock Ground: [";
             outText += mLockCameraToGround ? "Yes]" : "No]";
 
             outText += "\n+ - Pitch  ";
-            outText += StringConverter::toString( mTimeOfDay * 180.0f / Math::PI );
+            outText += StringConverter::toString( mPitch * 180.0f / Math::PI );
             outText += "\n/ * Yaw ";
-            outText += StringConverter::toString( mAzimuth * 180.0f / Math::PI );
+            outText += StringConverter::toString( mYaw * 180.0f / Math::PI );
             
             outText += "\n\nCamera: ";
             str.a( "", LwString::Float( camPos.x, 2, 2 ), " ",
@@ -283,6 +390,21 @@ namespace Demo
 
 
     //-----------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::keyPressed( const SDL_KeyboardEvent &arg )
+    {
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_PLUS )
+            mKeys[0] = 1;
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
+            mKeys[1] = 1;
+
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_MULTIPLY )
+            mKeys[2] = 1;
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_DIVIDE )
+            mKeys[3] = 1;
+
+        TutorialGameState::keyPressed( arg );
+    }
+    
     void Tutorial_TerrainGameState::keyReleased( const SDL_KeyboardEvent &arg )
     {
         if( arg.keysym.sym == SDLK_F4 && (arg.keysym.mod & (KMOD_LCTRL|KMOD_RCTRL)) )
@@ -302,29 +424,15 @@ namespace Demo
         }
 
         if( arg.keysym.scancode == SDL_SCANCODE_KP_PLUS )
-        {
-            mTimeOfDay += 0.1f;
-            mTimeOfDay = std::min( mTimeOfDay, (float)Math::PI );
-        }
-        else if( arg.keysym.scancode == SDL_SCANCODE_MINUS ||
-                 arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
-        {
-            mTimeOfDay -= 0.1f;
-            mTimeOfDay = std::max( mTimeOfDay, 0.0f );
-        }
+            mKeys[0] = 0;
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
+            mKeys[1] = 0;
 
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_9 )
-        {
-            mAzimuth += 0.1f;
-            mAzimuth = fmodf( mAzimuth, Math::TWO_PI );
-        }
-        else if( arg.keysym.scancode == SDL_SCANCODE_KP_6 )
-        {
-            mAzimuth -= 0.1f;
-            mAzimuth = fmodf( mAzimuth, Math::TWO_PI );
-            if( mAzimuth < 0 )
-                mAzimuth = Math::TWO_PI + mAzimuth;
-        }
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_MULTIPLY )
+            mKeys[2] = 0;
+        if( arg.keysym.scancode == SDL_SCANCODE_KP_DIVIDE )
+            mKeys[3] = 0;
+
 
         if( arg.keysym.scancode == SDL_SCANCODE_F2 )
             mLockCameraToGround = !mLockCameraToGround;
