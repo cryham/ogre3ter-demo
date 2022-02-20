@@ -67,9 +67,9 @@ hlms pine2norm pbs
 	roughness 0.1
 	metalness 0.1
 
-    two_sided_lighting true
-	cull_mode none
-    depth_write off
+    //two_sided_lighting true  //?
+	//cull_mode none
+    depth_write off  // terrain hides, no shadows
     //transparency 0.5
 	transparency_mode transparent
 
