@@ -76,6 +76,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void ShadowMapper::createCompositorWorkspace()
     {
+        //return;  //**  5 sec delay
         OGRE_ASSERT_LOW( !m_shadowWorkspace );
         OGRE_ASSERT_LOW( !m_tmpGaussianFilterTex );
 
@@ -152,6 +153,7 @@ namespace Ogre
                              GpuPageOutStrategy::SaveToSystemRam,
                              TextureFlags::Uav,
                              TextureTypes::Type2D );
+        //m_shadowMapTex->_setToDisplayDummyTexture();  //?
 
         uint32 width = m_heightMapTex->getWidth();
         uint32 height = m_heightMapTex->getHeight();
@@ -450,7 +452,8 @@ namespace Ogre
         ShaderParams &shaderParams = m_shadowJob->getShaderParams( "default" );
         shaderParams.setDirty();
 
-        m_shadowWorkspace->_update();
+        if (m_shadowWorkspace)
+            m_shadowWorkspace->_update();
 
         if( m_minimizeMemoryConsumption )
             destroyCompositorWorkspace();
