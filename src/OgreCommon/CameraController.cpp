@@ -16,8 +16,8 @@ namespace Demo
         mSpeed2( false ),
         mCameraYaw( 0 ),
         mCameraPitch( 0 ),
-        mCameraBaseSpeed( 300 ),
-        mCameraSpeed1( 0.1 ),
+        mCameraBaseSpeed( 90 ),
+        mCameraSpeed1( 0.03 ),
         mCameraSpeed2( 10 ),
         mGraphicsSystem( graphicsSystem )
     {

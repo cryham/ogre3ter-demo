@@ -103,7 +103,7 @@ namespace Demo
         SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
         // Render terrain after most objects, to improve performance by taking advantage of early Z
 
-    #if 0  //** 1 terrain
+    #if 1  //** 1 terrain
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
                                   &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
                                   sceneManager, 11u, root->getCompositorManager2(),
@@ -141,7 +141,8 @@ namespace Demo
             Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
             hlmsPbs->setListener( mHlmsPbsTerraShadows );
         }
-    #else  // Plane
+    #else
+        //  Plane  ------------------------------------------------
         v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane( "Plane v1",
             ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             Plane( Vector3::UNIT_Y, 1.0f ), 2000.0f, 2000.0f,
@@ -152,22 +153,23 @@ namespace Demo
             "Plane", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             planeMeshV1.get(), true, true, true );
         {
-            Item *item = sceneManager->createItem( planeMesh, SCENE_DYNAMIC );
+            Item *item = sceneManager->createItem( planeMesh, SCENE_STATIC );
             item->setDatablock( "Ground" );
-            //item->setDatablock( "Marble" );
-            SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_DYNAMIC );
+            SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
             sceneNode->setPosition( 0, 0, 0 );
             sceneNode->attachObject( item );
 
-            //Change the addressing mode of the roughness map to wrap via code.
+            //  Change the addressing mode to wrap
             assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
             HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(item->getSubItem(0)->getDatablock() );
-            //Make a hard copy of the sampler block
-            HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_ROUGHNESS ) );
+            HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
             samplerblock.mU = TAM_WRAP;
             samplerblock.mV = TAM_WRAP;
             samplerblock.mW = TAM_WRAP;
+            datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
+            datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
             datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
+            datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
         }
     #endif
 
@@ -177,14 +179,16 @@ namespace Demo
         mSunLight = sceneManager->createLight();
         SceneNode *lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( mSunLight );
-        mSunLight->setPowerScale( Math::PI *4 );  //** par!
+        mSunLight->setPowerScale( Math::PI * 2 );  //** par! 1.5 2 3, should be 1..
         mSunLight->setType( Light::LT_DIRECTIONAL );
-        mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );
+        mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );  //-
 
-        //  ambient
+        //  ambient  set in update ..
         sceneManager->setAmbientLight(
-            ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
-            ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
+            ColourValue( 0.63f, 0.61f, 0.28f ) * 0.04f,
+            ColourValue( 0.52f, 0.63f, 0.76f ) * 0.04f,
+            // ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
+            // ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
             Vector3::UNIT_Y );
 
 
@@ -202,27 +206,29 @@ namespace Demo
 
 
 #if 1
-        //  Mesh v2  ------------------------------------------------
+        //  Trees  ------------------------------------------------
     #if 1
         HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
         pbsdatablock->setTwoSidedLighting( true );  //?
         //pbsdatablock->setMacroblock( macroblockWire );
     #endif
 
-        const int all = 3, use = 1, ofs = 1;
-        //const int all = 3, use = 3, ofs = 0;  // all 3
+        // const int all = 3, use = 1, ofs = 2;  // test one
+        // const int all = 3, use = 3, ofs = 0;  // all
+        const int all = 3, use = 2, ofs = 0;  // two
+
         const String strMesh[all] =
         {   //  meshTool -v2 -l 10 -d 100 -p 11 jungle_tree.mesh
             "jungle_tree-lod10.mesh",
+            "palm2-lod10.mesh",
             //  meshTool -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
             "pine2_tall_norm-lod10.mesh",  // 10,9, 11,5
-            "palm2-lod10.mesh",
         };
-        const Real scales[all] = { 1.f, 0.8, 2.5f};
+        const Real scales[all] = { 1.f, 2.5f, 0.8};
 
-		//const int dim = 46;  // 8650
+		const int dim = 46;  // 8650
 		//const int dim = 26;  // 2800
-		const int dim = 12;  // 625
+		//const int dim = 12;  // 625
         const float step = 45.f;
 		
         for (int i=-dim; i<=dim; ++i)
@@ -236,6 +242,7 @@ namespace Demo
 					ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
 					SCENE_STATIC );
                 //item->setDatablock( "pine2norm" );
+                item->setRenderQueueGroup( 200 );  // after terrain
 
 				SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
 				sceneNode->attachObject( item );
@@ -315,8 +322,20 @@ namespace Demo
                 mYaw = Math::TWO_PI + mYaw;
         }
 
-        mSunLight->setDirection( Quaternion( Radian(mYaw), Vector3::UNIT_Y ) *
-            Vector3( cosf( mPitch ), -sinf( mPitch ), 0.0 ).normalisedCopy() );
+        Vector3 dir = Quaternion( Radian(mYaw), Vector3::UNIT_Y ) *
+            Vector3( cosf( mPitch ), -sinf( mPitch ), 0.0 ).normalisedCopy();
+        mSunLight->setDirection( dir );
+
+
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        sceneManager->setAmbientLight(
+            ColourValue( 0.99f, 0.94f, 0.90f ) * 0.04f,  //** par
+            ColourValue( 0.90f, 0.93f, 0.96f ) * 0.04f,
+            // ColourValue( 0.93f, 0.91f, 0.38f ) * 0.04f,
+            // ColourValue( 0.22f, 0.53f, 0.96f ) * 0.04f,
+            // ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
+            // ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
+            -dir );
 
         //Do not call update() while invisible, as it will cause an assert because the frames
         //are not advancing, but we're still mapping the same GPU region over and over.
