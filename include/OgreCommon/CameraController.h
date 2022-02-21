@@ -12,8 +12,7 @@ namespace Demo
         bool        mUseSceneNode;
         bool        mSpeed1;
         bool        mSpeed2;
-        bool        mWASD[4];
-        bool        mSlideUpDown[2];
+        bool        mWASDQE[6];
         float       mCameraYaw;
         float       mCameraPitch;
     public:

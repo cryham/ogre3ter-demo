@@ -1,6 +1,5 @@
 
 #include "CameraController.h"
-
 #include "GraphicsSystem.h"
 
 #include "OgreCamera.h"
@@ -10,6 +9,7 @@ using namespace Demo;
 
 namespace Demo
 {
+
     CameraController::CameraController( GraphicsSystem *graphicsSystem, bool useSceneNode ) :
         mUseSceneNode( useSceneNode ),
         mSpeed1( false ),
@@ -17,13 +17,13 @@ namespace Demo
         mCameraYaw( 0 ),
         mCameraPitch( 0 ),
         mCameraBaseSpeed( 90 ),
-        mCameraSpeed1( 0.03 ),
+        mCameraSpeed1( 0.1 ),
         mCameraSpeed2( 10 ),
         mGraphicsSystem( graphicsSystem )
     {
-        memset( mWASD, 0, sizeof(mWASD) );
-        memset( mSlideUpDown, 0, sizeof(mSlideUpDown) );
+        memset( mWASDQE, 0, sizeof(mWASDQE) );
     }
+
     //-----------------------------------------------------------------------------------
     void CameraController::update( float timeSinceLast )
     {
@@ -48,13 +48,13 @@ namespace Demo
             mCameraPitch = 0.0f;
         }
 
-        int camMovementZ = mWASD[2] - mWASD[0];
-        int camMovementX = mWASD[3] - mWASD[1];
-        int slideUpDown = mSlideUpDown[1] - mSlideUpDown[0];
+        int camMovementZ = mWASDQE[2] - mWASDQE[0];
+        int camMovementX = mWASDQE[3] - mWASDQE[1];
+        int camMovementY = mWASDQE[5] - mWASDQE[4];
 
-        if( camMovementZ || camMovementX || slideUpDown )
+        if( camMovementZ || camMovementX || camMovementY )
         {
-            Ogre::Vector3 camMovementDir( camMovementX, slideUpDown, camMovementZ );
+            Ogre::Vector3 camMovementDir( camMovementX, camMovementY, camMovementZ );
             camMovementDir.normalise();
             camMovementDir *= timeSinceLast * mCameraBaseSpeed
                 * (mSpeed1 ? mCameraSpeed1 : mSpeed2 ? mCameraSpeed2 : 1.f);
@@ -68,6 +68,7 @@ namespace Demo
                 camera->moveRelative( camMovementDir );
         }
     }
+
     //-----------------------------------------------------------------------------------
     bool CameraController::keyPressed( const SDL_KeyboardEvent &arg )
     {
@@ -77,22 +78,23 @@ namespace Demo
             mSpeed2 = true;
 
         if( arg.keysym.scancode == SDL_SCANCODE_W )
-            mWASD[0] = true;
+            mWASDQE[0] = true;
         else if( arg.keysym.scancode == SDL_SCANCODE_A )
-            mWASD[1] = true;
+            mWASDQE[1] = true;
         else if( arg.keysym.scancode == SDL_SCANCODE_S )
-            mWASD[2] = true;
+            mWASDQE[2] = true;
         else if( arg.keysym.scancode == SDL_SCANCODE_D )
-            mWASD[3] = true;
+            mWASDQE[3] = true;
         else if( arg.keysym.scancode == SDL_SCANCODE_Q )
-            mSlideUpDown[0] = true;
+            mWASDQE[4] = true;
         else if( arg.keysym.scancode == SDL_SCANCODE_E )
-            mSlideUpDown[1] = true;
+            mWASDQE[5] = true;
         else
             return false;
 
         return true;
     }
+
     //-----------------------------------------------------------------------------------
     bool CameraController::keyReleased( const SDL_KeyboardEvent &arg )
     {
@@ -102,22 +104,23 @@ namespace Demo
             mSpeed2 = false;
 
         if( arg.keysym.scancode == SDL_SCANCODE_W )
-            mWASD[0] = false;
+            mWASDQE[0] = false;
         else if( arg.keysym.scancode == SDL_SCANCODE_A )
-            mWASD[1] = false;
+            mWASDQE[1] = false;
         else if( arg.keysym.scancode == SDL_SCANCODE_S )
-            mWASD[2] = false;
+            mWASDQE[2] = false;
         else if( arg.keysym.scancode == SDL_SCANCODE_D )
-            mWASD[3] = false;
+            mWASDQE[3] = false;
         else if( arg.keysym.scancode == SDL_SCANCODE_Q )
-            mSlideUpDown[0] = false;
+            mWASDQE[4] = false;
         else if( arg.keysym.scancode == SDL_SCANCODE_E )
-            mSlideUpDown[1] = false;
+            mWASDQE[5] = false;
         else
             return false;
 
         return true;
     }
+
     //-----------------------------------------------------------------------------------
     void CameraController::mouseMoved( const SDL_Event &arg )
     {
