@@ -57,10 +57,13 @@ THE SOFTWARE.
 
 #include "OgreItem.h"
 #include "OgreLogManager.h"
+
 #include "OgreMesh.h"
 #include "OgreMeshManager.h"
 #include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
+
+#include "OgreParticleSystem.h"
 
 
 using namespace Demo;
@@ -88,19 +91,22 @@ namespace Demo
     {
         Root *root = mGraphicsSystem->getRoot();
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        
         HlmsManager *hlmsManager = root->getHlmsManager();
         HlmsDatablock *datablock = 0;
         HlmsMacroblock macroblockWire;
         macroblockWire.mPolygonMode = PM_WIREFRAME;
+        
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
 
         LogO("---- createScene");
 
         RenderSystem *renderSystem = root->getRenderSystem();  //**
         renderSystem->setMetricsRecordingEnabled( true );
 
+
         LogO("---- new Terra");
 
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
         // Render terrain after most objects, to improve performance by taking advantage of early Z
 
     #if 1  //** 1 terrain
@@ -205,9 +211,27 @@ namespace Demo
         Vector3 objPos;
 
 
+
 #if 1
+        //  Particles  ------------------------------------------------
+        LogO("---- new Particles");
+
+        for (int i=0; i < 1; ++i)
+        {
+            ParticleSystem* parHit = sceneManager->createParticleSystem("BoostRed");
+            //parHit->setVisibilityFlags(RV_Particles);
+            SceneNode* np = rootNode->createChildSceneNode();
+            np->attachObject(parHit);
+
+            objPos = camPos + Vector3(i * 1.f, -10.f, -40.f);
+            np->setPosition(objPos);
+            //parHit->getEmitter(0)->setEmissionRate(20);
+        }
+#endif
+
+#if 0
         //  Trees  ------------------------------------------------
-    #if 1
+    #if 0
         HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
         pbsdatablock->setTwoSidedLighting( true );  //?
         //pbsdatablock->setMacroblock( macroblockWire );
@@ -243,6 +267,7 @@ namespace Demo
 					SCENE_STATIC );
                 //item->setDatablock( "pine2norm" );
                 item->setRenderQueueGroup( 200 );  // after terrain
+                //item->setRenderingDistance(1500);  //** par  how far visible
 
 				SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
 				sceneNode->attachObject( item );
