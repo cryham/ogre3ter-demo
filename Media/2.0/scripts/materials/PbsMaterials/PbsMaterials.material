@@ -1,5 +1,6 @@
-//See the documentation of HlmsPbsDatablock::HlmsPbsDatablock and HlmsPbsMobileDatablock::HlmsPbsMobileDatablock
-//for all available settings; what they mean and what they do..
+//  See documentation of HlmsPbsDatablock for all available settings:
+//https://ogrecave.github.io/ogre-next/api/2.3/class_ogre_1_1_hlms_pbs_datablock.html#add5507880534dc20bf7dcae3435ed66a
+
 hlms AllSettings pbs
 {
 	//Note: Internally the diffuse colour is divided by PI.
@@ -9,21 +10,16 @@ hlms AllSettings pbs
 	//emissive 0.2 0.1 0.05
 	emissive 0 0 0
 
-	//Valid values are in range (0; inf]; but the range (0; 1] is physically correct.
-	//Note: Values extremely close to zero could cause NaNs and
-	//INFs in the pixel shader, also depends on the GPU's precision.
+	//Note: avoid values extremely close to zero  (0; 1] is physically correct.
 	roughness	0.4
 	
 	//Fresnel as IOR (index of refraction)
 	fresnel		1.33
-	
 	//Fresnel as IOR (index of refraction), seperate per RGB component
 	//fresnel		1.33 1.33 1.2
 
 	//Directly set the "F0" term, instead of using IOR
 	//fresnel_coeff	0.1
-	
-	//Directly set the "F0" term, instead of using IOR, separate per RGB component
 	//fresnel_coeff	0.1 0.1 0.2
 	
 	//diffuse_map		Rocks_Diffuse.tga
@@ -48,64 +44,50 @@ hlms AllSettings pbs
 	//detail_blend_mode3	Overlay
 	//detail_normal_map3	NMBalls.png
 
-	//Red	channel controls the masks on detail_map0 and detail_normal_map0
-	//Green	channel controls the masks on detail_map1 and detail_normal_map1
-	//Blue	channel controls the masks on detail_map2 and detail_normal_map2
-	//Alpha	channel controls the masks on detail_map3 and detail_normal_map3
 	//detail_weight_map	nm_up.png
 }
 
-
+//  ---------------
 hlms pine2norm pbs
 {
 	diffuse_map  pine_norm_gr1.png
 	normal_map   pine_norm_norm.jpg
-	roughness_map	mntn_dark_s.jpg
-	metalness_map	mntn_dark_s.jpg
 	fresnel_coeff 0.0
-	roughness 0.0
-	metalness 0.0
+	roughness 0.5
+	metalness 0.1
 
-    //two_sided_lighting true  //?
 	cull_mode none
-    depth_write off  // terrain hides, no shadows
+    //depth_write off  // no shadows
     //transparency 0.5
-	transparency_mode transparent
+	transparency_mode fade  //?
 
-	//alpha_test 0.5
-	//alpha_test_threshold 0.4
-    //alpha_from_textures true
+	alpha_test greater 0.5
+	alpha_test_threshold 0.74  //?
+    alpha_from_textures true
     
-   	//diffuse	1 1 1
-	specular	0 0 0  // fixes white on transparent
+	specular 0.01 0.01 0.01
+	two_sided true
 }
 
 hlms jungle_tree pbs
 {
 	diffuse_map  jungle_tree.png
-	roughness_map	mntn_dark_s.png
-	metalness_map	mntn_dark_s.png
-	fresnel_coeff 0.0
-	roughness 0.1
-	metalness 0.1
+	normal_map   jungle_tree_normal.png
+	fresnel_coeff 0.1
+	roughness 0.3
+	metalness 0.5
 	
-    //cull_mode none
-    //depth_write off
-    //transparency 0.5
-    
-	//alpha_test 0.5
+    cull_mode none
+	alpha_test greater 0.5
 	//alpha_test_threshold 0.4
-    //alpha_from_textures true
+    alpha_from_textures true
     
 	//diffuse 0.7 0.7 0.7
-	//specular 0.5 0.5 0.5
+	specular 0.2 0.2 0.2
 	
-	//depth_write off
-	transparency_mode transparent
 	//transparency 0.5
-
-   	//diffuse	1 1 1
-	//specular	1 1 1
+	//transparency_mode fade
+	two_sided true
 }
 
 hlms palm2 pbs
@@ -113,47 +95,30 @@ hlms palm2 pbs
 	diffuse_map  palm2_diffuse.png
 	normal_map   palm2_normal.png
 	specular_map palm2_specular.png
-	fresnel_coeff 0.0
-	roughness	0.1
+	fresnel_coeff 0.4
+	roughness	0.3
+	metalness 0.5
 	
     cull_mode none
-    //depth_write off
-    //transparency 1
-    //alpha_test 0.5
-    //alpha_from_textures true
-	transparency_mode transparent
+    alpha_test greater 0.5
+    alpha_from_textures true
+	//transparency_mode transparent
     
-	diffuse		1 1 1
-	specular	1 1 1
+	specular 0.2 0.2 0.2
+	two_sided true
 }
 
-hlms rock1 pbs
-{
-	diffuse_map  rock1.png
-	normal_map   rock1_normal.png
-	roughness_map  rock1.png
-	metalness_map  rock1.png
-
-	roughness 0.1
-	metalness 0.1
-}
-
+//  -----------------
 hlms Ground pbs
 {
 	diffuse_map  grass_ground_d.jpg
 	normal_map   grass_ground_n.jpg
 	roughness_map  grass_ground_h.jpg
 	metalness_map  grass_ground_s.jpg
+	fresnel_coeff 0.01
 
 	//diffuse		0.7 0.7 0.7
 	roughness 0.2
 	metalness 0.2
 }
 
-hlms Marble pbs
-{
-	roughness	1.0
-	detail_map0				MRAMOR6X6.jpg
-	detail_offset_scale0 	0 0 5 5
-	roughness_map			MRAMOR-bump.jpg
-}
