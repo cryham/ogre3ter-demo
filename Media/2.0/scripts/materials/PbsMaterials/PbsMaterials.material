@@ -91,6 +91,7 @@ hlms palm2 pbs
 	two_sided true
 }
 
+
 //  -----------------
 hlms Ground pbs
 {
@@ -106,22 +107,19 @@ hlms Ground pbs
 }
 
 
-//  Particles  ---------------
-hlms BoostRed pbs
+
+//  Particles
+//  -----------------
+hlms ParFire unlit
 {
-	diffuse_map  boost_red.png
-	fresnel_coeff 0.0
-	roughness 0.1
-	metalness 0.1
+	diffuse_map boost_red.png
+	depth_write	off
+	scene_blend	add
+}
 
-    //cull_mode none
-    //depth_write off
-    //transparency 0.5
-	//transparency_mode transparent
-
-	diffuse 0.1 0.2 0.2
-	specular 0.1 0.2 0.2
-
-	blend_operation add
-	alpha_test greater 0.5
+hlms ParSmoke unlit
+{
+	diffuse_map boost_red.png
+	depth_write	off
+	scene_blend	alpha_blend
 }

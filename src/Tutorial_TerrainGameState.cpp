@@ -99,6 +99,8 @@ namespace Demo
         
         SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
 
+        LogManager::getSingleton().setLogDetail(LoggingLevel::LL_BOREME);
+
         LogO("---- createScene");
 
         RenderSystem *renderSystem = root->getRenderSystem();  //**
@@ -109,7 +111,7 @@ namespace Demo
 
         // Render terrain after most objects, to improve performance by taking advantage of early Z
 
-    #if 1  //** 1 terrain
+    #if 0  //** 1 terrain
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
                                   &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
                                   sceneManager, 11u, root->getCompositorManager2(),
@@ -211,20 +213,21 @@ namespace Demo
         Vector3 objPos;
 
 
-
 #if 1
         //  Particles  ------------------------------------------------
         LogO("---- new Particles");
 
-        for (int i=0; i < 1; ++i)
+        for (int i=0; i < 2; ++i)  // 20
         {
-            ParticleSystem* parHit = sceneManager->createParticleSystem("BoostRed");
+            ParticleSystem* parSys = sceneManager->createParticleSystem(
+                i%2 ? "Smoke" : "Fire");
             //parHit->setVisibilityFlags(RV_Particles);
-            SceneNode* np = rootNode->createChildSceneNode();
-            np->attachObject(parHit);
+            SceneNode* node = rootNode->createChildSceneNode();
+            node->attachObject( parSys );
+            parSys->setRenderQueueGroup( 105 );  //? after trees
 
-            objPos = camPos + Vector3(i * 1.f, -10.f, -40.f);
-            np->setPosition(objPos);
+            objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, -10.f);
+            node->setPosition( objPos );
             //parHit->getEmitter(0)->setEmissionRate(20);
         }
 #endif
@@ -250,9 +253,9 @@ namespace Demo
         };
         const Real scales[all] = { 1.f, 2.5f, 0.8};
 
-		const int dim = 46;  // 8650
+		//const int dim = 46;  // 8650
 		//const int dim = 26;  // 2800
-		//const int dim = 12;  // 625
+		const int dim = 12;  // 625
         const float step = 45.f;
 		
         for (int i=-dim; i<=dim; ++i)
@@ -404,7 +407,7 @@ namespace Demo
             RenderSystem *renderSystem = mGraphicsSystem->getRoot()->getRenderSystem();
             const RenderingMetrics& rm = renderSystem->getMetrics();  //**
             outText +=
-                " f " + StringConverter::toString( rm.mFaceCount/1000 ) + 
+                "f " + StringConverter::toString( rm.mFaceCount/1000 ) + 
                 "k v " + StringConverter::toString( rm.mVertexCount/1000 ) + 
                 "k d " + StringConverter::toString( rm.mDrawCount ) + 
                 " i " + StringConverter::toString( rm.mInstanceCount ) + 
