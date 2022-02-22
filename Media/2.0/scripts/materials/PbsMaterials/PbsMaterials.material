@@ -40,12 +40,7 @@ hlms pine2norm pbs
 	metalness 0.1
 
 	cull_mode none
-    //depth_write off  // no shadows
-    //transparency 0.5
-	transparency_mode fade  //?
-
 	alpha_test greater 0.5
-	alpha_test_threshold 0.74  //?
     alpha_from_textures true
     
 	specular 0.01 0.01 0.01
@@ -85,7 +80,6 @@ hlms palm2 pbs
     cull_mode none
     alpha_test greater 0.5
     alpha_from_textures true
-	//transparency_mode transparent
     
 	specular 0.2 0.2 0.2
 	two_sided true

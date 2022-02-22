@@ -100,7 +100,7 @@ namespace Demo
         finalText += Ogre::StringConverter::toString( frameStats->getAvgTime() );
         finalText += " ms\n";
         finalText += "Avg FPS:\t";*/
-        finalText += Ogre::StringConverter::toString( frameStats->getAvgFps() ) + "\n";
+        finalText += Ogre::StringConverter::toString( (int)frameStats->getAvgFps() ) + "\n";
         //finalText += "\n\nPress F1 to toggle help";
 
         outText.swap( finalText );

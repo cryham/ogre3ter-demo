@@ -356,6 +356,7 @@
 		@piece( two_sided_flip_normal )* (gl_FrontFacing ? 1.0 : -1.0)@end
 	@end
 @end
+
 @piece( LoadNormalData )
 	@property( !normal_map )
 		// Geometric normal
@@ -814,6 +815,11 @@
 	@property( !hlms_render_depth_only )
 		@property( !hlms_prepass )
 			@property( hlms_normal || hlms_qtangent )
+
+				//**  fog
+				@insertpiece( FogPS )
+
+
 				@property( !hw_gamma_write )
 					//Linear to Gamma space
 					outPs_colour0.xyz	= sqrt( finalColour );

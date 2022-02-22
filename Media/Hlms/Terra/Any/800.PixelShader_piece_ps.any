@@ -363,6 +363,11 @@
 
 	@property( !hlms_render_depth_only )
 		@property( !hlms_prepass )
+
+			//**  fog
+			@insertpiece( FogPS )
+
+
 			@property( !hw_gamma_write )
 				//Linear to Gamma space
 				outPs_colour0.xyz	= sqrt( finalColour );

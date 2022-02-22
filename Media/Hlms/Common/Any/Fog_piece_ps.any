@@ -1,0 +1,19 @@
+
+@piece( FogPS )
+
+    //**  fog
+    float fogDistance = length( inPs.pos );
+    //float fogDistance = -inPs.pos.z;
+
+    //  linear
+    //float fogFactor = 1.0 - clamp((pass.fogParams.y - fogDistance) / (pass.fogParams.y - pass.fogParams.x),0.0,1.0);
+    // float2 params = float2(400, 3000);
+    // float fogFactor = 1.0 - clamp((params.y - fogDistance) / (params.y - params.x), 0.0, 1.0);
+    //  exp
+    float fogFactor = 1.0 - exp( -fogDistance * 0.00003 );  // + 0.0001 .. 0.001
+    //float fogFactor = exp(-inPs.pos.z * 0.0001); // * (1.0-exp( -distance*rayDir.y*b ))/rayDir.y;  // height and dist..
+
+    float3 fogColor = float3(0.2,0.4,0.6);
+    finalColour = mix(finalColour, fogColor, fogFactor);
+
+@end
