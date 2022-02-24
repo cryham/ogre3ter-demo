@@ -58,6 +58,8 @@ namespace Demo
     public:
         Tutorial_TerrainGameState( const Ogre::String &helpDescription );
 
+        void CreateSkyDome(Ogre::String sMater, float yaw);
+
         virtual void createScene01();
         virtual void destroyScene();
 

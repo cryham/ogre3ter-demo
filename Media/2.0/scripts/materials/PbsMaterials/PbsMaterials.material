@@ -30,7 +30,7 @@ hlms AllSettings pbs
 	//detail_weight_map	nm_up.png
 }
 
-//  ---------------
+//  Trees  ---------------
 hlms pine2norm pbs
 {
 	diffuse_map  pine_norm_gr1.png
@@ -101,7 +101,6 @@ hlms Ground pbs
 }
 
 
-
 //  Particles
 //  -----------------
 hlms ParFire unlit
@@ -116,4 +115,17 @@ hlms ParSmoke unlit
 	diffuse_map boost_red.png
 	depth_write	off
 	scene_blend	alpha_blend
+}
+
+
+//  Skies
+//  -----------------
+hlms sky-clearday1 unlit
+{
+	diffuse_map sky-clearday1.jpg
+}
+
+hlms sky_photo6 unlit
+{
+	diffuse_map sky_photo6.jpg
 }

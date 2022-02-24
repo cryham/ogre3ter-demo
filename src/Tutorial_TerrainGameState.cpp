@@ -62,6 +62,7 @@ THE SOFTWARE.
 #include "OgreMeshManager.h"
 #include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
+#include "OgreManualObject2.h"
 
 #include "OgreParticleSystem.h"
 
@@ -212,8 +213,44 @@ namespace Demo
         mGraphicsSystem->getCamera()->lookAt( camPos + Vector3(0.f, -0.5f, -1.f) );
         Vector3 objPos;
 
+#if 0
+        //  Car  ------------------------------------------------
+        const int carParts = 3;
+        const String cars[carParts] = {
+            "ES_body.mesh", "ES_interior.mesh", "ES_glass.mesh",
+            //"XZ_body.mesh", "XZ_interior.mesh", "XZ_glass.mesh",
+        };
+        for (int i=0; i < carParts; ++i)
+        {
+            Item *item = sceneManager->createItem( cars[i],
+                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+            //item->setDatablock( "pine2norm" );
 
-#if 1
+            SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
+            sceneNode->attachObject( item );
+            if (i==2)
+                item->setRenderQueueGroup( 202 );  // after trees
+            
+            //  scale
+            Real s = 6.f;
+            sceneNode->scale( s, s, s );
+            
+            //  pos
+            objPos = camPos + Vector3(0.f, -20.f, -140.f);
+            if (mTerra)
+                objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
+            //objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f + 0.1f;  // par
+            sceneNode->setPosition( objPos );
+            
+            //  rot
+            Degree k( 180 );  // ES
+            //Degree k( 0 );  // XZ
+            Quaternion q;  q.FromAngleAxis( k, Vector3::UNIT_Z );
+            sceneNode->setOrientation( q );
+        }
+#endif
+
+#if 0
         //  Particles  ------------------------------------------------
         LogO("---- new Particles");
 
@@ -232,7 +269,7 @@ namespace Demo
         }
 #endif
 
-#if 0
+#if 1
         //  Trees  ------------------------------------------------
     #if 0
         HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
@@ -246,10 +283,11 @@ namespace Demo
 
         const String strMesh[all] =
         {   //  meshTool -v2 -l 10 -d 100 -p 11 jungle_tree.mesh
-            "jungle_tree-lod10.mesh",
-            "palm2-lod10.mesh",
+            "jungle_tree-lod8.mesh",
+            //  meshTool -v2 -l 8 -d 200 -p 10 palm2.mesh
+            "palm2-lod8.mesh",
             //  meshTool -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
-            "pine2_tall_norm-lod10.mesh",  // 10,9, 11,5
+            "pine2_tall_norm-lod9.mesh",  // 10,9, 11,5
         };
         const Real scales[all] = { 1.f, 2.5f, 0.8};
 
@@ -301,9 +339,134 @@ namespace Demo
 		}
 #endif
 
+#if 0
+        //  Manual object  ------------------------------------------------
+        LogO("---- new Manual object");
+        ManualObject * m;
+        std::vector<Vector3> mVertices;
+
+        m = sceneManager->createManualObject();
+        m->begin("jungle_tree", OT_TRIANGLE_LIST);
+        //m->begin("ParSmoke", OT_TRIANGLE_LIST);
+
+        //m->beginUpdate(0);
+        const size_t GridSize = 15;
+        const float GridStep = 1.0f / GridSize;
+
+        for (size_t i = 0; i < GridSize; i++)
+        {
+            for (size_t j = 0; j < GridSize; j++)
+            {
+                mVertices.push_back(Vector3(GridStep * i, GridStep * j, 0.0f));
+                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * j, 0.0f));
+                mVertices.push_back(Vector3(GridStep * i, GridStep * (j + 1), 0.0f));
+                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * (j + 1), 0.0f));
+            }
+        }
+
+        float uvOffset = 0.f;
+        {
+            for (size_t i = 0; i < mVertices.size(); )
+            {
+                m->position(mVertices[i]);
+                m->normal(0.0f, 1.0f, 0.0f);
+                m->tangent(1.0f, 0.0f, 0.0f);
+                m->textureCoord(0.0f + uvOffset, 0.0f + uvOffset);
+
+                m->position(mVertices[i + 1]);
+                m->normal(0.0f, 1.0f, 0.0f);
+                m->tangent(1.0f, 0.0f, 0.0f);
+                m->textureCoord(1.0f + uvOffset, 0.0f + uvOffset);
+
+                m->position(mVertices[i + 2]);
+                m->normal(0.0f, 1.0f, 0.0f);
+                m->tangent(1.0f, 0.0f, 0.0f);
+                m->textureCoord(0.0f + uvOffset, 1.0f + uvOffset);
+
+                m->position(mVertices[i + 3]);
+                m->normal(0.0f, 1.0f, 0.0f);
+                m->tangent(1.0f, 0.0f, 0.0f);
+                m->textureCoord(1.0f + uvOffset, 1.0f + uvOffset);
+
+                m->quad(i, i + 1, i + 3, i + 2);
+                i += 4;
+            }
+        }
+        m->end();
+
+        SceneNode *sceneNodeGrid = sceneManager->getRootSceneNode( SCENE_DYNAMIC )->
+                                     createChildSceneNode( SCENE_DYNAMIC );
+        sceneNodeGrid->attachObject(m);
+        sceneNodeGrid->scale(4.0f, 4.0f, 4.0f);
+        objPos = camPos + Vector3( 0.f, -5.f, -10.f);
+        sceneNodeGrid->translate(objPos, SceneNode::TS_LOCAL);
+#endif
+
+#if 1
+        //  Sky Dome  ------------------------------------------------
+        CreateSkyDome("sky-clearday1", 0.f);
+        //CreateSkyDome("sky_photo6", 0.f);  // clouds
+#endif
+
         LogO("---- tutorial createScene");
 
         TutorialGameState::createScene01();
+    }
+
+
+    //-----------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreateSkyDome(String sMater, float yaw)
+    {
+    	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
+        
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        ManualObject* m = sceneManager->createManualObject();
+        m->begin(sMater, OT_TRIANGLE_LIST);
+
+        //  divisions- quality
+        int ia = 32*2, ib = 24,iB = 24 +1/*below_*/, i=0;
+        
+        //  angles, max
+        const Real B = Math::HALF_PI, A = Math::TWO_PI;
+        Real bb = B/ib, aa = A/ia;  // add
+        Real a,b;
+        ia += 1;
+
+        //  up/dn y  )
+        for (b = 0.f; b <= B+bb/*1*/*iB; b += bb)
+        {
+            Real cb = sinf(b), sb = cosf(b);
+            Real y = sb;
+
+            //  circle xz  o
+            for (a = 0.f; a <= A; a += aa, ++i)
+            {
+                Real x = cosf(a)*cb, z = sinf(a)*cb;
+                m->position(x,y,z);
+
+                m->textureCoord(a/A, b/B);
+
+                if (a > 0.f && b > 0.f)  // rect 2tri
+                {
+                    m->index(i-1);  m->index(i);     m->index(i-ia);
+                    m->index(i-1);  m->index(i-ia);  m->index(i-ia-1);
+                }
+            }
+        }
+        m->end();
+
+        //AxisAlignedBox aab;  aab.setInfinite();
+        //m->setBoundingBox(aab);
+        Aabb aab(Vector3(0,0,0), Vector3(1,1,1)*1000000);
+        m->setLocalAabb(aab);  // always visible
+        //m->setRenderQueueGroup(230);  //?
+        m->setCastShadows(false);
+
+        SceneNode *ndSky = sceneManager->getRootSceneNode()->createChildSceneNode();
+        ndSky->attachObject(m);  // SCENE_DYNAMIC
+        ndSky->setScale(scale);
+        Quaternion q;  q.FromAngleAxis(Degree(-yaw), Vector3::UNIT_Y);
+        ndSky->setOrientation(q);
     }
 
 
