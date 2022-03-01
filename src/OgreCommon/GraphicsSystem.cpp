@@ -850,8 +850,8 @@ namespace Demo
                     Ogre::RenderQueue::StableSort );
 
         //Set sane defaults for proper shadow mapping
-        mSceneManager->setShadowDirectionalLightExtrusionDistance( 500.0f );
-        mSceneManager->setShadowFarDistance( 500.0f );
+        mSceneManager->setShadowDirectionalLightExtrusionDistance( 1000.0f );  //** par! 500..1500
+        mSceneManager->setShadowFarDistance( 1000.0f );
     }
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::createCamera()

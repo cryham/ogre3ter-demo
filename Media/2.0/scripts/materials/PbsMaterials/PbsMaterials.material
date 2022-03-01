@@ -54,6 +54,7 @@ hlms jungle_tree pbs
 	fresnel_coeff 0.1
 	roughness 0.3
 	metalness 0.5
+	workflow specular_ogre
 	
     cull_mode none
 	alpha_test greater 0.5
@@ -76,6 +77,7 @@ hlms palm2 pbs
 	fresnel_coeff 0.4
 	roughness	0.3
 	metalness 0.5
+	workflow specular_ogre
 	
     cull_mode none
     alpha_test greater 0.5
@@ -87,18 +89,20 @@ hlms palm2 pbs
 
 
 //  -----------------
-hlms Ground pbs
-{
-	diffuse_map  grass_ground_d.jpg
-	normal_map   grass_ground_n.jpg
-	roughness_map  grass_ground_h.jpg
-	metalness_map  grass_ground_s.jpg
-	fresnel_coeff 0.01
+//hlms Ground pbs
+//{
+	//diffuse_map grass_ground_d.jpg
+	//workflow specular_ogre specular_fresnel metallic
+
+	// normal_map   grass_ground_n.jpg
+	// roughness_map  grass_ground_h.jpg
+	// metalness_map  grass_ground_s.jpg
+	// fresnel_coeff 0.01
 
 	//diffuse		0.7 0.7 0.7
-	roughness 0.2
-	metalness 0.2
-}
+	// roughness 0.2
+	// metalness 0.2
+//}
 
 
 //  Particles
@@ -117,12 +121,14 @@ hlms ParSmoke unlit
 	scene_blend	alpha_blend
 }
 
-
 //  Skies
 //  -----------------
 hlms sky-clearday1 unlit
 {
 	diffuse_map sky-clearday1.jpg
+	//u wrap  ?
+	//v wrap
+	//polygon_mode wireframe
 }
 
 hlms sky_photo6 unlit

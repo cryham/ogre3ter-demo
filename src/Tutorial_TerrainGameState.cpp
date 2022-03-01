@@ -112,7 +112,7 @@ namespace Demo
 
         // Render terrain after most objects, to improve performance by taking advantage of early Z
 
-    #if 0  //** 1 terrain
+    #if 1  //** 1 terrain
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
                                   &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
                                   sceneManager, 11u, root->getCompositorManager2(),
@@ -126,6 +126,7 @@ namespace Demo
         //mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
         //  1k  600 fps  (2 tex)
         mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
+        // mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f ), Vector3( 1024.f, 1.f, 1024.f ), false, false );
         //  2k  260 fps
         //mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
         //  4k  93 fps
@@ -169,7 +170,7 @@ namespace Demo
             sceneNode->attachObject( item );
 
             //  Change the addressing mode to wrap
-            assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
+            /*assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
             HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(item->getSubItem(0)->getDatablock() );
             HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
             samplerblock.mU = TAM_WRAP;
@@ -261,9 +262,11 @@ namespace Demo
             //parHit->setVisibilityFlags(RV_Particles);
             SceneNode* node = rootNode->createChildSceneNode();
             node->attachObject( parSys );
-            parSys->setRenderQueueGroup( 105 );  //? after trees
+            parSys->setRenderQueueGroup( 225 );  //? after trees
 
             objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, -10.f);
+            if (mTerra)
+                objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
             node->setPosition( objPos );
             //parHit->getEmitter(0)->setEmissionRate(20);
         }
@@ -467,6 +470,20 @@ namespace Demo
         ndSky->setScale(scale);
         Quaternion q;  q.FromAngleAxis(Degree(-yaw), Vector3::UNIT_Y);
         ndSky->setOrientation(q);
+
+        //  Change the addressing mode to wrap  ?
+        /*Root *root = mGraphicsSystem->getRoot();
+        Hlms *hlms = root->getHlmsManager()->getHlms( HLMS_UNLIT );
+        HlmsUnlitDatablock *datablock = static_cast<HlmsUnlitDatablock*>(hlms->getDatablock(sMater));
+        // HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(m->getDatablock() );
+        HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
+        samplerblock.mU = TAM_WRAP;
+        samplerblock.mV = TAM_WRAP;
+        samplerblock.mW = TAM_WRAP;
+        datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
+        datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
+        datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
+        datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
     }
 
 
@@ -576,25 +593,27 @@ namespace Demo
                 " i " + StringConverter::toString( rm.mInstanceCount ) + 
                 " b " + StringConverter::toString( rm.mBatchCount ) + "\n";
 
-            outText += "\nF2 Lock Ground: [";
-            outText += mLockCameraToGround ? "Yes]" : "No]";
+            //  F1 still help
+            //outText += "\nF2 Lock Ground: ";
+            //outText += mLockCameraToGround ? "Yes" : "No";
 
             outText += "\n+ - Pitch  ";
             outText += StringConverter::toString( mPitch * 180.0f / Math::PI );
             outText += "\n/ * Yaw ";
             outText += StringConverter::toString( mYaw * 180.0f / Math::PI );
             
-            outText += "\n\nCamera: ";
+            outText += "\n\nPos: ";
             str.a( "", LwString::Float( camPos.x, 2, 2 ), " ",
                        LwString::Float( camPos.y, 2, 2 ), " ",
                        LwString::Float( camPos.z, 2, 2 ), "" );
             outText += str.c_str();
-            outText += "\nLightDir: ";
+            
+            /*outText += "\nLightDir: ";
             str.clear();
             str.a( "", LwString::Float( mSunLight->getDirection().x, 2, 2 ), " ",
                        LwString::Float( mSunLight->getDirection().y, 2, 2 ), " ",
                        LwString::Float( mSunLight->getDirection().z, 2, 2 ), "" );
-            outText += str.c_str();
+            outText += str.c_str();/**/
         }
     }
 

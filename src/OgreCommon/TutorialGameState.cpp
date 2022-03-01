@@ -79,11 +79,9 @@ namespace Demo
         {
             outText = mHelpDescription;
             outText += "\n\nPress F1 to toggle help";
-            outText += "\n\nProtip: Ctrl+F1 will reload PBS shaders (for real time template editing).\n"
+            outText += "\n\nCtrl+F1 reload PBS shaders.\n"
                        "Ctrl+F2 reloads Unlit shaders.\n"
-                       "Ctrl+F3 reloads Compute shaders.\n"
-                       "Note: If the modified templates produce invalid shader code, "
-                       "crashes or exceptions can happen.\n";
+                       "Ctrl+F3 reloads Compute shaders.\n";
             return;
         }
 

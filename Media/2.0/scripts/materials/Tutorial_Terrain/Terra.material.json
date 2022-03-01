@@ -1,11 +1,24 @@
 {
+    "samplers" :
+    {
+        "aniso" :
+        {
+            "min" : "anisotropic",
+            "mag" : "anisotropic",
+            "mip" : "linear",
+            "u" : "wrap",
+            "v" : "wrap",
+            "w" : "wrap",
+            "max_anisotropic" : 16
+        }
+    },
     "Terra" :
     {
         "TerraExampleMaterial" :
         {
             "diffuse" :
             {
-                "value" : [1, 1, 1],
+                "value" : [0.7, 0.7, 0.7],
                 "texture" : "stones_gray_h2.jpg"
             },
 			
