@@ -364,10 +364,6 @@
 	@property( !hlms_render_depth_only )
 		@property( !hlms_prepass )
 
-			//**  fog
-			@insertpiece( FogPS )
-
-
 			@property( !hw_gamma_write )
 				//Linear to Gamma space
 				outPs_colour0.xyz	= sqrt( finalColour );
@@ -384,6 +380,9 @@
 			@else
 				outPs_colour0.w		= 1.0;
 			@end
+
+			//**  fog
+			@insertpiece( FogPS )
 
 			@property( debug_pssm_splits )
 				outPs_colour0.xyz = mix( outPs_colour0.xyz, debugPssmSplit.xyz, 0.2f );
