@@ -1,14 +1,18 @@
 syntax: glob
 *.dll
+*.pdb
+
+# VS crap
 #*.vcxproj
 #*.filters
 *.vcxproj.user
-*.pdb
 *.ilk
 *.tlog
 *.obj
 *.rule
 *.sdf
+
+.cache
 bin/*
 build/*
 Dependencies/*

@@ -6,6 +6,9 @@
 #endif
 #include "GameEntity.h"
 
+#include "OgreAbiUtils.h"
+#include "OgreConfigFile.h"
+#include "OgreException.h"
 #include "OgreRoot.h"
 #include "OgreException.h"
 #include "OgreConfigFile.h"
@@ -152,7 +155,8 @@ namespace Demo
         const Ogre::String cfgPath = "";
     #endif
 
-        mRoot = OGRE_NEW Ogre::Root( pluginsPath, cfgPath,
+        const Ogre::AbiCookie abiCookie = Ogre::generateAbiCookie();
+		mRoot = OGRE_NEW Ogre::Root( &abiCookie, pluginsPath, cfgPath,
                                      mWriteAccessFolder + "Ogre.log",
                                      windowTitle );
 
