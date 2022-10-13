@@ -20,12 +20,20 @@ include( CMake/Bootstrap.cmake )
 include( CMake/Dependencies/OGRE.cmake )
 
 
+#  root dir
+get_filename_component(DIR_ONE_ABOVE ../ ABSOLUTE)
+message(STATUS ${DIR_ONE_ABOVE})
+
+set(OGRE_NEXT ${DIR_ONE_ABOVE}/Ogre/ogre-next)
+
 ## Fix 1
-set(OGRE_SOURCE "/home/ch/_sr/og3/Ogre/ogre-next/")
+set(OGRE_SOURCE ${OGRE_NEXT}/)
+set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(OGRE_BINARIES "/home/ch/_sr/og3/Ogre/ogre-next/build/Debug")
+	set(OGRE_BINARIES ${OGRE_NEXT}/build/Debug)
 else()
-	set(OGRE_BINARIES "/home/ch/_sr/og3/Ogre/ogre-next/build/Release")
+	set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
 endif()
 
 #This scripts will add all the cpp and h files from src and include folders
@@ -33,7 +41,7 @@ setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )
 
 ## Fix 2 sdl
 include_directories("/usr/include/SDL2")
-include_directories("/home/ch/_sr/og3/Ogre/ogre-next-deps/build/ogredeps/include")  #for rapidjson
+include_directories(${DIR_ONE_ABOVE}/Ogre/ogre-next-deps/build/ogredeps/include)  #for rapidjson
 
 
 # Setup our application
