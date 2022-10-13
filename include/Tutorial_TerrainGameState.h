@@ -29,6 +29,7 @@ THE SOFTWARE.
 #ifndef _Demo_Tutorial_TerrainGameState_H_
 #define _Demo_Tutorial_TerrainGameState_H_
 
+#include "OgreHlmsDatablock.h"
 #include "OgrePrerequisites.h"
 #include "TutorialGameState.h"
 
@@ -52,6 +53,9 @@ namespace Demo
 
         /// Listener to make PBS objects also be affected by terrain's shadows
         Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows;
+        //  wireframe
+        Ogre::HlmsMacroblock macroblockWire;
+        bool wireTerrain = false;
 
         virtual void generateDebugText( float timeSinceLast, Ogre::String &outText );
 

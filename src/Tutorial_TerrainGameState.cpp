@@ -84,6 +84,7 @@ namespace Demo
         mSunLight( 0 ),
         mHlmsPbsTerraShadows( 0 )
     {
+        macroblockWire.mPolygonMode = PM_WIREFRAME;
     }
 
     
@@ -95,9 +96,8 @@ namespace Demo
         
         HlmsManager *hlmsManager = root->getHlmsManager();
         HlmsDatablock *datablock = 0;
-        HlmsMacroblock macroblockWire;
-        macroblockWire.mPolygonMode = PM_WIREFRAME;
         
+       
         SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
 
         LogManager::getSingleton().setLogDetail(LoggingLevel::LL_BOREME);
@@ -128,8 +128,8 @@ namespace Demo
         mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
         // mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f ), Vector3( 1024.f, 1.f, 1024.f ), false, false );
         //  2k  260 fps
-        //mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
-        //  4k  93 fps
+        //mTerra->load( "Heightmap2b.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
+        //  4k  140 fps
         //mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
 
         SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
@@ -251,7 +251,7 @@ namespace Demo
         }
 #endif
 
-#if 0
+#if 1
         //  Particles  ------------------------------------------------
         LogO("---- new Particles");
 
@@ -294,9 +294,10 @@ namespace Demo
         };
         const Real scales[all] = { 1.f, 2.5f, 0.8};
 
-		//const int dim = 46;  // 8650
+		//const int dim = 76;  // 
+		const int dim = 46;  // 8650
 		//const int dim = 26;  // 2800
-		const int dim = 12;  // 625
+		//const int dim = 12;  // 625
         const float step = 45.f;
 		
         for (int i=-dim; i<=dim; ++i)
@@ -360,10 +361,10 @@ namespace Demo
         {
             for (size_t j = 0; j < GridSize; j++)
             {
-                mVertices.push_back(Vector3(GridStep * i, GridStep * j, 0.0f));
-                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * j, 0.0f));
-                mVertices.push_back(Vector3(GridStep * i, GridStep * (j + 1), 0.0f));
-                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * (j + 1), 0.0f));
+                mVertices.push_back(Vector3(GridStep * i,       GridStep * j,       0.00f));
+                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * j,       0.00f));
+                mVertices.push_back(Vector3(GridStep * i,       GridStep * (j + 1), 0.00f * j));
+                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * (j + 1), 0.00f * i));
             }
         }
 
@@ -588,7 +589,7 @@ namespace Demo
             const RenderingMetrics& rm = renderSystem->getMetrics();  //**
             outText +=
                 "f " + StringConverter::toString( rm.mFaceCount/1000 ) + 
-                "k v " + StringConverter::toString( rm.mVertexCount/1000 ) + 
+                //"k v " + StringConverter::toString( rm.mVertexCount/1000 ) + 
                 "k d " + StringConverter::toString( rm.mDrawCount ) + 
                 " i " + StringConverter::toString( rm.mInstanceCount ) + 
                 " b " + StringConverter::toString( rm.mBatchCount ) + "\n";
@@ -630,6 +631,22 @@ namespace Demo
             mKeys[2] = 1;
         if( arg.keysym.scancode == SDL_SCANCODE_KP_DIVIDE )
             mKeys[3] = 1;
+
+        if( arg.keysym.scancode == SDL_SCANCODE_R )
+        {
+            wireTerrain = !wireTerrain;
+            Root *root = mGraphicsSystem->getRoot();
+            HlmsManager *hlmsManager = root->getHlmsManager();
+            HlmsDatablock *datablock = 0;
+            datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
+            //** terrain wireframe
+            if (wireTerrain)
+            {
+                datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
+                datablock->setMacroblock( macroblockWire );
+            }
+            mTerra->setDatablock( datablock );
+        }
 
         TutorialGameState::keyPressed( arg );
     }
