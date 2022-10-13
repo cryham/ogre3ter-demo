@@ -41,7 +41,6 @@ hlms pine2norm pbs
 
 	cull_mode none
 	alpha_test greater 0.5
-    alpha_from_textures true
     
 	specular 0.01 0.01 0.01
 	two_sided true
@@ -59,13 +58,10 @@ hlms jungle_tree pbs
     cull_mode none
 	alpha_test greater 0.5
 	//alpha_test_threshold 0.4
-    alpha_from_textures true
     
 	//diffuse 0.7 0.7 0.7
 	specular 0.2 0.2 0.2
 	
-	//transparency 0.5
-	//transparency_mode fade
 	two_sided true
 }
 
@@ -81,7 +77,6 @@ hlms palm2 pbs
 	
     cull_mode none
     alpha_test greater 0.5
-    alpha_from_textures true
     
 	specular 0.2 0.2 0.2
 	two_sided true
