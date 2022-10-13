@@ -33,6 +33,9 @@ THE SOFTWARE.
 #include "OgrePrerequisites.h"
 #include "TutorialGameState.h"
 
+#define LogO(s)  LogManager::getSingleton().logMessage(s)
+
+
 namespace Ogre
 {
     class Terra;
@@ -44,15 +47,16 @@ namespace Demo
     class Tutorial_TerrainGameState : public TutorialGameState
     {
         bool mLockCameraToGround;
-        float mPitch;
+        float mPitch;  // sun dir
         float mYaw;
         int mKeys[4] = {0,0,0,0};
 
-        Ogre::Terra *mTerra;
+        Ogre::Terra *mTerra;  // terrain
         Ogre::Light *mSunLight;
 
-        /// Listener to make PBS objects also be affected by terrain's shadows
+        // Listener to make PBS objects also be affected by terrain's shadows
         Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows;
+
         //  wireframe
         Ogre::HlmsMacroblock macroblockWire;
         bool wireTerrain = false;
@@ -62,8 +66,6 @@ namespace Demo
     public:
         Tutorial_TerrainGameState( const Ogre::String &helpDescription );
 
-        void CreateSkyDome(Ogre::String sMater, float yaw);
-
         virtual void createScene01();
         virtual void destroyScene();
 
@@ -71,6 +73,16 @@ namespace Demo
 
         virtual void keyPressed( const SDL_KeyboardEvent &arg );
         virtual void keyReleased( const SDL_KeyboardEvent &arg );
+
+        //  scene
+        void CreateSkyDome(Ogre::String sMater, float yaw);
+    
+        void CreateTrees(), DestroyTrees();
+
+		std::vector<Ogre::Item*> vegetItems;
+    	std::vector<Ogre::SceneNode*> vegetNodes;
+
+        void CreateManualObj(Ogre::Vector3 camPos);
     };
 }
 
