@@ -128,7 +128,7 @@ namespace Demo
         mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
         // mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f ), Vector3( 1024.f, 1.f, 1024.f ), false, false );
         //  2k  260 fps
-        //mTerra->load( "Heightmap2b.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
+        //mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
         //  4k  140 fps
         //mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
 
@@ -138,10 +138,6 @@ namespace Demo
         LogO("---- Terra attach");
 
         datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
-        #if 0  //** terrain wireframe
-            datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
-            datablock->setMacroblock( macroblockWire );
-        #endif
         mTerra->setDatablock( datablock );
 
         {
@@ -272,139 +268,6 @@ namespace Demo
         }
 #endif
 
-#if 1
-        //  Trees  ------------------------------------------------
-    #if 0
-        HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
-        pbsdatablock->setTwoSidedLighting( true );  //?
-        //pbsdatablock->setMacroblock( macroblockWire );
-    #endif
-
-        // const int all = 3, use = 1, ofs = 2;  // test one
-        // const int all = 3, use = 3, ofs = 0;  // all
-        const int all = 3, use = 2, ofs = 0;  // two
-
-        const String strMesh[all] =
-        {   //  meshTool -v2 -l 10 -d 100 -p 11 jungle_tree.mesh
-            "jungle_tree-lod8.mesh",
-            //  meshTool -v2 -l 8 -d 200 -p 10 palm2.mesh
-            "palm2-lod8.mesh",
-            //  meshTool -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
-            "pine2_tall_norm-lod9.mesh",  // 10,9, 11,5
-        };
-        const Real scales[all] = { 1.f, 2.5f, 0.8};
-
-		//const int dim = 76;  // 
-		const int dim = 46;  // 8650
-		//const int dim = 26;  // 2800
-		//const int dim = 12;  // 625
-        const float step = 45.f;
-		
-        for (int i=-dim; i<=dim; ++i)
-        {
-            for (int j=-dim; j<=dim; ++j)
-            {
-                int n = rand() % use + ofs;
-                //int n = abs(i+j) % all;
-				Item *item = sceneManager->createItem(
-                    strMesh[n],
-					ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
-					SCENE_STATIC );
-                //item->setDatablock( "pine2norm" );
-                item->setRenderQueueGroup( 200 );  // after terrain
-                //item->setRenderingDistance(1500);  //** par  how far visible
-
-				SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
-				sceneNode->attachObject( item );
-                
-                //  scale
-                Real s = (rand()%1000*0.001f * 2.f + 3.f) * scales[n];
-				sceneNode->scale( s, s, s );
-                
-                //  pos
-				objPos = Vector3( i*step, 0.f, j*step );
-            #if 1
-				objPos += Vector3(
-					(rand()%1000-1000)*0.001f*step,
-                    !mTerra ? 0.f :  // plane
-                    (rand()%1000-1000)*0.001f*step, // h
-					(rand()%1000-1000)*0.001f*step);
-            #endif
-                if (mTerra)
-                    mTerra->getHeightAt( objPos );
-                objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f - 0.1f;  // par
-                sceneNode->setPosition( objPos );
-                
-                //  rot
-                Degree k( (rand()%3600) * 0.1f );
-                Quaternion q;  q.FromAngleAxis( k, Vector3::UNIT_Y );
-                sceneNode->setOrientation( q );
-			}
-		}
-#endif
-
-#if 0
-        //  Manual object  ------------------------------------------------
-        LogO("---- new Manual object");
-        ManualObject * m;
-        std::vector<Vector3> mVertices;
-
-        m = sceneManager->createManualObject();
-        m->begin("jungle_tree", OT_TRIANGLE_LIST);
-        //m->begin("ParSmoke", OT_TRIANGLE_LIST);
-
-        //m->beginUpdate(0);
-        const size_t GridSize = 15;
-        const float GridStep = 1.0f / GridSize;
-
-        for (size_t i = 0; i < GridSize; i++)
-        {
-            for (size_t j = 0; j < GridSize; j++)
-            {
-                mVertices.push_back(Vector3(GridStep * i,       GridStep * j,       0.00f));
-                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * j,       0.00f));
-                mVertices.push_back(Vector3(GridStep * i,       GridStep * (j + 1), 0.00f * j));
-                mVertices.push_back(Vector3(GridStep * (i + 1), GridStep * (j + 1), 0.00f * i));
-            }
-        }
-
-        float uvOffset = 0.f;
-        {
-            for (size_t i = 0; i < mVertices.size(); )
-            {
-                m->position(mVertices[i]);
-                m->normal(0.0f, 1.0f, 0.0f);
-                m->tangent(1.0f, 0.0f, 0.0f);
-                m->textureCoord(0.0f + uvOffset, 0.0f + uvOffset);
-
-                m->position(mVertices[i + 1]);
-                m->normal(0.0f, 1.0f, 0.0f);
-                m->tangent(1.0f, 0.0f, 0.0f);
-                m->textureCoord(1.0f + uvOffset, 0.0f + uvOffset);
-
-                m->position(mVertices[i + 2]);
-                m->normal(0.0f, 1.0f, 0.0f);
-                m->tangent(1.0f, 0.0f, 0.0f);
-                m->textureCoord(0.0f + uvOffset, 1.0f + uvOffset);
-
-                m->position(mVertices[i + 3]);
-                m->normal(0.0f, 1.0f, 0.0f);
-                m->tangent(1.0f, 0.0f, 0.0f);
-                m->textureCoord(1.0f + uvOffset, 1.0f + uvOffset);
-
-                m->quad(i, i + 1, i + 3, i + 2);
-                i += 4;
-            }
-        }
-        m->end();
-
-        SceneNode *sceneNodeGrid = sceneManager->getRootSceneNode( SCENE_DYNAMIC )->
-                                     createChildSceneNode( SCENE_DYNAMIC );
-        sceneNodeGrid->attachObject(m);
-        sceneNodeGrid->scale(4.0f, 4.0f, 4.0f);
-        objPos = camPos + Vector3( 0.f, -5.f, -10.f);
-        sceneNodeGrid->translate(objPos, SceneNode::TS_LOCAL);
-#endif
 
 #if 1
         //  Sky Dome  ------------------------------------------------
@@ -415,76 +278,6 @@ namespace Demo
         LogO("---- tutorial createScene");
 
         TutorialGameState::createScene01();
-    }
-
-
-    //-----------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateSkyDome(String sMater, float yaw)
-    {
-    	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
-        
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        ManualObject* m = sceneManager->createManualObject();
-        m->begin(sMater, OT_TRIANGLE_LIST);
-
-        //  divisions- quality
-        int ia = 32*2, ib = 24,iB = 24 +1/*below_*/, i=0;
-        
-        //  angles, max
-        const Real B = Math::HALF_PI, A = Math::TWO_PI;
-        Real bb = B/ib, aa = A/ia;  // add
-        Real a,b;
-        ia += 1;
-
-        //  up/dn y  )
-        for (b = 0.f; b <= B+bb/*1*/*iB; b += bb)
-        {
-            Real cb = sinf(b), sb = cosf(b);
-            Real y = sb;
-
-            //  circle xz  o
-            for (a = 0.f; a <= A; a += aa, ++i)
-            {
-                Real x = cosf(a)*cb, z = sinf(a)*cb;
-                m->position(x,y,z);
-
-                m->textureCoord(a/A, b/B);
-
-                if (a > 0.f && b > 0.f)  // rect 2tri
-                {
-                    m->index(i-1);  m->index(i);     m->index(i-ia);
-                    m->index(i-1);  m->index(i-ia);  m->index(i-ia-1);
-                }
-            }
-        }
-        m->end();
-
-        //AxisAlignedBox aab;  aab.setInfinite();
-        //m->setBoundingBox(aab);
-        Aabb aab(Vector3(0,0,0), Vector3(1,1,1)*1000000);
-        m->setLocalAabb(aab);  // always visible
-        //m->setRenderQueueGroup(230);  //?
-        m->setCastShadows(false);
-
-        SceneNode *ndSky = sceneManager->getRootSceneNode()->createChildSceneNode();
-        ndSky->attachObject(m);  // SCENE_DYNAMIC
-        ndSky->setScale(scale);
-        Quaternion q;  q.FromAngleAxis(Degree(-yaw), Vector3::UNIT_Y);
-        ndSky->setOrientation(q);
-
-        //  Change the addressing mode to wrap  ?
-        /*Root *root = mGraphicsSystem->getRoot();
-        Hlms *hlms = root->getHlmsManager()->getHlms( HLMS_UNLIT );
-        HlmsUnlitDatablock *datablock = static_cast<HlmsUnlitDatablock*>(hlms->getDatablock(sMater));
-        // HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(m->getDatablock() );
-        HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
-        samplerblock.mU = TAM_WRAP;
-        samplerblock.mV = TAM_WRAP;
-        samplerblock.mW = TAM_WRAP;
-        datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
-        datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
-        datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
-        datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
     }
 
 
@@ -632,6 +425,7 @@ namespace Demo
         if( arg.keysym.scancode == SDL_SCANCODE_KP_DIVIDE )
             mKeys[3] = 1;
 
+        //** terrain wireframe toggle
         if( arg.keysym.scancode == SDL_SCANCODE_R )
         {
             wireTerrain = !wireTerrain;
@@ -639,13 +433,27 @@ namespace Demo
             HlmsManager *hlmsManager = root->getHlmsManager();
             HlmsDatablock *datablock = 0;
             datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
-            //** terrain wireframe
             if (wireTerrain)
             {
                 datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
                 datablock->setMacroblock( macroblockWire );
             }
             mTerra->setDatablock( datablock );
+        }
+
+        //  trees add, destroy all
+        if( arg.keysym.scancode == SDL_SCANCODE_V )
+            CreateTrees();
+
+        if( arg.keysym.scancode == SDL_SCANCODE_C )
+            DestroyTrees();
+
+
+        //  other
+        if( arg.keysym.scancode == SDL_SCANCODE_M )
+        {
+            Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
+            CreateManualObj(camPos);
         }
 
         TutorialGameState::keyPressed( arg );
