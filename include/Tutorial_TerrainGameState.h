@@ -44,11 +44,30 @@ namespace Ogre
 
 namespace Demo
 {
+
+    struct VegetLayer
+    {
+        std::string mesh;
+        float scaleMin, scaleMax, density;
+        float visFar, down;
+        bool rotAll;
+        int count;  // auto
+        // range ter angle, height..
+        
+        VegetLayer(std::string mesh1, float scMin, float scMax,
+                float dens, float dn, float vis, bool rot)
+            : mesh(mesh1), scaleMin(scMin), scaleMax(scMax)
+            , density(dens), visFar(vis), down(dn), rotAll(rot), count(0)
+        {   }
+    };
+
+
     class Tutorial_TerrainGameState : public TutorialGameState
     {
         bool mLockCameraToGround;
         float mPitch;  // sun dir
         float mYaw;
+        Ogre::Vector3 camPos;
         int mKeys[4] = {0,0,0,0};
 
         Ogre::Terra *mTerra;  // terrain
@@ -77,12 +96,15 @@ namespace Demo
         //  scene
         void CreateSkyDome(Ogre::String sMater, float yaw);
     
-        void CreateTrees(), DestroyTrees();
+        void SetupTrees(), CreateTrees(), DestroyTrees();
 
+        std::vector<VegetLayer> vegetLayers;
 		std::vector<Ogre::Item*> vegetItems;
     	std::vector<Ogre::SceneNode*> vegetNodes;
 
         void CreateManualObj(Ogre::Vector3 camPos);
+        void CreateParticles();
+        void CreateCar();
     };
 }
 
