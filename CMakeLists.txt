@@ -30,11 +30,11 @@ set(OGRE_NEXT ${DIR_ONE_ABOVE}/Ogre/ogre-next)
 set(OGRE_SOURCE ${OGRE_NEXT}/)
 set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(OGRE_BINARIES ${OGRE_NEXT}/build/Debug)
-else()
-	set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
-endif()
+#if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+#	set(OGRE_BINARIES ${OGRE_NEXT}/build/Debug)
+#else()
+#	set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
+#endif()
 
 #This scripts will add all the cpp and h files from src and include folders
 setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )
