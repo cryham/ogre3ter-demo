@@ -85,6 +85,7 @@ namespace Demo
         mHlmsPbsTerraShadows( 0 )
     {
         macroblockWire.mPolygonMode = PM_WIREFRAME;
+        SetupTrees();
     }
 
     
@@ -124,16 +125,16 @@ namespace Demo
         //  Heightmap  ------------------------------------------------
         //  64 flat
         //mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
-        //  1k  600 fps  (2 tex)
+        //  1k  600 fps  4 tex
         mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
         // mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f ), Vector3( 1024.f, 1.f, 1024.f ), false, false );
-        //  2k  260 fps
+        //  2k
         //mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
-        //  4k  140 fps
-        //mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
+        //  4k
+        //mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), 2.f* Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
 
-        SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
-        sceneNode->attachObject( mTerra );
+        SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+        node->attachObject( mTerra );
 
         LogO("---- Terra attach");
 
@@ -161,9 +162,9 @@ namespace Demo
         {
             Item *item = sceneManager->createItem( planeMesh, SCENE_STATIC );
             item->setDatablock( "Ground" );
-            SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
-            sceneNode->setPosition( 0, 0, 0 );
-            sceneNode->attachObject( item );
+            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+            node->setPosition( 0, 0, 0 );
+            node->attachObject( item );
 
             //  Change the addressing mode to wrap
             /*assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
@@ -185,16 +186,17 @@ namespace Demo
         mSunLight = sceneManager->createLight();
         SceneNode *lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( mSunLight );
+        
         mSunLight->setPowerScale( Math::PI * 2 );  //** par! 1.5 2 3, should be 1..
         mSunLight->setType( Light::LT_DIRECTIONAL );
         mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );  //-
 
         //  ambient  set in update ..
         sceneManager->setAmbientLight(
-            ColourValue( 0.63f, 0.61f, 0.28f ) * 0.04f,
-            ColourValue( 0.52f, 0.63f, 0.76f ) * 0.04f,
-            // ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
-            // ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
+            // ColourValue( 0.63f, 0.61f, 0.28f ) * 0.04f,
+            // ColourValue( 0.52f, 0.63f, 0.76f ) * 0.04f,
+            ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
+            ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
             Vector3::UNIT_Y );
 
 
@@ -202,71 +204,13 @@ namespace Demo
         mCameraController = new CameraController( mGraphicsSystem, false );
         mGraphicsSystem->getCamera()->setFarClipDistance( 100000.f );  // far
 
-        //Vector3 camPos(-10.f, 80.f, 10.f );
-        //Vector3 camPos(-2005.f, 40.f, -929.f);
-        Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
+        //camPos = Vector3(-10.f, 80.f, 10.f );
+        //camPos = Vector3(-2005.f, 40.f, -929.f);
+        camPos = Vector3(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
         //camPos.y += mTerra->getHeightAt( camPos );
         mGraphicsSystem->getCamera()->setPosition( camPos );
         mGraphicsSystem->getCamera()->lookAt( camPos + Vector3(0.f, -0.5f, -1.f) );
         Vector3 objPos;
-
-#if 0
-        //  Car  ------------------------------------------------
-        const int carParts = 3;
-        const String cars[carParts] = {
-            "ES_body.mesh", "ES_interior.mesh", "ES_glass.mesh",
-            //"XZ_body.mesh", "XZ_interior.mesh", "XZ_glass.mesh",
-        };
-        for (int i=0; i < carParts; ++i)
-        {
-            Item *item = sceneManager->createItem( cars[i],
-                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
-            //item->setDatablock( "pine2norm" );
-
-            SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
-            sceneNode->attachObject( item );
-            if (i==2)
-                item->setRenderQueueGroup( 202 );  // after trees
-            
-            //  scale
-            Real s = 6.f;
-            sceneNode->scale( s, s, s );
-            
-            //  pos
-            objPos = camPos + Vector3(0.f, -20.f, -140.f);
-            if (mTerra)
-                objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
-            //objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f + 0.1f;  // par
-            sceneNode->setPosition( objPos );
-            
-            //  rot
-            Degree k( 180 );  // ES
-            //Degree k( 0 );  // XZ
-            Quaternion q;  q.FromAngleAxis( k, Vector3::UNIT_Z );
-            sceneNode->setOrientation( q );
-        }
-#endif
-
-#if 1
-        //  Particles  ------------------------------------------------
-        LogO("---- new Particles");
-
-        for (int i=0; i < 2; ++i)  // 20
-        {
-            ParticleSystem* parSys = sceneManager->createParticleSystem(
-                i%2 ? "Smoke" : "Fire");
-            //parHit->setVisibilityFlags(RV_Particles);
-            SceneNode* node = rootNode->createChildSceneNode();
-            node->attachObject( parSys );
-            parSys->setRenderQueueGroup( 225 );  //? after trees
-
-            objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, -10.f);
-            if (mTerra)
-                objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
-            node->setPosition( objPos );
-            //parHit->getEmitter(0)->setEmissionRate(20);
-        }
-#endif
 
 
 #if 1
@@ -408,6 +352,14 @@ namespace Demo
                        LwString::Float( mSunLight->getDirection().y, 2, 2 ), " ",
                        LwString::Float( mSunLight->getDirection().z, 2, 2 ), "" );
             outText += str.c_str();/**/
+
+            //**  veget cnt
+            outText += "\n";
+            outText += "Veget: " + StringConverter::toString(vegetNodes.size());
+            #if 0  // list all cnts
+            for (const auto& lay : vegetLayers)
+                outText += StringConverter::toString( lay.count ) + " " + lay.mesh + "\n";
+            #endif
         }
     }
 

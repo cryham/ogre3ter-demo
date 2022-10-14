@@ -46,6 +46,39 @@ using namespace Ogre;
 namespace Demo
 {
 
+    void Tutorial_TerrainGameState::SetupTrees()
+    {
+        vegetLayers.clear();   //  OgreMeshTool args
+        // sc min, max, dens, down
+        vegetLayers.emplace_back(VegetLayer("jungle_tree-lod8.mesh",
+            3.0f, 5.0f, 10.f, -0.1f, 5000, 0 ));  //  -v2 -l 10 -d 100 -p 11 jungle_tree.mesh
+        vegetLayers.emplace_back(VegetLayer("palm2-lod8.mesh",
+            7.5f,12.5f, 8.f,  -0.1f, 5000, 0 ));  //  -v2 -l 8 -d 200 -p 10 palm2.mesh
+
+        vegetLayers.emplace_back(VegetLayer("plant_tropical-lod6.mesh",
+            4.5f, 7.5f, 20.f, 0.5f, 1000, 0 ));  //  -v2 -l 6 -d 200 -p 15 plant_tropical.mesh
+        vegetLayers.emplace_back(VegetLayer("fern-lod6.mesh",
+            0.6f, 1.0f, 115.f, 1.0f, 600, 0 ));  //  -v2 -l 6 -d 200 -p 15 fern.mesh
+        vegetLayers.emplace_back(VegetLayer("fern2-lod6.mesh",
+            0.6f, 1.0f, 120.f, 1.0f, 600, 0 ));  //  -v2 -l 8 -d 200 -p 10 palm2.mesh
+
+        vegetLayers.emplace_back(VegetLayer("rock02brown2flat.mesh",
+            1.1f, 5.0f, 5.0f, 1.0f, 3000, 1 ));  //  -v2 -l 6 -d 200 -p 15 rock*.mesh
+        vegetLayers.emplace_back(VegetLayer("rock25dark2Harsh2.mesh",
+            0.6f, 3.0f, 5.0f, 1.0f, 3000, 1 ));
+        vegetLayers.emplace_back(VegetLayer("rock30grayGreen.mesh",
+            2.1f, 6.0f, 5.0f, 1.0f, 3000, 1 ));
+        vegetLayers.emplace_back(VegetLayer("rock37brGr1tall.mesh",
+            1.1f, 3.0f, 5.0f, 1.0f, 3000, 1 ));
+        // vegetLayers.emplace_back(VegetLayer("rock18black3.mesh",
+        //     1.6f,7.f, 5.f ));
+        // vegetLayers.emplace_back(VegetLayer("rock_B02.mesh",
+        //     0.5f,2.f, 5.f ));
+
+        //vegetLayers.emplace_back(VegetLayer("pine2_tall_norm-lod9.mesh",
+        //    2.5f,4.f, 10.f ));  //  -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
+    }
+
     //  Trees
 	//-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateTrees()
