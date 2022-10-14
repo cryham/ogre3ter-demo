@@ -83,49 +83,31 @@ namespace Demo
 	//-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateTrees()
 	{
-        //  Trees  ------------------------------------------------
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
-   #if 0
+    #if 0
         HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
         pbsdatablock->setTwoSidedLighting( true );  //?
         //pbsdatablock->setMacroblock( macroblockWire );
     #endif
 
-        // const int all = 3, use = 1, ofs = 2;  // test one
-        // const int all = 3, use = 3, ofs = 0;  // all
-        const int all = 3, use = 2, ofs = 0;  // two
-
-        const String strMesh[all] =
-        {   //  meshTool -v2 -l 10 -d 100 -p 11 jungle_tree.mesh
-            "jungle_tree-lod8.mesh",
-            //  meshTool -v2 -l 8 -d 200 -p 10 palm2.mesh
-            "palm2-lod8.mesh",
-            //  meshTool -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
-            "pine2_tall_norm-lod9.mesh",  // 10,9, 11,5
-        };
-        const Real scales[all] = { 1.f, 2.5f, 0.8};
-
-		//const int dim = 76;  // 
-		const int dim = 46;  // 8650
-		//const int dim = 26;  // 2800
-		//const int dim = 12;  // 625
-        const float step = 45.f;
+		const Real mult = 1.f;
+        const Real scaleXZ = 4095.f/2.f;  //par world
 		
-        for (int i=-dim; i<=dim; ++i)
+        for (auto& lay : vegetLayers)
         {
-            for (int j=-dim; j<=dim; ++j)
+            int cnt = mult * lay.density * 200.f;  // count, fake..
+            for (int i=0; i < cnt; ++i)
             {
-                int n = rand() % use + ofs;
-                //int n = abs(i+j) % all;
+                ++lay.count;
 				//  Item  ----
 				Item *item = sceneManager->createItem(
-                    strMesh[n],
+                    lay.mesh,
 					ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
 					SCENE_STATIC );
                 //item->setDatablock( "pine2norm" );
                 item->setRenderQueueGroup( 200 );  // after terrain
-                //item->setRenderingDistance(2500);  //** par  how far visible
+                item->setRenderingDistance( lay.visFar );  // how far visible
 				vegetItems.push_back(item);
 
 				//  Node  ----
@@ -133,27 +115,28 @@ namespace Demo
 				sceneNode->attachObject( item );
                 
                 //  scale
-                Real s = (rand()%1000*0.001f * 2.f + 3.f) * scales[n];
+                Real s = Math::RangeRandom(lay.scaleMin, lay.scaleMax);
 				sceneNode->scale( s, s, s );
                 
                 //  pos
-				Vector3 objPos{ i*step, 0.f, j*step };
-            #if 1
-				objPos += Vector3(
-					(rand()%1000-1000)*0.001f*step,
-                    !mTerra ? 0.f :  // plane
-                    (rand()%1000-1000)*0.001f*step, // h
-					(rand()%1000-1000)*0.001f*step);
-            #endif
+				Vector3 objPos = Vector3(
+                    Math::RangeRandom(-scaleXZ, scaleXZ), 0.f,
+                    Math::RangeRandom(-scaleXZ, scaleXZ));
                 if (mTerra)
                     mTerra->getHeightAt( objPos );
-                objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f - 0.1f;  // par
+                objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f + lay.down;  //par
                 sceneNode->setPosition( objPos );
                 
                 //  rot
-                Degree k( (rand()%3600) * 0.1f );
-                Quaternion q;  q.FromAngleAxis( k, Vector3::UNIT_Y );
-                sceneNode->setOrientation( q );
+                Degree ang( Math::RangeRandom(0, 360.f) );
+                Quaternion q;  q.FromAngleAxis( ang, Vector3::UNIT_Y );
+                if (lay.rotAll)
+                {
+                    Degree ang( Math::RangeRandom(0, 180.f) );  //par ? range
+                    Quaternion p;  p.FromAngleAxis( -ang, Vector3::UNIT_Z );
+                    sceneNode->setOrientation( p * q );
+                }else
+                    sceneNode->setOrientation( q );
 
 				vegetNodes.push_back(sceneNode);
 			}
@@ -253,7 +236,7 @@ namespace Demo
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
 
         LogO("---- new Manual object");
-        ManualObject * m;
+        ManualObject *m;
         std::vector<Vector3> mVertices;
 
         m = sceneManager->createManualObject();
@@ -312,5 +295,104 @@ namespace Demo
         Vector3 objPos = camPos + Vector3( 0.f, -5.f, -10.f);
         sceneNodeGrid->translate(objPos, SceneNode::TS_LOCAL);
 	}
+
+
+    //  Particles
+	//-----------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreateParticles()
+    {
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        LogO("---- new Particles");
+
+        Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
+        Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
+        camPos += dir * 40.f;
+
+        for (int i=0; i < 2; ++i)  // 20
+        {
+            ParticleSystem* parSys = sceneManager->createParticleSystem(
+                i%2 ? "Smoke" : "Fire");
+            //parHit->setVisibilityFlags(RV_Particles);
+            SceneNode* node = rootNode->createChildSceneNode();
+            node->attachObject( parSys );
+            parSys->setRenderQueueGroup( 225 );  //? after trees
+
+            Vector3 objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, 0.f);
+            // if (mTerra)
+            //     objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
+            node->setPosition( objPos );
+            //parHit->getEmitter(0)->setEmissionRate(20);
+        }
+    }
+
+
+    //  Car
+	//-----------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreateCar()
+    {
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+
+        Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
+        Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
+        camPos += dir * 40.f;
+
+        const String cars[3] = { "ES", "SX", "HI" };
+        const String car = cars[1];  // par
+
+        const int carParts = 3;
+        const String carPart[carParts] = {"_body.mesh", "_interior.mesh", "_glass.mesh"}, sWheel = "_wheel.mesh";
+
+        //  scale
+        Real s = 6.f;
+
+        //  pos
+        Vector3 objPos = camPos;
+        Real ymin = !mTerra ? 0.85f * s : mTerra->getHeightAt( objPos ) + 12.85f * s;
+        if (objPos.y < ymin)
+            objPos.y = ymin;
+
+        for (int i=0; i < carParts; ++i)
+        {
+            Item *item = sceneManager->createItem( car + carPart[i],
+                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+
+            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+            node->attachObject( item );
+            if (i==2)
+                item->setRenderQueueGroup( 202 );  // glass after trees
+            
+            node->scale( s, s, s );
+            
+            node->setPosition( objPos );
+            
+            //  rot
+            Quaternion q;  q.FromAngleAxis( Degree(180), Vector3::UNIT_Z );
+            node->setOrientation( q );
+        }
+
+        //  wheels
+        for (int i=0; i < 4; ++i)
+        {
+            Item *item = sceneManager->createItem( car + sWheel,
+                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+
+            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+            node->attachObject( item );
+            
+            node->scale( s, s, s );
+            
+            //if (car == "SX")  // todo rest
+            node->setPosition( objPos + s * Vector3(
+                i/2 ? -1.29f : 1.28f,  -0.34f, 
+                i%2 ? -0.8f : 0.8f ) );
+            
+            //  rot
+            Quaternion q;  q.FromAngleAxis( Degree(-180), Vector3::UNIT_Z );
+            Quaternion r;  r.FromAngleAxis( Degree(i%2 ? 90 : -90), Vector3::UNIT_Y );
+            node->setOrientation( r * q );
+        }
+    }
 
 }

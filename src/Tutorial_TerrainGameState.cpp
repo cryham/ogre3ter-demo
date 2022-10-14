@@ -115,15 +115,15 @@ namespace Demo
 
     #if 1  //** 1 terrain
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
-                                  &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
-                                  sceneManager, 11u, root->getCompositorManager2(),
-                                  mGraphicsSystem->getCamera(), false );
+                            &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
+                            sceneManager, 11u, root->getCompositorManager2(),
+                            mGraphicsSystem->getCamera(), false );
         mTerra->setCastShadows( false );
 
         LogO("---- Terra load");
 
         //  Heightmap  ------------------------------------------------
-        //  64 flat
+        //  64  flat
         //mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
         //  1k  600 fps  4 tex
         mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
@@ -213,11 +213,11 @@ namespace Demo
         Vector3 objPos;
 
 
-#if 1
+    #if 1
         //  Sky Dome  ------------------------------------------------
         CreateSkyDome("sky-clearday1", 0.f);
         //CreateSkyDome("sky_photo6", 0.f);  // clouds
-#endif
+    #endif
 
         LogO("---- tutorial createScene");
 
@@ -408,6 +408,16 @@ namespace Demo
             CreateManualObj(camPos);
         }
 
+        if( arg.keysym.scancode == SDL_SCANCODE_F )
+        {
+            CreateParticles();
+        }
+
+        if( arg.keysym.scancode == SDL_SCANCODE_G )
+        {
+            CreateCar();
+        }
+        
         TutorialGameState::keyPressed( arg );
     }
     
