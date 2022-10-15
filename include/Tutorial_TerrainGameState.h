@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -68,7 +68,10 @@ namespace Demo
         float mPitch;  // sun dir
         float mYaw;
         Ogre::Vector3 camPos;
-        int mKeys[4] = {0,0,0,0};
+
+        int mKeys[4] = {0,0,0,0};  // keys
+        bool left = false, right = false;  // arrows
+        bool shift = false, ctrl = false;
 
         Ogre::Terra *mTerra;  // terrain
         Ogre::Light *mSunLight;
@@ -80,18 +83,18 @@ namespace Demo
         Ogre::HlmsMacroblock macroblockWire;
         bool wireTerrain = false;
 
-        virtual void generateDebugText( float timeSinceLast, Ogre::String &outText );
+        void generateDebugText( float timeSinceLast, Ogre::String &outText ) override;
 
     public:
         Tutorial_TerrainGameState( const Ogre::String &helpDescription );
 
-        virtual void createScene01();
-        virtual void destroyScene();
+        void createScene01() override;
+        void destroyScene() override;
 
-        virtual void update( float timeSinceLast );
+        void update( float timeSinceLast ) override;
 
-        virtual void keyPressed( const SDL_KeyboardEvent &arg );
-        virtual void keyReleased( const SDL_KeyboardEvent &arg );
+        void keyPressed( const SDL_KeyboardEvent &arg ) override;
+        void keyReleased( const SDL_KeyboardEvent &arg ) override;
 
         //  scene
         void CreateSkyDome(Ogre::String sMater, float yaw);

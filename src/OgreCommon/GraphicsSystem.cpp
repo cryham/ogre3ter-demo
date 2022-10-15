@@ -42,6 +42,11 @@
 
 #include "System/Android/AndroidSystems.h"
 
+#include "OgreAtmosphereComponent.h"
+#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+#    include "OgreAtmosphereNpr.h"
+#endif
+
 #include <fstream>
 
 #if OGRE_USE_SDL2
@@ -103,7 +108,8 @@ namespace Demo
             mWriteAccessFolder = filesystemLayer.getWritablePath( "" );
         }
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     GraphicsSystem::~GraphicsSystem()
     {
         if( mRoot )
@@ -112,7 +118,7 @@ namespace Demo
                         "WARNING: GraphicsSystem::deinitialize() not called!!!", Ogre::LML_CRITICAL );
         }
     }
-    //-----------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------------------
     bool GraphicsSystem::isWriteAccessFolder( const Ogre::String &folderPath,
                                               const Ogre::String &fileToSave )
     {
@@ -126,7 +132,8 @@ namespace Demo
 
         return true;
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::initialize( const Ogre::String &windowTitle )
     {
     #if OGRE_USE_SDL2
@@ -228,8 +235,8 @@ namespace Demo
             Ogre::String::size_type heightEnd = opt->second.currentValue.find(' ', widthEnd+3);
             // Now we can parse out the values
             width   = Ogre::StringConverter::parseInt( opt->second.currentValue.substr( 0, widthEnd ) );
-            height  = Ogre::StringConverter::parseInt( opt->second.currentValue.substr(
-                                                           widthEnd+3, heightEnd ) );
+            height = Ogre::StringConverter::parseInt(
+                opt->second.currentValue.substr( widthEnd + 3, heightEnd ) );
         }
 
         Ogre::NameValuePairList params;
@@ -352,7 +359,8 @@ namespace Demo
     #endif
 #endif
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::deinitialize()
     {
         BaseSystem::deinitialize();
@@ -361,7 +369,12 @@ namespace Demo
         saveHlmsDiskCache();
 
         if( mSceneManager )
+        {
+            Ogre::AtmosphereComponent *atmosphere = mSceneManager->getAtmosphereRaw();
+            OGRE_DELETE atmosphere;
+
             mSceneManager->removeRenderQueueListener( mOverlaySystem );
+        }
 
         OGRE_DELETE mOverlaySystem;
         mOverlaySystem = 0;
@@ -386,7 +399,8 @@ namespace Demo
         SDL_Quit();
     #endif
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::update( float timeSinceLast )
     {
         Ogre::WindowEventUtilities::messagePump();
@@ -423,7 +437,9 @@ namespace Demo
         SDL_GetDisplayBounds( 0, &rect );
         SDL_GetDisplayBounds( 0, &rect );*/
     }
-    //-----------------------------------------------------------------------------------
+
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     #if OGRE_USE_SDL2
     void GraphicsSystem::handleWindowEvent( const SDL_Event& evt )
     {
@@ -467,7 +483,8 @@ namespace Demo
         }
     }
     #endif
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::processIncomingMessage( Mq::MessageId messageId, const void *data )
     {
         switch( messageId )
@@ -507,7 +524,8 @@ namespace Demo
             break;
         }
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::addResourceLocation( const Ogre::String &archName, const Ogre::String &typeName,
                                               const Ogre::String &secName )
     {
@@ -527,8 +545,8 @@ namespace Demo
     {
 #if !OGRE_NO_JSON
         Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
-        Ogre::Archive *rwAccessFolderArchive = archiveManager.load( mWriteAccessFolder,
-                                                                    "FileSystem", true );
+        Ogre::Archive *rwAccessFolderArchive =
+            archiveManager.load( mWriteAccessFolder, "FileSystem", true );
         try
         {
             const Ogre::String filename = "textureMetadataCache.json";
@@ -562,7 +580,8 @@ namespace Demo
         archiveManager.unload( rwAccessFolderArchive );
 #endif
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::saveTextureCache()
     {
         if( mRoot->getRenderSystem() )
@@ -591,8 +610,8 @@ namespace Demo
 
         Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
 
-        Ogre::Archive *rwAccessFolderArchive = archiveManager.load( mWriteAccessFolder,
-                                                                    "FileSystem", true );
+        Ogre::Archive *rwAccessFolderArchive =
+            archiveManager.load( mWriteAccessFolder, "FileSystem", true );
 
         if( mUseMicrocodeCache )
         {
@@ -638,7 +657,8 @@ namespace Demo
 
         archiveManager.unload( mWriteAccessFolder );
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::saveHlmsDiskCache()
     {
         if( mRoot->getRenderSystem() && Ogre::GpuProgramManager::getSingletonPtr() &&
@@ -680,7 +700,8 @@ namespace Demo
             archiveManager.unload( mWriteAccessFolder );
         }
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::setupResources()
     {
         // Load resource paths from config file
@@ -708,7 +729,8 @@ namespace Demo
             }
         }
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::registerHlms()
     {
         Ogre::ConfigFile cf;
@@ -805,7 +827,8 @@ namespace Demo
             }
         }
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::loadResources()
     {
         registerHlms();
@@ -833,7 +856,8 @@ namespace Demo
                 Ogre::LML_CRITICAL );
         }
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::chooseSceneManager()
     {
 #if OGRE_DEBUG_MODE >= OGRE_DEBUG_HIGH
@@ -857,7 +881,8 @@ namespace Demo
         mSceneManager->setShadowDirectionalLightExtrusionDistance( 1000.0f );  //** par! 500..1500
         mSceneManager->setShadowFarDistance( 1000.0f );
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     void GraphicsSystem::createCamera()
     {
         mCamera = mSceneManager->createCamera( "Main Camera" );
@@ -870,7 +895,8 @@ namespace Demo
         mCamera->setFarClipDistance( 1000.0f );
         mCamera->setAutoAspectRatio( true );
     }
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
     Ogre::CompositorWorkspace* GraphicsSystem::setupCompositor()
     {
         Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
@@ -885,17 +911,47 @@ namespace Demo
         return compositorManager->addWorkspace( mSceneManager, mRenderWindow->getTexture(), mCamera,
                                                 workspaceName, true );
     }
+
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::initMiscParamsListener( Ogre::NameValuePairList &params )
     {
     }
+
+    //--------------------------------------------------------------------------------------------------------------------------------
+    void GraphicsSystem::createAtmosphere( Ogre::Light *sunLight )
+    {
+#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+        {
+            Ogre::AtmosphereComponent *atmosphere = mSceneManager->getAtmosphereRaw();
+            OGRE_DELETE atmosphere;
+        }
+
+        Ogre::AtmosphereNpr *atmosphere =
+            OGRE_NEW Ogre::AtmosphereNpr( mRoot->getRenderSystem()->getVaoManager() );
+        {
+            // Preserve the Power Scale explicitly set by the sample
+            Ogre::AtmosphereNpr::Preset preset = atmosphere->getPreset();
+            preset.linkedLightPower = sunLight->getPowerScale();
+            atmosphere->setPreset( preset );
+        }
+
+        atmosphere->setSunDir(
+            sunLight->getDirection(),
+            std::asin( Ogre::Math::Clamp( -sunLight->getDirection().y, -1.0f, 1.0f ) ) /
+                Ogre::Math::PI );
+        atmosphere->setLight( sunLight );
+        atmosphere->setSky( mSceneManager, true );
+#endif
+    }
+
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::setAlwaysAskForConfig( bool alwaysAskForConfig )
     {
         mAlwaysAskForConfig = alwaysAskForConfig;
     }
+
     //-----------------------------------------------------------------------------------
-    const char *GraphicsSystem::getMediaReadArchiveType( void ) const
+    const char *GraphicsSystem::getMediaReadArchiveType() const
     {
 #if OGRE_PLATFORM != OGRE_PLATFORM_ANDROID
         return "FileSystem";
@@ -903,6 +959,7 @@ namespace Demo
         return "APKFileSystem";
 #endif
     }
+
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::stopCompositor()
     {
@@ -913,14 +970,16 @@ namespace Demo
             mWorkspace = 0;
         }
     }
+
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::restartCompositor()
     {
         stopCompositor();
         mWorkspace = setupCompositor();
     }
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------------------
     struct GameEntityCmp
     {
         bool operator () ( const GameEntity *_l, const Ogre::Matrix4 * RESTRICT_ALIAS _r ) const
@@ -939,9 +998,11 @@ namespace Demo
         {
             const Ogre::Transform &lTransform = _l->mSceneNode->_getTransform();
             const Ogre::Transform &rTransform = _r->mSceneNode->_getTransform();
-            return &lTransform.mDerivedTransform[lTransform.mIndex] < &rTransform.mDerivedTransform[rTransform.mIndex];
+            return &lTransform.mDerivedTransform[lTransform.mIndex] <
+                   &rTransform.mDerivedTransform[rTransform.mIndex];
         }
     };
+
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::gameEntityAdded( const GameEntityManager::CreatedGameEntity *cge )
     {
@@ -965,9 +1026,8 @@ namespace Demo
 
             for( size_t i=0; i<minMaterials; ++i )
             {
-                item->getSubItem(i)->setDatablockOrMaterialName( materialNames[i],
-                                                                 cge->gameEntity->mMoDefinition->
-                                                                                    resourceGroup );
+                item->getSubItem( i )->setDatablockOrMaterialName(
+                    materialNames[i], cge->gameEntity->mMoDefinition->resourceGroup );
             }
 
             cge->gameEntity->mMovableObject = item;
@@ -985,6 +1045,7 @@ namespace Demo
                     GameEntityCmp() );
         mGameEntities[cge->gameEntity->mType].insert( itGameEntity, cge->gameEntity );
     }
+    
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::gameEntityRemoved( GameEntity *toRemove )
     {
@@ -1006,6 +1067,7 @@ namespace Demo
         mSceneManager->destroyItem( static_cast<Ogre::Item*>( toRemove->mMovableObject ) );
         toRemove->mMovableObject = 0;
     }
+    
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::updateGameEntities( const GameEntityVec &gameEntities, float weight )
     {
@@ -1017,6 +1079,7 @@ namespace Demo
         //execute another UserScalableTask (you would have to be careful, but it could work).
         mSceneManager->executeUserScalableTask( this, true );
     }
+    
     //-----------------------------------------------------------------------------------
     void GraphicsSystem::execute( size_t threadId, size_t numThreads )
     {
