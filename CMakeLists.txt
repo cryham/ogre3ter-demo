@@ -1,11 +1,8 @@
-#This scripts assumes that your Ogre source code is in Dependencies/Ogre and that:
-# In Windows you built Ogre into Dependencies/Ogre/build
-# In Linux you built Release into Dependencies/Ogre/build/Release
-# In Linux you built Debug into Dependencies/Ogre/build/Debug
 #
-# If your source code is not in "Dependencies/Ogre" you can use "mklink /D" to create
-# a symbolic link to where the source code is located on Windows.
-# On Linux, you can use "ln -s"
+# This assumes you used scripts to get and build latest Ogre-next from sources
+# And your Ogre source code is above, in ../Ogre/ogre-next and ../Ogre/ogre-next-deps
+# Tested on Linux.  Windows most likely broken..
+#
 
 cmake_minimum_required( VERSION 3.0 )
 project( TerrainDemo )
@@ -28,13 +25,12 @@ set(OGRE_NEXT ${DIR_ONE_ABOVE}/Ogre/ogre-next)
 
 ## Fix 1
 set(OGRE_SOURCE ${OGRE_NEXT}/)
-set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
 
-#if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-#	set(OGRE_BINARIES ${OGRE_NEXT}/build/Debug)
-#else()
-#	set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
-#endif()
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(OGRE_BINARIES ${OGRE_NEXT}/build/Debug)
+else()
+	set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
+endif()
 
 #This scripts will add all the cpp and h files from src and include folders
 setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )
@@ -42,6 +38,8 @@ setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )
 ## Fix 2 sdl
 include_directories("/usr/include/SDL2")
 include_directories(${DIR_ONE_ABOVE}/Ogre/ogre-next-deps/build/ogredeps/include)  #for rapidjson
+#include_directories(${OGRE_NEXT}/Components/Atmosphere/include)
+#message(${OGRE_NEXT}/Components/Atmosphere/include)
 
 
 # Setup our application
@@ -65,8 +63,16 @@ include_directories( "./include" )
 add_recursive( ./src SOURCES )
 add_recursive( ./include HEADERS )
 
+#if( OGRE_BUILD_COMPONENT_ATMOSPHERE )
+#	ogre_add_comonent_include_dir(Atmosphere)
+#endif()
+#if( OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS )
+#    ogre_add_component_include_dir( PlanarReflections )
+#endif()
 
 add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${RESOURCES} )
+#target_include_directories( ${PROJECT_NAME} PRIVATE ${OGRE_NEXT}/Components/Atmosphere/include)
+
 target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
 ## Fix 3 sdl
 target_link_libraries( ${PROJECT_NAME} "-lSDL2" )
