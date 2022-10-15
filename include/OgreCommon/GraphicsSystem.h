@@ -2,16 +2,17 @@
 #ifndef _Demo_GraphicsSystem_H_
 #define _Demo_GraphicsSystem_H_
 
-#include "BaseSystem.h"
-#include "GameEntityManager.h"
-#include "System/StaticPluginLoader.h"
-#include "OgrePrerequisites.h"
-#include "OgreColourValue.h"
 #include "OgreOverlayPrerequisites.h"
+#include "OgrePrerequisites.h"
 
-#include "Threading/OgreUniformScalableTask.h"
-#include "SdlEmulationLayer.h"
+#include "BaseSystem.h"
+
+#include "GameEntityManager.h"
+#include "OgreColourValue.h"
 #include "OgreOverlaySystem.h"
+#include "SdlEmulationLayer.h"
+#include "System/StaticPluginLoader.h"
+#include "Threading/OgreUniformScalableTask.h"
 
 #if OGRE_USE_SDL2
     #include <SDL.h>
@@ -69,14 +70,16 @@ namespace Demo
         bool isWriteAccessFolder( const Ogre::String &folderPath, const Ogre::String &fileToSave );
 
         /// @see MessageQueueSystem::processIncomingMessage
-        virtual void processIncomingMessage( Mq::MessageId messageId, const void *data );
+        void processIncomingMessage( Mq::MessageId messageId, const void *data ) override;
 
         static void addResourceLocation( const Ogre::String &archName, const Ogre::String &typeName,
                                          const Ogre::String &secName );
+
         void loadTextureCache();
         void saveTextureCache();
         void loadHlmsDiskCache();
         void saveHlmsDiskCache();
+
         virtual void setupResources();
         virtual void registerHlms();
         /// Optional override method where you can perform resource group loading
@@ -91,22 +94,23 @@ namespace Demo
 
         /// Called right before initializing Ogre's first window, so the params can be customized
         virtual void initMiscParamsListener( Ogre::NameValuePairList &params );
-
+        
         /// Optional override method where you can create resource listeners (e.g. for loading screens)
         virtual void createResourceListener() {}
 
         void gameEntityAdded( const GameEntityManager::CreatedGameEntity *createdGameEntity );
         void gameEntityRemoved( GameEntity *toRemove );
+
     public:
         GraphicsSystem( GameState *gameState,
                         Ogre::String resourcePath = Ogre::String(""),
                         Ogre::ColourValue backgroundColour = Ogre::ColourValue( 0.2f, 0.4f, 0.6f ) );
-        virtual ~GraphicsSystem();
+        ~GraphicsSystem() override;
 
         void _notifyLogicSystem( BaseSystem *logicSystem )      { mLogicSystem = logicSystem; }
 
         void initialize( const Ogre::String &windowTitle );
-        void deinitialize();
+        void deinitialize() override;
 
         void update( float timeSinceLast );
 
@@ -121,16 +125,25 @@ namespace Demo
         void updateGameEntities( const GameEntityVec &gameEntities, float weight );
 
         /// Overload Ogre::UniformScalableTask. @see updateGameEntities
-        virtual void execute( size_t threadId, size_t numThreads );
+        void execute( size_t threadId, size_t numThreads ) override;
 
         /// Returns the GameEntities that are ready to be rendered. May include entities
         /// that are scheduled to be removed (i.e. they are no longer updated by logic)
         const GameEntityVec& getGameEntities( Ogre::SceneMemoryMgrTypes type ) const
-                                                                { return mGameEntities[type]; }
+        {
+            return mGameEntities[type];
+        }
 
     #if OGRE_USE_SDL2
         SdlInputHandler* getInputHandler()                  { return mInputHandler; }
     #endif
+
+        /// Creates an atmosphere and binds it to the SceneManager
+        /// You can use SceneManager::getAtmosphere to retrieve it.
+        ///
+        /// The input light will be bound to the atmosphere component.
+        /// Can be nullptr.
+        void createAtmosphere( Ogre::Light *sunLight );
 
         void setQuit()                                      { mQuit = true; }
         bool getQuit() const                                { return mQuit; }
@@ -145,12 +158,12 @@ namespace Demo
         Ogre::v1::OverlaySystem* getOverlaySystem() const   { return mOverlaySystem; }
 
         void setAlwaysAskForConfig( bool alwaysAskForConfig );
-        bool getAlwaysAskForConfig( void ) const                { return mAlwaysAskForConfig; }
+        bool getAlwaysAskForConfig() const { return mAlwaysAskForConfig; }
 
         const Ogre::String& getPluginsFolder() const        { return mPluginsFolder; }
         const Ogre::String& getWriteAccessFolder() const    { return mWriteAccessFolder; }
         const Ogre::String& getResourcePath() const         { return mResourcePath; }
-        const char *getMediaReadArchiveType( void ) const;
+        const char *        getMediaReadArchiveType() const;
 
         virtual void stopCompositor();
         virtual void restartCompositor();

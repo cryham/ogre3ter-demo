@@ -91,9 +91,9 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    void HlmsPbsTerraShadows::preparePassHash( const CompositorShadowNode *shadowNode,
-                                               bool casterPass, bool dualParaboloid,
-                                               SceneManager *sceneManager, Hlms *hlms )
+    void HlmsPbsTerraShadows::preparePassHash( const CompositorShadowNode *shadowNode, bool casterPass,
+                                               bool dualParaboloid, SceneManager *sceneManager,
+                                               Hlms *hlms )
     {
         if( !casterPass && mTerra )
         {
@@ -153,8 +153,8 @@ namespace Ogre
 
             //Bind the shadows' texture. Tex. slot must match with
             //the one in HlmsPbsTerraShadows::propertiesMergedPreGenerationStep
-            *commandBuffer->addCommand<CbTexture>() = CbTexture( texUnit++, terraShadowTex,
-                                                                 mTerraSamplerblock );
+            *commandBuffer->addCommand<CbTexture>() =
+                CbTexture( (uint16)texUnit++, terraShadowTex, mTerraSamplerblock );
         }
     }
 }

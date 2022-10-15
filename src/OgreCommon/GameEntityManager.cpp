@@ -11,7 +11,7 @@ namespace Demo
     GameEntityManager::GameEntityManager( Mq::MessageQueueSystem *graphicsSystem,
                                           LogicSystem *logicSystem ) :
         mCurrentId( 0 ),
-        mScheduledForRemovalCurrentSlot( (size_t)-1 ),
+        mScheduledForRemovalCurrentSlot( std::numeric_limits<size_t>::max() ),
         mGraphicsSystem( graphicsSystem ),
         mLogicSystem( logicSystem )
     {
@@ -65,7 +65,7 @@ namespace Demo
         aquireTransformSlot( slot, bufferIdx );
 
         gameEntity->mTransformBufferIdx = bufferIdx;
-        for( int i=0; i<NUM_GAME_ENTITY_BUFFERS; ++i )
+        for( size_t i = 0; i < NUM_GAME_ENTITY_BUFFERS; ++i )
         {
             gameEntity->mTransform[i] = mTransformBuffers[bufferIdx] + slot + cNumTransforms * i;
             memcpy( gameEntity->mTransform[i], &cge.initialTransform, sizeof(GameEntityTransform) );
@@ -80,11 +80,11 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void GameEntityManager::removeGameEntity( GameEntity *toRemove )
     {
-        Ogre::uint32 slot = getScheduledForRemovalAvailableSlot();
+        const size_t slot = getScheduledForRemovalAvailableSlot();
         mScheduledForRemoval[slot].push_back( toRemove );
-        GameEntityVec::iterator itor = std::lower_bound( mGameEntities[toRemove->mType].begin(),
-                                                         mGameEntities[toRemove->mType].end(),
-                                                         toRemove, GameEntity::OrderById );
+        GameEntityVec::iterator itor =
+            std::lower_bound( mGameEntities[toRemove->mType].begin(),
+                              mGameEntities[toRemove->mType].end(), toRemove, GameEntity::OrderById );
         assert( itor != mGameEntities[toRemove->mType].end() && *itor == toRemove );
         mGameEntities[toRemove->mType].erase( itor );
         mLogicSystem->queueSendMessage( mGraphicsSystem, Mq::GAME_ENTITY_REMOVED, toRemove );
@@ -136,7 +136,7 @@ namespace Demo
         //Try to prevent a lot of fragmentation by adding the slot to an existing region.
         //It won't fully avoid it, but this is good/simple enough. If you want to fully
         //prevent fragmentation, see StagingBuffer::mergeContiguousBlocks implementation.
-        const size_t slot = transform - mTransformBuffers[bufferIdx];
+        const size_t slot = static_cast<size_t>( transform - mTransformBuffers[bufferIdx] );
 
         std::vector<Region>::iterator itor = mAvailableTransforms.begin();
         std::vector<Region>::iterator end  = mAvailableTransforms.end();
@@ -165,7 +165,7 @@ namespace Demo
         }
     }
     //-----------------------------------------------------------------------------------
-    Ogre::uint32 GameEntityManager::getScheduledForRemovalAvailableSlot()
+    size_t GameEntityManager::getScheduledForRemovalAvailableSlot()
     {
         if( mScheduledForRemovalCurrentSlot >= mScheduledForRemoval.size() )
         {
@@ -189,7 +189,7 @@ namespace Demo
             mLogicSystem->queueSendMessage( mGraphicsSystem, Mq::GAME_ENTITY_SCHEDULED_FOR_REMOVAL_SLOT,
                                             mScheduledForRemovalCurrentSlot );
 
-            mScheduledForRemovalCurrentSlot = (size_t)-1;
+            mScheduledForRemovalCurrentSlot = std::numeric_limits<size_t>::max();
         }
     }
 }

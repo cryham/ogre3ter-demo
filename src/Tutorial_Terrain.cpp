@@ -56,11 +56,11 @@ THE SOFTWARE.
 
 namespace Demo
 {
-    class Tutorial_TerrainGraphicsSystem : public GraphicsSystem
+    class Tutorial_TerrainGraphicsSystem final : public GraphicsSystem
     {
         Ogre::TerraWorkspaceListener *mTerraWorkspaceListener;
 
-        virtual void stopCompositor()
+        void stopCompositor() override
         {
             if( mWorkspace )
                 mWorkspace->removeListener( mTerraWorkspaceListener );
@@ -68,7 +68,7 @@ namespace Demo
             mTerraWorkspaceListener = 0;
         }
 
-        virtual Ogre::CompositorWorkspace *setupCompositor()
+        Ogre::CompositorWorkspace *setupCompositor() override
         {
             using namespace Ogre;
             CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
@@ -91,7 +91,7 @@ namespace Demo
             return workspace;
         }
 
-        virtual void setupResources()
+        void setupResources() override
         {
             GraphicsSystem::setupResources();
 
@@ -123,7 +123,7 @@ namespace Demo
             }
         }
 
-        virtual void registerHlms()
+        void registerHlms() override
         {
             GraphicsSystem::registerHlms();
 
@@ -132,10 +132,10 @@ namespace Demo
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
             Ogre::String rootHlmsFolder = Ogre::macBundlePath() + '/' +
-                                          cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
+                cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
 #else
             Ogre::String rootHlmsFolder = mResourcePath +
-                                          cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
+                cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
 #endif
             if( rootHlmsFolder.empty() )
                 rootHlmsFolder = AndroidSystems::isAndroid() ? "/" : "./";
@@ -212,15 +212,7 @@ namespace Demo
                                          LogicSystem **outLogicSystem )
     {
         Tutorial_TerrainGameState *gfxGameState = new Tutorial_TerrainGameState(
-        "   * Own Hlms implementation to render the terrain\n"
-        "   * Vertex buffer-less rendering: The terrain is generated purely using SV_VertexID "
-        "   * Hlms customizations to PBS to make terrain shadows affect regular objects\n"
-        "This sample depends on the media files:\n"
-        "   * Samples/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor\n"
-        "   * Samples/Media/2.0/materials/Tutorial_Terrain/*.*\n"
-        "   * Samples/Media/2.0/materials/Common/GLSL/GaussianBlurBase_cs.glsl\n"
-        "   * Samples/Media/2.0/materials/Common/HLSL/GaussianBlurBase_cs.hlsl\n"
-        "   * Samples/Media/Hlms/Terra/*.*\n" );
+        "   * Info\n" );
 
         Tutorial_TerrainGraphicsSystem *graphicsSystem =
                 new Tutorial_TerrainGraphicsSystem( gfxGameState );

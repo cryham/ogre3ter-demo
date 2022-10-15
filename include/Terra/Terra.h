@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -156,7 +156,7 @@ namespace Ogre
     public:
         Terra( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *sceneManager,
                uint8 renderQueueId, CompositorManager2 *compositorManager, Camera *camera, bool zUp );
-        ~Terra();
+        ~Terra() override;
 
         /// Sets shared resources for minimizing memory consumption wasted on temporary
         /// resources when you have more than one Terra.
@@ -232,7 +232,7 @@ namespace Ogre
         void setDatablock( HlmsDatablock *datablock );
 
         //MovableObject overloads
-        const String& getMovableType() const;
+        const String &getMovableType() const override;
 
         /// Swaps current state with a saved one. Useful for rendering shadow maps
         void _swapSavedState();

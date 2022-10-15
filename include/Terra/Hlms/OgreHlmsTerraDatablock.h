@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -181,17 +181,15 @@ namespace Ogre
         /// @see TerraBrdf::TerraBrdf
         uint32  mBrdf;
 
-        virtual void cloneImpl( HlmsDatablock *datablock ) const;
+        void cloneImpl( HlmsDatablock *datablock ) const override;
 
         void scheduleConstBufferUpdate();
-        virtual void uploadToConstBuffer( char *dstPtr, uint8 dirtyFlags );
+        void uploadToConstBuffer( char *dstPtr, uint8 dirtyFlags ) override;
 
     public:
-        HlmsTerraDatablock( IdString name, HlmsTerra *creator,
-                          const HlmsMacroblock *macroblock,
-                          const HlmsBlendblock *blendblock,
-                          const HlmsParamVec &params );
-        virtual ~HlmsTerraDatablock();
+        HlmsTerraDatablock( IdString name, HlmsTerra *creator, const HlmsMacroblock *macroblock,
+                            const HlmsBlendblock *blendblock, const HlmsParamVec &params );
+        ~HlmsTerraDatablock() override;
 
         /// Sets overall diffuse colour. The colour will be divided by PI for energy conservation.
         void setDiffuse( const Vector3 &diffuseColour );
@@ -227,7 +225,7 @@ namespace Ogre
         const Vector4& getDetailMapOffsetScale( uint8 detailMap ) const;
 
         /// Overloaded to tell it's unsupported
-        virtual void setAlphaTestThreshold( float threshold );
+        void setAlphaTestThreshold( float threshold ) override;
 
         /// Unlike most Hlms implementations, directly modifying mShadowConstantBias is not enough
         /// Call this function instead
@@ -251,10 +249,10 @@ namespace Ogre
         bool suggestUsingSRGB( TerraTextureTypes type ) const;
         uint32 suggestFiltersForType( TerraTextureTypes type ) const;
 
-        virtual void calculateHash();
+        void calculateHash() override;
 
-        static const size_t MaterialSizeInGpu;
-        static const size_t MaterialSizeInGpuAligned;
+        static const uint32 MaterialSizeInGpu;
+        static const uint32 MaterialSizeInGpuAligned;
     };
 
     /** @} */

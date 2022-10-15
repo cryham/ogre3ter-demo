@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -70,7 +70,7 @@ namespace Ogre
         //Setup bufferless vao
         VertexBufferPackedVec vertexBuffers;
         VertexArrayObject *vao = vaoManager->createVertexArrayObject(
-                    vertexBuffers, 0, OT_TRIANGLE_STRIP );
+            vertexBuffers, 0, OT_TRIANGLE_STRIP );
         mVaoPerLod[VpNormal].push_back( vao );
         mVaoPerLod[VpShadow].push_back( vao );
     }
@@ -126,8 +126,14 @@ namespace Ogre
             uint32 horizontalPixelDim  = m_sizeX;
             uint32 verticalPixelDim    = m_sizeZ;
 
-            if( (this->m_gridX + this->m_sizeX == next->m_gridX ||
-                 next->m_gridX + next->m_sizeX == this->m_gridX) &&
+            const uint32 thisGridX = static_cast<uint32>( this->m_gridX );
+            const uint32 nextGridX = static_cast<uint32>( next->m_gridX );
+
+            const uint32 thisGridZ = static_cast<uint32>( this->m_gridZ );
+            const uint32 nextGridZ = static_cast<uint32>( next->m_gridZ );
+
+            if( ( thisGridX + this->m_sizeX == nextGridX ||  //
+                  nextGridX + next->m_sizeX == thisGridX ) &&
                  m_gridZ == next->m_gridZ && m_sizeZ == next->m_sizeZ )
             {
                 //Merge horizontally
@@ -137,8 +143,8 @@ namespace Ogre
                 this->setOrigin( pos, horizontalPixelDim, verticalPixelDim, m_lodLevel );
                 merged = true;
             }
-            else if( (this->m_gridZ + this->m_sizeZ == next->m_gridZ ||
-                      next->m_gridZ + next->m_sizeZ == this->m_gridZ) &&
+            else if( ( thisGridZ + this->m_sizeZ == nextGridZ ||  //
+                       nextGridZ + next->m_sizeZ == thisGridZ ) &&
                       m_gridX == next->m_gridX && m_sizeX == next->m_sizeX )
             {
                 //Merge vertically

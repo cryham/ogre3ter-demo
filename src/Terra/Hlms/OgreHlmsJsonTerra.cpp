@@ -95,28 +95,18 @@ namespace Ogre
 
         TextureGpu *texture = 0;
 
-        const CommonTextureTypes::CommonTextureTypes texMapTypes[NUM_TERRA_TEXTURE_TYPES] =
-        {
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::NonColourData,
+        const CommonTextureTypes::CommonTextureTypes texMapTypes[NUM_TERRA_TEXTURE_TYPES] = {
+            CommonTextureTypes::Diffuse,    CommonTextureTypes::NonColourData,
 
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::NormalMap,
-            CommonTextureTypes::NormalMap,
-            CommonTextureTypes::NormalMap,
-            CommonTextureTypes::NormalMap,
+            CommonTextureTypes::Diffuse,    CommonTextureTypes::Diffuse,
+            CommonTextureTypes::Diffuse,    CommonTextureTypes::Diffuse,
+            CommonTextureTypes::NormalMap,  CommonTextureTypes::NormalMap,
+            CommonTextureTypes::NormalMap,  CommonTextureTypes::NormalMap,
 
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
             CommonTextureTypes::EnvMap
         };
 
@@ -148,28 +138,18 @@ namespace Ogre
         TextureGpu *texture = 0;
         HlmsSamplerblock const *samplerblock = 0;
 
-        const CommonTextureTypes::CommonTextureTypes texMapTypes[NUM_TERRA_TEXTURE_TYPES] =
-        {
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::NonColourData,
+        const CommonTextureTypes::CommonTextureTypes texMapTypes[NUM_TERRA_TEXTURE_TYPES] = {
+            CommonTextureTypes::Diffuse,    CommonTextureTypes::NonColourData,
 
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::Diffuse,
-            CommonTextureTypes::NormalMap,
-            CommonTextureTypes::NormalMap,
-            CommonTextureTypes::NormalMap,
-            CommonTextureTypes::NormalMap,
+            CommonTextureTypes::Diffuse,    CommonTextureTypes::Diffuse,
+            CommonTextureTypes::Diffuse,    CommonTextureTypes::Diffuse,
+            CommonTextureTypes::NormalMap,  CommonTextureTypes::NormalMap,
+            CommonTextureTypes::NormalMap,  CommonTextureTypes::NormalMap,
 
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
-            CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
+            CommonTextureTypes::Monochrome, CommonTextureTypes::Monochrome,
             CommonTextureTypes::EnvMap
         };
 
@@ -247,7 +227,7 @@ namespace Ogre
             loadTexture( subobj, blocks, TERRA_DETAIL_WEIGHT, terraDatablock, resourceGroup );
         }
 
-        for( int i=0; i<4; ++i )
+        for( uint8 i = 0u; i < 4u; ++i )
         {
             const String iAsStr = StringConverter::toString(i);
             String texTypeName = "detail" + iAsStr;
@@ -378,7 +358,7 @@ namespace Ogre
         {
             HlmsTextureManager::TextureLocation texLocation;
             texLocation.texture = datablock->getTexture( textureType );
-            if( !texLocation.texture.isNull() )
+            if( texLocation.texture )
             {
                 texLocation.xIdx = datablock->_getTextureIdx( textureType );
                 texLocation.yIdx = 0;
@@ -414,7 +394,8 @@ namespace Ogre
     void HlmsJsonTerra::saveMaterial( const HlmsDatablock *datablock, String &outString )
     {
 //        assert( dynamic_cast<const HlmsTerraDatablock*>(datablock) );
-//        const HlmsTerraDatablock *terraDatablock = static_cast<const HlmsTerraDatablock*>(datablock);
+        //        const HlmsTerraDatablock *terraDatablock = static_cast<const
+        //        HlmsTerraDatablock*>(datablock);
 
 ////        outString += ",\n\t\t\t\"workflow\" : ";
 ////        toQuotedStr( terraDatablock->getWorkflow(), outString );
@@ -422,7 +403,7 @@ namespace Ogre
 //        saveTexture( terraDatablock->getDiffuse(), "diffuse", TERRA_DIFFUSE,
 //                     terraDatablock, outString );
 
-//        if( !terraDatablock->getTexture( TERRA_DETAIL_WEIGHT ).isNull() )
+        //        if( terraDatablock->getTexture( TERRA_DETAIL_WEIGHT ) )
 //            saveTexture( "detail_weight", TERRA_DETAIL_WEIGHT, terraDatablock, outString );
 
 //        for( int i=0; i<4; ++i )
@@ -431,14 +412,16 @@ namespace Ogre
 //            const Vector2 offset( offsetScale.x, offsetScale.y );
 //            const Vector2 scale( offsetScale.z, offsetScale.w );
 
-//            const TerraTextureTypes textureType = static_cast<TerraTextureTypes>(TERRA_DETAIL0 + i);
+        //            const TerraTextureTypes textureType = static_cast<TerraTextureTypes>(TERRA_DETAIL0
+        //            + i);
 
 //            if( offset != Vector2::ZERO ||
-//                scale != Vector2::UNIT_SCALE || terraDatablock->getDetailMapWeight( i ) != 1.0f ||
-//                !terraDatablock->getTexture( textureType ).isNull() )
+        //                scale != Vector2::UNIT_SCALE || terraDatablock->getDetailMapWeight( i ) != 1.0f
+        //                || terraDatablock->getTexture( textureType ) )
 //            {
 //                char tmpBuffer[64];
-//                LwString blockName( LwString::FromEmptyPointer( tmpBuffer, sizeof(tmpBuffer) ) );
+        //                LwString blockName( LwString::FromEmptyPointer( tmpBuffer, sizeof(tmpBuffer) )
+        //                );
 
 //                blockName.a( "detail_diffuse", i );
 
@@ -454,23 +437,25 @@ namespace Ogre
 //            const Vector2 offset( offsetScale.x, offsetScale.y );
 //            const Vector2 scale( offsetScale.z, offsetScale.w );
 
-//            const TerraTextureTypes textureType = static_cast<TerraTextureTypes>(TERRA_DETAIL0_NM + i);
+        //            const TerraTextureTypes textureType =
+        //            static_cast<TerraTextureTypes>(TERRA_DETAIL0_NM + i);
 
 //            if( offset != Vector2::ZERO || scale != Vector2::UNIT_SCALE ||
 //                terraDatablock->getDetailNormalWeight( i ) != 1.0f ||
-//                !terraDatablock->getTexture( textureType ).isNull() )
+        //                terraDatablock->getTexture( textureType ) )
 //            {
 //                char tmpBuffer[64];
-//                LwString blockName( LwString::FromEmptyPointer( tmpBuffer, sizeof(tmpBuffer) ) );
+        //                LwString blockName( LwString::FromEmptyPointer( tmpBuffer, sizeof(tmpBuffer) )
+        //                );
 
 //                blockName.a( "detail_normal", i );
 //                saveTexture( terraDatablock->getDetailNormalWeight( i ), blockName.c_str(),
-//                             static_cast<TerraTextureTypes>(TERRA_DETAIL0_NM + i), terraDatablock,
-//                             outString );
+        //                             static_cast<TerraTextureTypes>(TERRA_DETAIL0_NM + i),
+        //                             terraDatablock, outString );
 //            }
 //        }
 
-//        if( !terraDatablock->getTexture( TERRA_REFLECTION ).isNull() )
+        //        if( terraDatablock->getTexture( TERRA_REFLECTION ) )
 //            saveTexture( "reflection", TERRA_REFLECTION, terraDatablock, outString );
     }
     //-----------------------------------------------------------------------------------
