@@ -11,9 +11,6 @@ project( TerrainDemo )
 set( EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}" )
 
 include( CMake/Bootstrap.cmake )
-#include( CMake/FindPkgMacros.cmake )
-#include( CMake/FindRapidjson.cmake )
-#include( CMake/FindSDL2.cmake )
 include( CMake/Dependencies/OGRE.cmake )
 
 
@@ -38,8 +35,6 @@ setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )
 ## Fix 2 sdl
 include_directories("/usr/include/SDL2")
 include_directories(${DIR_ONE_ABOVE}/Ogre/ogre-next-deps/build/ogredeps/include)  #for rapidjson
-#include_directories(${OGRE_NEXT}/Components/Atmosphere/include)
-#message(${OGRE_NEXT}/Components/Atmosphere/include)
 
 
 # Setup our application
@@ -63,15 +58,9 @@ include_directories( "./include" )
 add_recursive( ./src SOURCES )
 add_recursive( ./include HEADERS )
 
-#if( OGRE_BUILD_COMPONENT_ATMOSPHERE )
-#	ogre_add_comonent_include_dir(Atmosphere)
-#endif()
-#if( OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS )
-#    ogre_add_component_include_dir( PlanarReflections )
-#endif()
 
 add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${RESOURCES} )
-#target_include_directories( ${PROJECT_NAME} PRIVATE ${OGRE_NEXT}/Components/Atmosphere/include)
+
 
 target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
 ## Fix 3 sdl
