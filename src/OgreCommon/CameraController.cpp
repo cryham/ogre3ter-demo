@@ -72,53 +72,37 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     bool CameraController::keyPressed( const SDL_KeyboardEvent &arg )
     {
-        if( arg.keysym.scancode == SDL_SCANCODE_LSHIFT )
-            mSpeed1 = true;
-        if( arg.keysym.scancode == SDL_SCANCODE_LCTRL )
-            mSpeed2 = true;
+        switch (arg.keysym.scancode)
+        {
+        case SDL_SCANCODE_LSHIFT:  mSpeed1 = true;  return true;
+        case SDL_SCANCODE_LCTRL:   mSpeed2 = true;  return true;
 
-        if( arg.keysym.scancode == SDL_SCANCODE_W )
-            mWASDQE[0] = true;
-        else if( arg.keysym.scancode == SDL_SCANCODE_A )
-            mWASDQE[1] = true;
-        else if( arg.keysym.scancode == SDL_SCANCODE_S )
-            mWASDQE[2] = true;
-        else if( arg.keysym.scancode == SDL_SCANCODE_D )
-            mWASDQE[3] = true;
-        else if( arg.keysym.scancode == SDL_SCANCODE_Q )
-            mWASDQE[4] = true;
-        else if( arg.keysym.scancode == SDL_SCANCODE_E )
-            mWASDQE[5] = true;
-        else
-            return false;
-
-        return true;
+        case SDL_SCANCODE_W:  mWASDQE[0] = true;  return true;
+        case SDL_SCANCODE_A:  mWASDQE[1] = true;  return true;
+        case SDL_SCANCODE_S:  mWASDQE[2] = true;  return true;
+        case SDL_SCANCODE_D:  mWASDQE[3] = true;  return true;
+        case SDL_SCANCODE_Q:  mWASDQE[4] = true;  return true;
+        case SDL_SCANCODE_E:  mWASDQE[5] = true;  return true;
+        }    
+        return false;
     }
 
     //-----------------------------------------------------------------------------------
     bool CameraController::keyReleased( const SDL_KeyboardEvent &arg )
     {
-        if( arg.keysym.scancode == SDL_SCANCODE_LSHIFT )
-            mSpeed1 = false;
-        if( arg.keysym.scancode == SDL_SCANCODE_LCTRL )
-            mSpeed2 = false;
+        switch (arg.keysym.scancode)
+        {
+        case SDL_SCANCODE_LSHIFT:  mSpeed1 = false;  return true;
+        case SDL_SCANCODE_LCTRL:   mSpeed2 = false;  return true;
 
-        if( arg.keysym.scancode == SDL_SCANCODE_W )
-            mWASDQE[0] = false;
-        else if( arg.keysym.scancode == SDL_SCANCODE_A )
-            mWASDQE[1] = false;
-        else if( arg.keysym.scancode == SDL_SCANCODE_S )
-            mWASDQE[2] = false;
-        else if( arg.keysym.scancode == SDL_SCANCODE_D )
-            mWASDQE[3] = false;
-        else if( arg.keysym.scancode == SDL_SCANCODE_Q )
-            mWASDQE[4] = false;
-        else if( arg.keysym.scancode == SDL_SCANCODE_E )
-            mWASDQE[5] = false;
-        else
-            return false;
-
-        return true;
+        case SDL_SCANCODE_W:  mWASDQE[0] = false;  return true;
+        case SDL_SCANCODE_A:  mWASDQE[1] = false;  return true;
+        case SDL_SCANCODE_S:  mWASDQE[2] = false;  return true;
+        case SDL_SCANCODE_D:  mWASDQE[3] = false;  return true;
+        case SDL_SCANCODE_Q:  mWASDQE[4] = false;  return true;
+        case SDL_SCANCODE_E:  mWASDQE[5] = false;  return true;
+        }    
+        return false;
     }
 
     //-----------------------------------------------------------------------------------

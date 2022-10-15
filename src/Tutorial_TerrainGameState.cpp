@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "Tutorial_TerrainGameState.h"
 #include "CameraController.h"
 #include "GraphicsSystem.h"
+#include "SDL_scancode.h"
 #include "Utils/MeshUtils.h"
 
 #include "OgreSceneManager.h"
@@ -66,6 +67,10 @@ THE SOFTWARE.
 
 #include "OgreParticleSystem.h"
 
+#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+#    include "OgreAtmosphereNpr.h"
+#endif
+
 
 using namespace Demo;
 using namespace Ogre;
@@ -89,7 +94,8 @@ namespace Demo
     }
 
     
-    //-----------------------------------------------------------------------------------
+    //  Create
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::createScene01()
     {
         Root *root = mGraphicsSystem->getRoot();
@@ -187,7 +193,7 @@ namespace Demo
         SceneNode *lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( mSunLight );
         
-        mSunLight->setPowerScale( Math::PI * 2 );  //** par! 1.5 2 3, should be 1..
+        mSunLight->setPowerScale( Math::PI * 1 );  //** par! 1.5 2 3, should be * 1..
         mSunLight->setType( Light::LT_DIRECTIONAL );
         mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );  //-
 
@@ -199,6 +205,29 @@ namespace Demo
             ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
             Vector3::UNIT_Y );
 
+#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+        mGraphicsSystem->createAtmosphere( mSunLight );
+        OGRE_ASSERT_HIGH( dynamic_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
+        Ogre::AtmosphereNpr *atmosphere =
+            static_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() );
+        Ogre::AtmosphereNpr::Preset p = atmosphere->getPreset();
+        p.fogDensity = 0.002f;  //** par
+        p.densityCoeff = 0.27f;
+        p.densityDiffusion = 0.75f;
+        
+        p.horizonLimit = 0.025f;
+        p.sunPower = 1.0f;
+        p.skyPower = 1.0f;
+        p.skyColour = Vector3(0.334f, 0.57f, 1.0f);
+        p.fogBreakMinBrightness = 0.25f;
+        p.fogBreakFalloff = 0.1f;
+        // p.linkedLightPower = Math::PI;
+        // p.linkedSceneAmbientUpperPower = 0.1f * Math::PI;
+        // p.linkedSceneAmbientLowerPower = 0.01f * Math::PI;
+        p.envmapScale = 1.0f;
+        p.fogBreakMinBrightness = 0.05f;
+        atmosphere->setPreset( p );
+#endif
 
         //  camera  ------------------------------------------------
         mCameraController = new CameraController( mGraphicsSystem, false );
@@ -213,8 +242,7 @@ namespace Demo
         Vector3 objPos;
 
 
-    #if 1
-        //  Sky Dome  ------------------------------------------------
+    #if 0  //  Sky Dome
         CreateSkyDome("sky-clearday1", 0.f);
         //CreateSkyDome("sky_photo6", 0.f);  // clouds
     #endif
@@ -225,6 +253,7 @@ namespace Demo
     }
 
 
+    //  Destroy
     //-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::destroyScene()
     {
@@ -249,10 +278,24 @@ namespace Demo
     }
 
 
-    //-----------------------------------------------------------------------------------
+    //  Update  frame
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::update( float timeSinceLast )
     {
-        int d = mKeys[0] - mKeys[1];
+        //  Keys
+        int d = right ? 1 : left ? -1 : 0;
+        if (d)
+        {
+            SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+            Ogre::AtmosphereNpr *atmosphere =
+                static_cast<Ogre::AtmosphereNpr*>( sceneManager->getAtmosphere() );
+            Ogre::AtmosphereNpr::Preset p = atmosphere->getPreset();
+            if (left)   p.fogDensity *= 0.99f;
+            if (right)  p.fogDensity *= 1.01f;
+            atmosphere->setPreset(p);
+        }
+
+        d = mKeys[0] - mKeys[1];
         if (d)
         {
             mPitch += d * 0.6f * timeSinceLast;
@@ -267,7 +310,7 @@ namespace Demo
             if( mYaw < 0.f )
                 mYaw = Math::TWO_PI + mYaw;
         }
-
+        //  Light  sun dir  ----
         Vector3 dir = Quaternion( Radian(mYaw), Vector3::UNIT_Y ) *
             Vector3( cosf( mPitch ), -sinf( mPitch ), 0.0 ).normalisedCopy();
         mSunLight->setDirection( dir );
@@ -283,29 +326,39 @@ namespace Demo
             // ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
             -dir );
 
-        //Do not call update() while invisible, as it will cause an assert because the frames
-        //are not advancing, but we're still mapping the same GPU region over and over.
+    #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+        OGRE_ASSERT_HIGH( dynamic_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
+        AtmosphereNpr *atmosphere =
+            static_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() );
+        atmosphere->setSunDir( mSunLight->getDirection(), mPitch / Ogre::Math::PI );
+    #endif
+
+        ///  Terrain  ----
         if (mTerra && mGraphicsSystem->getRenderWindow()->isVisible() )
         {
-            //Force update the shadow map every frame to avoid the feeling we're "cheating" the
-            //user in this sample with higher framerates than what he may encounter in many of
-            //his possible uses.
-            const float lightEpsilon = 0.0001f;  //** 0.f slow
+            // Force update the shadow map every frame to avoid the feeling we're "cheating" the
+            // user in this sample with higher framerates than what he may encounter in many of
+            // his possible uses.
+            const float lightEpsilon = 0.0001f;  //** 0.0f slow
             mTerra->update( mSunLight->getDerivedDirectionUpdated(), lightEpsilon );
         }
 
         TutorialGameState::update( timeSinceLast );
 
-        //Camera must be locked to ground *after* we've moved it. Otherwise
-        //fast motion may go below the terrain for 1 or 2 frames.
-        Camera *camera = mGraphicsSystem->getCamera();
-        Vector3 camPos = camera->getPosition();
-        if( mLockCameraToGround && mTerra->getHeightAt( camPos ) )
+        //  Camera must be locked to ground after we've moved it.
+        //  Otherwise fast motion may go below the terrain for 1 or 2 frames.
+        if( mLockCameraToGround && mTerra )
+        {
+            mTerra->getHeightAt( camPos );
+            Camera *camera = mGraphicsSystem->getCamera();
+            Vector3 camPos = camera->getPosition();
             camera->setPosition( camPos + Vector3::UNIT_Y * 10.0f );
+        }
     }
 
 
-    //-----------------------------------------------------------------------------------
+    //  text
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::generateDebugText( float timeSinceLast, String &outText )
     {
         TutorialGameState::generateDebugText( timeSinceLast, outText );
@@ -364,21 +417,25 @@ namespace Demo
     }
 
 
-    //-----------------------------------------------------------------------------------
+    //  Key events
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::keyPressed( const SDL_KeyboardEvent &arg )
     {
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_PLUS )
-            mKeys[0] = 1;
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
-            mKeys[1] = 1;
+        switch (arg.keysym.scancode)
+        {
+        case SDL_SCANCODE_LSHIFT:  shift = true;  break;
+        case SDL_SCANCODE_LCTRL:   ctrl = true;   break;
 
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_MULTIPLY )
-            mKeys[2] = 1;
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_DIVIDE )
-            mKeys[3] = 1;
+        case SDL_SCANCODE_LEFT:   left = true;   break;
+        case SDL_SCANCODE_RIGHT:  right = true;  break;
 
+        case SDL_SCANCODE_KP_PLUS:      mKeys[0] = 1;  break;
+        case SDL_SCANCODE_KP_MINUS:     mKeys[1] = 1;  break;
+        case SDL_SCANCODE_KP_MULTIPLY:  mKeys[2] = 1;  break;
+        case SDL_SCANCODE_KP_DIVIDE:    mKeys[3] = 1;  break;
+        
         //** terrain wireframe toggle
-        if( arg.keysym.scancode == SDL_SCANCODE_R )
+        case SDL_SCANCODE_R:
         {
             wireTerrain = !wireTerrain;
             Root *root = mGraphicsSystem->getRoot();
@@ -391,31 +448,21 @@ namespace Demo
                 datablock->setMacroblock( macroblockWire );
             }
             mTerra->setDatablock( datablock );
-        }
+        }   break;
 
-        //  trees add, destroy all
-        if( arg.keysym.scancode == SDL_SCANCODE_V )
-            CreateTrees();
-
-        if( arg.keysym.scancode == SDL_SCANCODE_C )
-            DestroyTrees();
-
+        //  Trees add, destroy all
+        case SDL_SCANCODE_V:  CreateTrees();  break;
+        case SDL_SCANCODE_C:  DestroyTrees();  break;
 
         //  other
-        if( arg.keysym.scancode == SDL_SCANCODE_M )
+        case SDL_SCANCODE_F:  CreateParticles();  break;
+        case SDL_SCANCODE_G:  CreateCar();  break;
+        
+        case SDL_SCANCODE_M:
         {
             Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
             CreateManualObj(camPos);
-        }
-
-        if( arg.keysym.scancode == SDL_SCANCODE_F )
-        {
-            CreateParticles();
-        }
-
-        if( arg.keysym.scancode == SDL_SCANCODE_G )
-        {
-            CreateCar();
+        }   break;
         }
         
         TutorialGameState::keyPressed( arg );
@@ -423,7 +470,22 @@ namespace Demo
     
     void Tutorial_TerrainGameState::keyReleased( const SDL_KeyboardEvent &arg )
     {
-        if( arg.keysym.sym == SDLK_F4 && (arg.keysym.mod & (KMOD_LCTRL|KMOD_RCTRL)) )
+        switch (arg.keysym.scancode)
+        {
+        case SDL_SCANCODE_LSHIFT:  shift = false;  break;
+        case SDL_SCANCODE_LCTRL:   ctrl = false;   break;
+
+        case SDL_SCANCODE_LEFT:   left = false;   break;
+        case SDL_SCANCODE_RIGHT:  right = false;  break;
+
+        case SDL_SCANCODE_KP_PLUS:      mKeys[0] = 0;  break;
+        case SDL_SCANCODE_KP_MINUS:     mKeys[1] = 0;  break;
+        case SDL_SCANCODE_KP_MULTIPLY:  mKeys[2] = 0;  break;
+        case SDL_SCANCODE_KP_DIVIDE:    mKeys[3] = 0;  break;
+
+
+        case SDL_SCANCODE_F4:
+        if (arg.keysym.mod & (KMOD_LCTRL|KMOD_RCTRL))
         {
             //Hot reload of Terra shaders.
             Root *root = mGraphicsSystem->getRoot();
@@ -432,27 +494,13 @@ namespace Demo
             Hlms *hlms = hlmsManager->getHlms( HLMS_USER3 );
             GpuProgramManager::getSingleton().clearMicrocodeCache();
             hlms->reloadFrom( hlms->getDataFolder() );
-        }
-        else if( (arg.keysym.mod & ~(KMOD_NUM|KMOD_CAPS)) != 0 )
-        {
-            TutorialGameState::keyReleased( arg );
-            return;
-        }
+        }   break;
 
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_PLUS )
-            mKeys[0] = 0;
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_MINUS )
-            mKeys[1] = 0;
-
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_MULTIPLY )
-            mKeys[2] = 0;
-        if( arg.keysym.scancode == SDL_SCANCODE_KP_DIVIDE )
-            mKeys[3] = 0;
-
-
-        if( arg.keysym.scancode == SDL_SCANCODE_F2 )
+        case SDL_SCANCODE_F2:
             mLockCameraToGround = !mLockCameraToGround;
-        else
-            TutorialGameState::keyReleased( arg );
+            break;
+        }
+
+        TutorialGameState::keyReleased( arg );
     }
 }

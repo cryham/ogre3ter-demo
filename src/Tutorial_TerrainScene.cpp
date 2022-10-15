@@ -46,6 +46,7 @@ using namespace Ogre;
 namespace Demo
 {
 
+    //  Trees setup
     void Tutorial_TerrainGameState::SetupTrees()
     {
         vegetLayers.clear();   //  OgreMeshTool args
@@ -56,11 +57,11 @@ namespace Demo
             7.5f,12.5f, 8.f,  -0.1f, 5000, 0 ));  //  -v2 -l 8 -d 200 -p 10 palm2.mesh
 
         vegetLayers.emplace_back(VegetLayer("plant_tropical-lod6.mesh",
-            4.5f, 7.5f, 20.f, 0.5f, 1000, 0 ));  //  -v2 -l 6 -d 200 -p 15 plant_tropical.mesh
+            4.5f, 7.5f, 30.f, 0.5f, 1000, 0 ));  //  -v2 -l 6 -d 200 -p 15 plant_tropical.mesh
         vegetLayers.emplace_back(VegetLayer("fern-lod6.mesh",
-            0.6f, 1.0f, 115.f, 1.0f, 600, 0 ));  //  -v2 -l 6 -d 200 -p 15 fern.mesh
+            0.6f, 1.0f, 55.f, 1.0f, 600, 0 ));  //  -v2 -l 6 -d 200 -p 15 fern.mesh
         vegetLayers.emplace_back(VegetLayer("fern2-lod6.mesh",
-            0.6f, 1.0f, 120.f, 1.0f, 600, 0 ));  //  -v2 -l 8 -d 200 -p 10 palm2.mesh
+            0.6f, 1.0f, 50.f, 1.0f, 600, 0 ));  //  -v2 -l 8 -d 200 -p 10 palm2.mesh
 
         vegetLayers.emplace_back(VegetLayer("rock02brown2flat.mesh",
             1.1f, 5.0f, 5.0f, 1.0f, 3000, 1 ));  //  -v2 -l 6 -d 200 -p 15 rock*.mesh
@@ -80,7 +81,7 @@ namespace Demo
     }
 
     //  Trees
-	//-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateTrees()
 	{
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
@@ -101,31 +102,37 @@ namespace Demo
             {
                 ++lay.count;
 				//  Item  ----
-				Item *item = sceneManager->createItem(
-                    lay.mesh,
-					ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
-					SCENE_STATIC );
+                Item *item;
+                try 
+				{   item = sceneManager->createItem( lay.mesh,
+					    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
+					    SCENE_STATIC );
+                }catch(...)
+                {
+                    LogO("error: mesh not found: " + lay.mesh);
+                    return;
+                }
                 //item->setDatablock( "pine2norm" );
                 item->setRenderQueueGroup( 200 );  // after terrain
                 item->setRenderingDistance( lay.visFar );  // how far visible
 				vegetItems.push_back(item);
 
 				//  Node  ----
-				SceneNode *sceneNode = rootNode->createChildSceneNode( SCENE_STATIC );
-				sceneNode->attachObject( item );
+				SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+				node->attachObject( item );
                 
                 //  scale
                 Real s = Math::RangeRandom(lay.scaleMin, lay.scaleMax);
-				sceneNode->scale( s, s, s );
+				node->scale( s, s, s );
                 
                 //  pos
 				Vector3 objPos = Vector3(
-                    Math::RangeRandom(-scaleXZ, scaleXZ), 0.f,
+                    Math::RangeRandom(-scaleXZ, scaleXZ), 20.f,
                     Math::RangeRandom(-scaleXZ, scaleXZ));
                 if (mTerra)
                     mTerra->getHeightAt( objPos );
                 objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f + lay.down;  //par
-                sceneNode->setPosition( objPos );
+                node->setPosition( objPos );
                 
                 //  rot
                 Degree ang( Math::RangeRandom(0, 360.f) );
@@ -134,11 +141,11 @@ namespace Demo
                 {
                     Degree ang( Math::RangeRandom(0, 180.f) );  //par ? range
                     Quaternion p;  p.FromAngleAxis( -ang, Vector3::UNIT_Z );
-                    sceneNode->setOrientation( p * q );
+                    node->setOrientation( p * q );
                 }else
-                    sceneNode->setOrientation( q );
+                    node->setOrientation( q );
 
-				vegetNodes.push_back(sceneNode);
+				vegetNodes.push_back(node);
 			}
 		}
 	}
@@ -159,7 +166,7 @@ namespace Demo
 
 
     //  Sky dome
-	//-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateSkyDome(String sMater, float yaw)
     {
     	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
@@ -230,7 +237,7 @@ namespace Demo
 
 
     //  Manual object
-	//-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateManualObj(Ogre::Vector3 camPos)
 	{
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
@@ -298,7 +305,7 @@ namespace Demo
 
 
     //  Particles
-	//-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateParticles()
     {
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
@@ -328,7 +335,7 @@ namespace Demo
 
 
     //  Car
-	//-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateCar()
     {
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
