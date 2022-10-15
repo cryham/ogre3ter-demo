@@ -6,31 +6,28 @@ hlms AllSettings pbs
 	//Note: Internally the diffuse colour is divided by PI.
 	diffuse		1 1 1
 	specular	1 1 1
-
-	//emissive 0.2 0.1 0.05
-	emissive 0 0 0
+	emissive    0 0 0
 
 	//Note: avoid values extremely close to zero  (0; 1] is physically correct.
 	roughness	0.4
 	
-	//Fresnel as IOR (index of refraction)
 	fresnel		1.33
 	//Fresnel as IOR (index of refraction), seperate per RGB component
-	//fresnel		1.33 1.33 1.2
+	//fresnel	1.33 1.33 1.2
 
 	//Directly set the "F0" term, instead of using IOR
 	//fresnel_coeff	0.1
 	//fresnel_coeff	0.1 0.1 0.2
 	
-	//diffuse_map		Rocks_Diffuse.tga
-	//normal_map		Rocks_Normal.tga
+	//diffuse_map	Rocks_Diffuse.tga
+	//normal_map	Rocks_Normal.tga
 	//roughness_map	Rocks_Spec.tga
 	//specular_map	Rocks_Diffuse.tga
 
 	//detail_weight_map	nm_up.png
 }
 
-//  Trees  ---------------
+//  Trees  ---------------------------------------------
 hlms pine2norm pbs
 {
 	diffuse_map  pine_norm_gr1.png
@@ -82,7 +79,7 @@ hlms palm2 pbs
 	two_sided true
 }
 
-//  plants  ---------------
+//  plants  ---------------------------------------------
 hlms plant_tropical pbs
 {
 	diffuse_map  plant_tropical.png
@@ -113,7 +110,7 @@ hlms fern_v2 pbs
     cull_mode none
     alpha_test greater 0.5
     
-	specular 0.2 0.2 0.2
+	specular 0.8 0.8 0.8
 	two_sided true
 }
 
@@ -130,11 +127,11 @@ hlms fern2 pbs
     cull_mode none
     alpha_test greater 0.5
     
-	specular 0.2 0.2 0.2
+	specular 0.8 0.8 0.8
 	two_sided true
 }
 
-//  rocks  ---------------
+//  rocks  ---------------------------------------------
 hlms rock02brown2flat pbs
 {
 	diffuse_map  rock02.jpg
