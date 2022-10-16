@@ -69,7 +69,8 @@ namespace Demo
         float mYaw;
         Ogre::Vector3 camPos;
 
-        int mKeys[4] = {0,0,0,0};  // keys
+        int mKeys[4] = {0,0,0,0};  // sun keys
+        int param = 0;  // to adjust
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
 

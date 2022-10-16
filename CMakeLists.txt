@@ -18,16 +18,17 @@ include( CMake/Dependencies/OGRE.cmake )
 get_filename_component(DIR_ONE_ABOVE ../ ABSOLUTE)
 message(STATUS ${DIR_ONE_ABOVE})
 
-set(OGRE_NEXT ${DIR_ONE_ABOVE}/Ogre/ogre-next)
+set(OGRE_NEXT_DIR ${DIR_ONE_ABOVE}/Ogre/ogre-next)
 
 ## Fix 1
-set(OGRE_SOURCE ${OGRE_NEXT}/)
+set(OGRE_SOURCE ${OGRE_NEXT_DIR}/)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(OGRE_BINARIES ${OGRE_NEXT}/build/Debug)
+	set(OGRE_BINARIES ${OGRE_NEXT_DIR}/build/Debug)
 else()
-	set(OGRE_BINARIES ${OGRE_NEXT}/build/Release)
+	set(OGRE_BINARIES ${OGRE_NEXT_DIR}/build/Release)
 endif()
+
 
 #This scripts will add all the cpp and h files from src and include folders
 setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )

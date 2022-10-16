@@ -92,8 +92,8 @@ namespace Demo
         //pbsdatablock->setMacroblock( macroblockWire );
     #endif
 
-		const Real mult = 1.f;
-        const Real scaleXZ = 4095.f/2.f;  //par world
+		const Real mult    = !mTerra ? 0.1f : 1.f;
+        const Real scaleXZ = !mTerra ? 1000.f : 4095.f/2.f;  //par world
 		
         for (auto& lay : vegetLayers)
         {
@@ -127,7 +127,7 @@ namespace Demo
                 
                 //  pos
 				Vector3 objPos = Vector3(
-                    Math::RangeRandom(-scaleXZ, scaleXZ), 20.f,
+                    Math::RangeRandom(-scaleXZ, scaleXZ), 0.f,
                     Math::RangeRandom(-scaleXZ, scaleXZ));
                 if (mTerra)
                     mTerra->getHeightAt( objPos );

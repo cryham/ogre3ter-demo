@@ -40,6 +40,7 @@ THE SOFTWARE.
 
 #include "OgreCamera.h"
 #include "OgreWindow.h"
+#include "OgreFrameStats.h"
 
 #include "Terra/Hlms/OgreHlmsTerra.h"
 #include "Terra/Hlms/PbsListener/OgreHlmsPbsTerraShadows.h"
@@ -52,7 +53,6 @@ THE SOFTWARE.
 
 #include "OgreTextureGpuManager.h"
 
-#include "OgreLwString.h"
 #include "OgreGpuProgramManager.h"
 #include "OgreHlmsPbsDatablock.h"
 
@@ -193,7 +193,7 @@ namespace Demo
         SceneNode *lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( mSunLight );
         
-        mSunLight->setPowerScale( Math::PI * 1 );  //** par! 1.5 2 3, should be * 1..
+        mSunLight->setPowerScale( Math::PI * 3 );  //** par! 1.5 2 3* 4  should be * 1..
         mSunLight->setType( Light::LT_DIRECTIONAL );
         mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );  //-
 
@@ -207,17 +207,17 @@ namespace Demo
 
 #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
         mGraphicsSystem->createAtmosphere( mSunLight );
-        OGRE_ASSERT_HIGH( dynamic_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
-        Ogre::AtmosphereNpr *atmosphere =
-            static_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() );
-        Ogre::AtmosphereNpr::Preset p = atmosphere->getPreset();
-        p.fogDensity = 0.002f;  //** par
+        OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
+        AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
+        AtmosphereNpr::Preset p = atmosphere->getPreset();
+        p.fogDensity = 0.0002f;  //** par
         p.densityCoeff = 0.27f;
         p.densityDiffusion = 0.75f;
-        
+        // p.densityCoeff = 0.47f;
+        // p.densityDiffusion = 2.0f;
         p.horizonLimit = 0.025f;
-        p.sunPower = 1.0f;
-        p.skyPower = 1.0f;
+        // p.sunPower = 1.0f;
+        // p.skyPower = 1.0f;
         p.skyColour = Vector3(0.334f, 0.57f, 1.0f);
         p.fogBreakMinBrightness = 0.25f;
         p.fogBreakFalloff = 0.1f;
@@ -225,7 +225,6 @@ namespace Demo
         // p.linkedSceneAmbientUpperPower = 0.1f * Math::PI;
         // p.linkedSceneAmbientLowerPower = 0.01f * Math::PI;
         p.envmapScale = 1.0f;
-        p.fogBreakMinBrightness = 0.05f;
         atmosphere->setPreset( p );
 #endif
 
@@ -283,29 +282,46 @@ namespace Demo
     void Tutorial_TerrainGameState::update( float timeSinceLast )
     {
         //  Keys
+        float mul = shift ? 0.2f : ctrl ? 3.f : 1.f;
         int d = right ? 1 : left ? -1 : 0;
         if (d)
         {
             SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-            Ogre::AtmosphereNpr *atmosphere =
-                static_cast<Ogre::AtmosphereNpr*>( sceneManager->getAtmosphere() );
-            Ogre::AtmosphereNpr::Preset p = atmosphere->getPreset();
-            if (left)   p.fogDensity *= 0.99f;
-            if (right)  p.fogDensity *= 1.01f;
+            AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
+            AtmosphereNpr::Preset p = atmosphere->getPreset();
+            float mul1 = 1.f + 0.003f * mul * d;
+            switch (param)
+            {
+            case 0:  p.fogDensity *= mul1;  break;
+            case 1:  p.densityCoeff *= mul1;  break;
+            case 2:  p.densityDiffusion *= mul1;  break;
+            case 3:  p.horizonLimit *= mul1;  break;
+            case 4:  p.sunPower *= mul1;  break;
+            case 5:  p.skyPower *= mul1;  break;
+            case 6:  p.skyColour.x *= mul1;  break;
+            case 7:  p.skyColour.y *= mul1;  break;
+            case 8:  p.skyColour.z *= mul1;  break;
+            case 9:   p.fogBreakMinBrightness *= mul1;  break;
+            case 10:  p.fogBreakFalloff *= mul1;  break;
+            case 11:  p.linkedLightPower *= mul1;  break;
+            case 12:  p.linkedSceneAmbientUpperPower *= mul1;  break;
+            case 13:  p.linkedSceneAmbientLowerPower *= mul1;  break;
+            case 14:  p.envmapScale *= mul1;  break;
+            }
             atmosphere->setPreset(p);
         }
 
         d = mKeys[0] - mKeys[1];
         if (d)
         {
-            mPitch += d * 0.6f * timeSinceLast;
+            mPitch += d * mul * 0.6f * timeSinceLast;
             mPitch = std::max( 0.f, std::min( mPitch, (float)Math::PI ) );
         }
 
         d = mKeys[2] - mKeys[3];
         if (d)
         {
-            mYaw += d * 1.5f * timeSinceLast;
+            mYaw += d * mul * 1.5f * timeSinceLast;
             mYaw = fmodf( mYaw, Math::TWO_PI );
             if( mYaw < 0.f )
                 mYaw = Math::TWO_PI + mYaw;
@@ -327,10 +343,9 @@ namespace Demo
             -dir );
 
     #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
-        OGRE_ASSERT_HIGH( dynamic_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
-        AtmosphereNpr *atmosphere =
-            static_cast<Ogre::AtmosphereNpr *>( sceneManager->getAtmosphere() );
-        atmosphere->setSunDir( mSunLight->getDirection(), mPitch / Ogre::Math::PI );
+        OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
+        AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
+        atmosphere->setSunDir( mSunLight->getDirection(), mPitch / Math::PI );
     #endif
 
         ///  Terrain  ----
@@ -361,54 +376,65 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::generateDebugText( float timeSinceLast, String &outText )
     {
-        TutorialGameState::generateDebugText( timeSinceLast, outText );
+        //TutorialGameState::generateDebugText( timeSinceLast, outText );
+        #define toStr(v, p)  StringConverter::toString(v,p)
+        //auto toStr = [](auto v, auto p=1) {  return StringConverter::toString(v,p);  };
+        outText = "";
 
         if( mDisplayHelpMode == 0 )
         {
+            //  F1 still help
             outText += "\nCtrl+F4 will reload Terra's shaders.";
+            
+            outText += "\nF2 Lock Ground: ";
+            outText += mLockCameraToGround ? "Yes" : "No";
+
+            Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
+            outText += "\n\nPos: " + toStr( camPos.x, 1) +" "+ toStr( camPos.y, 1) +" "+ toStr( camPos.z, 1);
         }
         else if( mDisplayHelpMode == 1 )
         {
-            char tmp[128];
-            LwString str( LwString::FromEmptyPointer(tmp, sizeof(tmp)) );
-            Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
-
-            using namespace Ogre;
-
-            RenderSystem *renderSystem = mGraphicsSystem->getRoot()->getRenderSystem();
-            const RenderingMetrics& rm = renderSystem->getMetrics();  //**
-            outText +=
-                "f " + StringConverter::toString( rm.mFaceCount/1000 ) + 
-                //"k v " + StringConverter::toString( rm.mVertexCount/1000 ) + 
-                "k d " + StringConverter::toString( rm.mDrawCount ) + 
-                " i " + StringConverter::toString( rm.mInstanceCount ) + 
-                " b " + StringConverter::toString( rm.mBatchCount ) + "\n";
-
-            //  F1 still help
-            //outText += "\nF2 Lock Ground: ";
-            //outText += mLockCameraToGround ? "Yes" : "No";
-
-            outText += "\n+ - Pitch  ";
-            outText += StringConverter::toString( mPitch * 180.0f / Math::PI );
-            outText += "\n/ * Yaw ";
-            outText += StringConverter::toString( mYaw * 180.0f / Math::PI );
+            //  fps stats
+            RenderSystem *rs = mGraphicsSystem->getRoot()->getRenderSystem();
+            const RenderingMetrics& rm = rs->getMetrics();  //**
+            const FrameStats *st = mGraphicsSystem->getRoot()->getFrameStats();
             
-            outText += "\n\nPos: ";
-            str.a( "", LwString::Float( camPos.x, 2, 2 ), " ",
-                       LwString::Float( camPos.y, 2, 2 ), " ",
-                       LwString::Float( camPos.z, 2, 2 ), "" );
-            outText += str.c_str();
-            
-            /*outText += "\nLightDir: ";
-            str.clear();
-            str.a( "", LwString::Float( mSunLight->getDirection().x, 2, 2 ), " ",
-                       LwString::Float( mSunLight->getDirection().y, 2, 2 ), " ",
-                       LwString::Float( mSunLight->getDirection().z, 2, 2 ), "" );
-            outText += str.c_str();/**/
+            outText += toStr( (int)st->getAvgFps(), 0) +"  "+ //"\n" +
+                "f " + toStr( rm.mFaceCount/1000, 0) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
+                "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0) + 
+                " b " + toStr( rm.mBatchCount, 0) + "\n";
 
-            //**  veget cnt
+            outText += "Veget: " + toStr(vegetNodes.size(), 5);
+            outText += "\n+ - sun Pitch " + toStr( mPitch * 180.f / Math::PI, 3 );
+            outText += "\n/ * sun Yaw   " + toStr( mYaw * 180.f / Math::PI, 3 );
+
+            outText += "\nParam: " + toStr( param, 0 );
+            
+            SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+            AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
+            AtmosphereNpr::Preset p = atmosphere->getPreset();
+            
             outText += "\n";
-            outText += "Veget: " + StringConverter::toString(vegetNodes.size());
+            switch (param)
+            {
+            case 0:   outText += "Fog density: " + toStr( p.fogDensity, 5 );  break;
+            case 1:   outText += "density coeff: " + toStr( p.densityCoeff, 5 );  break;
+            case 2:   outText += "density diffusion: " + toStr( p.densityDiffusion, 5 );  break;
+            case 3:   outText += "horizon limit: " + toStr( p.horizonLimit, 5 );  break;
+            case 4:   outText += "Sun Power: " + toStr( p.sunPower, 5 );  break;
+            case 5:   outText += "sky Power: " + toStr( p.skyPower, 5 );  break;
+            case 6:   outText += "sky Colour R: " + toStr( p.skyColour.x, 5 );  break;
+            case 7:   outText += "sky Colour G: " + toStr( p.skyColour.y, 5 );  break;
+            case 8:   outText += "sky Colour B: " + toStr( p.skyColour.z, 5 );  break;
+            case 9:   outText += "fog break MinBright: " + toStr( p.fogBreakMinBrightness, 5 );  break;
+            case 10:  outText += "fog break Falloff: " + toStr( p.fogBreakFalloff, 5 );  break;
+            case 11:  outText += "linked LightPower: " + toStr( p.linkedLightPower, 5 );  break;
+            case 12:  outText += "ambient UpperPower: " + toStr( p.linkedSceneAmbientUpperPower, 5 );  break;
+            case 13:  outText += "ambient LowerPower: " + toStr( p.linkedSceneAmbientLowerPower, 5 );  break;
+            case 14:  outText += "envmap Scale: " + toStr( p.envmapScale, 5 );  break;
+            }
+            
+            //**  veget cnt
             #if 0  // list all cnts
             for (const auto& lay : vegetLayers)
                 outText += StringConverter::toString( lay.count ) + " " + lay.mesh + "\n";
@@ -428,6 +454,8 @@ namespace Demo
 
         case SDL_SCANCODE_LEFT:   left = true;   break;
         case SDL_SCANCODE_RIGHT:  right = true;  break;
+        case SDL_SCANCODE_UP:     --param;  break;
+        case SDL_SCANCODE_DOWN:   ++param;  break;
 
         case SDL_SCANCODE_KP_PLUS:      mKeys[0] = 1;  break;
         case SDL_SCANCODE_KP_MINUS:     mKeys[1] = 1;  break;
