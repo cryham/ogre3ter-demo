@@ -14,7 +14,7 @@ Showing:
 
 No reflection or real PBR textures yet.  
 Specular light is somewhat broken, too much still.  
-Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), see _Licenses.txt  
+Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
 
 ## Keys
 
