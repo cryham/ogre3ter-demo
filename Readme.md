@@ -12,9 +12,9 @@ Showing:
 * **Atmosphere** component with adjustable parameters
 * **Car** models, **particles**
 
-No reflection or real PBR textures yet.
-Specular light is somewhat broken, too much still.
-Models and textures from StuntRally, see _Licenses.txt
+No reflection or real PBR textures yet.  
+Specular light is somewhat broken, too much still.  
+Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), see _Licenses.txt  
 
 ## Keys
 
@@ -29,7 +29,7 @@ G - Add car in front, next model.
 F - Add fire with smoke particles  
 
 T - toggle Terrain / flat plane. Note: terrain loads in 5 sec.  
-R * terrain wireframe toggle
+R - terrain wireframe toggle  
 K - Add / remove SkyDome, next texture.  
 
 Up,Down - previous / next **parameter**  
@@ -41,7 +41,7 @@ Numpad +,- - change sun pitch (time of day)
 F1 - Toggle Help text  
 
 To reload *shaders* (after editing):  
-Ctrl-F1 - PBS  Ctrl-F2 - Unlit  Ctrl-F3 - Compute  Ctrl-F4 - Terrain  
+Ctrl-F1 - PBS,  Ctrl-F2 - Unlit,  Ctrl-F3 - Compute,  Ctrl-F4 - Terrain  
 Ctrl-F5 - Force device reelection  
 
 ## Info on screen
