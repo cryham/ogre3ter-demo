@@ -64,7 +64,6 @@ namespace Demo
 
     class Tutorial_TerrainGameState : public TutorialGameState
     {
-        bool mLockCameraToGround;
         float mPitch;  // sun dir
         float mYaw;
         Ogre::Vector3 camPos;
@@ -74,11 +73,11 @@ namespace Demo
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
 
-        Ogre::Terra *mTerra;  // terrain
-        Ogre::Light *mSunLight;
+        Ogre::Terra *mTerra = 0;  // terrain
+        Ogre::Light *mSunLight = 0;
 
         // Listener to make PBS objects also be affected by terrain's shadows
-        Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows;
+        Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows = 0;
 
         //  wireframe
         Ogre::HlmsMacroblock macroblockWire;
@@ -89,16 +88,32 @@ namespace Demo
     public:
         Tutorial_TerrainGameState( const Ogre::String &helpDescription );
 
+        //  main
         void createScene01() override;
         void destroyScene() override;
 
         void update( float timeSinceLast ) override;
 
+        //  events
         void keyPressed( const SDL_KeyboardEvent &arg ) override;
         void keyReleased( const SDL_KeyboardEvent &arg ) override;
 
-        //  scene
+
+        //  scene  ----
+        Ogre::Real sizeXZ = 1000.f;
+        void CreateTerrain(), DestroyTerrain();
+        Ogre::SceneNode *nodeTerrain = 0;
+
+        void CreatePlane(), DestroyPlane();
+        Ogre::MeshPtr planeMesh = 0;
+        Ogre::Item *planeItem = 0;
+        Ogre::SceneNode *planeNode = 0;
+
         void CreateSkyDome(Ogre::String sMater, float yaw);
+        int iSky = 0;
+        Ogre::ManualObject* moSky = 0;
+        Ogre::SceneNode* ndSky = 0;
+        void DestroySkyDome();
     
         void SetupTrees(), CreateTrees(), DestroyTrees();
 
@@ -108,7 +123,9 @@ namespace Demo
 
         void CreateManualObj(Ogre::Vector3 camPos);
         void CreateParticles();
+
         void CreateCar();
+        int iCar = 1;  const int nCars = 3;
     };
 }
 
