@@ -2,51 +2,26 @@
 #include "CameraController.h"
 #include "GraphicsSystem.h"
 #include "SDL_scancode.h"
-#include "Utils/MeshUtils.h"
 
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
-// #include "Vao/OgreVaoManager.h"
-// #include "Vao/OgreVertexArrayObject.h"
+#include "OgreLogManager.h"
 
 #include "OgreCamera.h"
 #include "OgreWindow.h"
 #include "OgreFrameStats.h"
 
-// #include "Terra/Hlms/OgreHlmsTerra.h"
-// #include "Terra/Hlms/PbsListener/OgreHlmsPbsTerraShadows.h"
 #include "Terra/Terra.h"
-// #include "Terra/TerraShadowMapper.h"
-#include "OgreHlmsManager.h"
 #include "OgreHlms.h"
-// #include "Compositor/OgreCompositorManager2.h"
-// #include "Compositor/OgreCompositorWorkspace.h"
-
-#include "OgreTextureGpuManager.h"
-
 #include "OgreGpuProgramManager.h"
-#include "OgreHlmsPbsDatablock.h"
-
 #include "OgreItem.h"
-#include "OgreLogManager.h"
-
-#include "OgreMesh.h"
-#include "OgreMeshManager.h"
-#include "OgreMesh2.h"
-#include "OgreMeshManager2.h"
-#include "OgreManualObject2.h"
-
-#include "OgreParticleSystem.h"
 
 #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
 #    include "OgreAtmosphereNpr.h"
 #endif
 
-
 using namespace Demo;
 using namespace Ogre;
-
-#define LogO(s)  LogManager::getSingleton().logMessage(s)
 
 
 namespace Demo
