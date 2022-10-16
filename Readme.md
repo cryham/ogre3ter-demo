@@ -1,6 +1,6 @@
 ## Screenshot
 
-![](https://github.com/cryham/ogre3ter-demo/blob/master/screen1.jpg?raw=true)
+![](https://github.com/cryham/ogre3ter-demo/blob/main/screen1.jpg?raw=true)
 
 
 ## Description
