@@ -8,7 +8,7 @@
 Ogre-Next demo. Based on Tutorial_Terrain.
 Showing:
 * **Terrain** with 4 layers
-* **Vegetation**, few layers: tree, palm, ferns, rocks
+* **Vegetation**, 9 layers: tree, palm, 4 rocks, 2 ferns, plant
 * **Atmosphere** component with adjustable parameters
 * **Car** models, **particles**
 
@@ -17,6 +17,8 @@ Specular light is somewhat broken, too much still.
 Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
 
 ## Keys
+
+F1 - Toggle Help text  
 
 W,S, A,D, Q,E - move camera: forward,backward, left,right, down,up
 
@@ -38,8 +40,6 @@ Left,Right - dec / increase parameter
 Numpad /,* - rotate **sun** yaw  
 Numpad +,- - change sun pitch (time of day)  
 
-F1 - Toggle Help text  
-
 To reload *shaders* (after editing):  
 Ctrl-F1 - PBS,  Ctrl-F2 - Unlit,  Ctrl-F3 - Compute,  Ctrl-F4 - Terrain  
 Ctrl-F5 - Force device reelection  
@@ -49,4 +49,9 @@ Ctrl-F5 - Force device reelection
 Top line meaning:
 
 **Fps** (frames per second), **f** face (triangles) count [k = 1000], **d** draw count, **i** instances  
-Veget - total vegetation models on scece
+Veget - total vegetation models on scene
+
+## Building from sources
+
+Only tested on Linux, Debian 11.
+See CMake

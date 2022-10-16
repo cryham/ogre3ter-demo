@@ -77,14 +77,12 @@ namespace Demo
         AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
         AtmosphereNpr::Preset p = atmosphere->getPreset();
         p.fogDensity = 0.0002f;  //** par
-        p.densityCoeff = 0.27f;
-        p.densityDiffusion = 0.75f;
-        // p.densityCoeff = 0.47f;
-        // p.densityDiffusion = 2.0f;
+        p.densityCoeff = 0.27f;  //0.47f;
+        p.densityDiffusion = 0.75f;  //2.0f;
         p.horizonLimit = 0.025f;
         // p.sunPower = 1.0f;
         // p.skyPower = 1.0f;
-        p.skyColour = Vector3(0.334f, 0.57f, 1.0f);
+        p.skyColour = Vector3(0.234f, 0.57f, 1.0f);
         p.fogBreakMinBrightness = 0.25f;
         p.fogBreakFalloff = 0.1f;
         // p.linkedLightPower = Math::PI;
