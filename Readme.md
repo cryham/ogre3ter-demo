@@ -1,6 +1,6 @@
 ## Screenshot
 
-![](https://github.com/cryham/ogre3ter-demo/blob/master/screenshot.jpg?raw=true)
+![](https://github.com/cryham/ogre3ter-demo/blob/master/screen1.jpg?raw=true)
 
 
 ## Description
@@ -40,7 +40,7 @@ Numpad +,- - change sun pitch (time of day)
 
 F1 - Toggle Help text  
 
-To reload *shaders* (after you edited them):  
+To reload *shaders* (after editing):  
 Ctrl-F1 - PBS  Ctrl-F2 - Unlit  Ctrl-F3 - Compute  Ctrl-F4 - Terrain  
 Ctrl-F5 - Force device reelection  
 

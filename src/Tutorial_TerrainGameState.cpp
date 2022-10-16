@@ -53,8 +53,8 @@ namespace Demo
 {
     Tutorial_TerrainGameState::Tutorial_TerrainGameState( const String &helpDescription )
         : TutorialGameState( helpDescription )
-        , mPitch( Math::PI * 0.55f )  // par
-        , mYaw( 0 )
+        , mPitch( 50.f * Math::PI / 180.f )  // par
+        , mYaw( 102 * Math::PI / 180.f )
     {
         macroblockWire.mPolygonMode = PM_WIREFRAME;
         SetupTrees();
@@ -276,11 +276,11 @@ namespace Demo
                 +"\n";
                 // +" b " + toStr( rm.mBatchCount, 0) + "\n";
 
-            outText += "Veget all: " + toStr(vegetNodes.size(), 5);
-            outText += "\n- + Sun Pitch " + toStr( mPitch * 180.f / Math::PI, 3 );
-            outText += "\n/ * Sun Yaw   " + toStr( mYaw * 180.f / Math::PI, 3 );
+            outText += "Veget all  " + toStr(vegetNodes.size(), 5);
+            outText += "\n- + Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
+            outText += "\n/ * Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
 
-            outText += "\n^ v Param: " + toStr( param, 0 );
+            outText += "\n^ v Param  " + toStr( param, 0 );
             
             SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
             AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
@@ -289,21 +289,21 @@ namespace Demo
             outText += "\n< > ";  const int d = 3;
             switch (param)
             {
-            case 0:   outText += "Fog density: " + toStr( p.fogDensity, d );  break;
-            case 1:   outText += "density coeff: " + toStr( p.densityCoeff, d );  break;
-            case 2:   outText += "density diffusion: " + toStr( p.densityDiffusion, d );  break;
-            case 3:   outText += "horizon limit: " + toStr( p.horizonLimit, d );  break;
-            case 4:   outText += "Sun Power: " + toStr( p.sunPower, d );  break;
-            case 5:   outText += "sky Power: " + toStr( p.skyPower, d );  break;
-            case 6:   outText += "sky Colour   Red: " + toStr( p.skyColour.x, d );  break;
-            case 7:   outText += "sky Colour Green: " + toStr( p.skyColour.y, d );  break;
-            case 8:   outText += "sky Colour   Blu: " + toStr( p.skyColour.z, d );  break;
-            case 9:   outText += "fog break MinBright: " + toStr( p.fogBreakMinBrightness, d );  break;
-            case 10:  outText += "fog break Falloff: " + toStr( p.fogBreakFalloff, d );  break;
-            case 11:  outText += "linked LightPower: " + toStr( p.linkedLightPower, d );  break;
-            case 12:  outText += "ambient UpperPower: " + toStr( p.linkedSceneAmbientUpperPower, d );  break;
-            case 13:  outText += "ambient LowerPower: " + toStr( p.linkedSceneAmbientLowerPower, d );  break;
-            case 14:  outText += "envmap Scale: " + toStr( p.envmapScale, d );  break;
+            case 0:   outText += "Fog density  " + toStr( p.fogDensity, d );  break;
+            case 1:   outText += "density coeff  " + toStr( p.densityCoeff, d );  break;
+            case 2:   outText += "density diffusion  " + toStr( p.densityDiffusion, d );  break;
+            case 3:   outText += "horizon limit  " + toStr( p.horizonLimit, d );  break;
+            case 4:   outText += "Sun Power  " + toStr( p.sunPower, d );  break;
+            case 5:   outText += "sky Power  " + toStr( p.skyPower, d );  break;
+            case 6:   outText += "sky Colour   Red  " + toStr( p.skyColour.x, d );  break;
+            case 7:   outText += "sky Colour Green  " + toStr( p.skyColour.y, d );  break;
+            case 8:   outText += "sky Colour  Blue  " + toStr( p.skyColour.z, d );  break;
+            case 9:   outText += "fog break MinBright  " + toStr( p.fogBreakMinBrightness, d );  break;
+            case 10:  outText += "fog break Falloff  " + toStr( p.fogBreakFalloff, d );  break;
+            case 11:  outText += "linked LightPower  " + toStr( p.linkedLightPower, d );  break;
+            case 12:  outText += "ambient UpperPower  " + toStr( p.linkedSceneAmbientUpperPower, d );  break;
+            case 13:  outText += "ambient LowerPower  " + toStr( p.linkedSceneAmbientLowerPower, d );  break;
+            case 14:  outText += "envmap Scale  " + toStr( p.envmapScale, d );  break;
             }
         }
     }

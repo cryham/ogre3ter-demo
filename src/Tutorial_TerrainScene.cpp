@@ -84,8 +84,8 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateTrees()
 	{
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
     #if 0
         HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
         pbsdatablock->setTwoSidedLighting( true );  //?
@@ -104,7 +104,7 @@ namespace Demo
 				//  Item  ----
                 Item *item;
                 try 
-				{   item = sceneManager->createItem( lay.mesh,
+				{   item = mgr->createItem( lay.mesh,
 					    ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
 					    SCENE_STATIC );
                 }catch(...)
@@ -153,14 +153,14 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::DestroyTrees()
 	{
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
 		
 		for (auto node : vegetNodes)
-			sceneManager->destroySceneNode(node);
+			mgr->destroySceneNode(node);
 		vegetNodes.clear();
 		
 		for (auto item : vegetItems)
-			sceneManager->destroyItem(item);
+			mgr->destroyItem(item);
 		vegetItems.clear();
 	}
 
@@ -171,8 +171,8 @@ namespace Demo
     {
         if (mTerra) return;
         Root *root = mGraphicsSystem->getRoot();
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
         
         HlmsManager *hlmsManager = root->getHlmsManager();
         HlmsDatablock *datablock = 0;
@@ -180,8 +180,8 @@ namespace Demo
         LogO("---- new Terra");
 
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
-                            &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
-                            sceneManager, 11u, root->getCompositorManager2(),
+                            &mgr->_getEntityMemoryManager( SCENE_STATIC ),
+                            mgr, 11u, root->getCompositorManager2(),
                             mGraphicsSystem->getCamera(), false );
         mTerra->setCastShadows( false );
 
@@ -252,40 +252,28 @@ namespace Demo
             "Plane", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             planeMeshV1.get(), true, true, true );
 
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
 
-        planeItem = sceneManager->createItem( planeMesh, SCENE_STATIC );
+        planeItem = mgr->createItem( planeMesh, SCENE_STATIC );
         planeItem->setDatablock( "Ground" );
         
         planeNode = rootNode->createChildSceneNode( SCENE_STATIC );
         planeNode->setPosition( 0, 0, 0 );
         planeNode->attachObject( planeItem );
-
-        //  Change the addressing mode to wrap
-        /*assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
-        HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(item->getSubItem(0)->getDatablock() );
-        HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
-        samplerblock.mU = TAM_WRAP;
-        samplerblock.mV = TAM_WRAP;
-        samplerblock.mW = TAM_WRAP;
-        datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
-        datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
-        datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
-        datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
     }
 
     void Tutorial_TerrainGameState::DestroyPlane()
     {
         LogO("---- destroy Plane");
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
         // if (planeMesh)
-        // {   MeshManager::getSingleton().destroy();  // ?
+        // {   MeshManager::getSingleton().destroy();  // todo: ?
         //     planeMesh = 0;  }
         if (planeItem)
-        {   sceneManager->destroyItem(planeItem);  planeItem = 0;  }
+        {   mgr->destroyItem(planeItem);  planeItem = 0;  }
         if (planeNode)
-        {   sceneManager->destroySceneNode(planeNode);  planeNode = 0;  }
+        {   mgr->destroySceneNode(planeNode);  planeNode = 0;  }
     }
 
 
@@ -296,8 +284,8 @@ namespace Demo
         if (moSky)  return;
     	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
         
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        ManualObject* m = sceneManager->createManualObject();
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        ManualObject* m = mgr->createManualObject();
         m->begin(sMater, OT_TRIANGLE_LIST);
 
         //  divisions- quality
@@ -333,14 +321,12 @@ namespace Demo
         m->end();
         moSky = m;
 
-        //AxisAlignedBox aab;  aab.setInfinite();
-        //m->setBoundingBox(aab);
         Aabb aab(Vector3(0,0,0), Vector3(1,1,1)*1000000);
         m->setLocalAabb(aab);  // always visible
         //m->setRenderQueueGroup(230);  //?
         m->setCastShadows(false);
 
-        ndSky = sceneManager->getRootSceneNode()->createChildSceneNode();
+        ndSky = mgr->getRootSceneNode()->createChildSceneNode();
         ndSky->attachObject(m);  // SCENE_DYNAMIC
         ndSky->setScale(scale);
         Quaternion q;  q.FromAngleAxis(Degree(-yaw), Vector3::UNIT_Y);
@@ -364,11 +350,11 @@ namespace Demo
     void Tutorial_TerrainGameState::DestroySkyDome()
     {
         LogO("---- destroy SkyDome");
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
         if (moSky)
-        {   sceneManager->destroyManualObject(moSky);  moSky = 0;  }
+        {   mgr->destroyManualObject(moSky);  moSky = 0;  }
         if (ndSky)
-        {   sceneManager->destroySceneNode(ndSky);  ndSky = 0;  }
+        {   mgr->destroySceneNode(ndSky);  ndSky = 0;  }
     }
 
 
@@ -376,8 +362,8 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateParticles()
     {
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
         LogO("---- new Particles");
 
         Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
@@ -386,7 +372,7 @@ namespace Demo
 
         for (int i=0; i < 2; ++i)  // 20
         {
-            ParticleSystem* parSys = sceneManager->createParticleSystem(
+            ParticleSystem* parSys = mgr->createParticleSystem(
                 i%2 ? "Smoke" : "Fire");
             //parHit->setVisibilityFlags(RV_Particles);
             SceneNode* node = rootNode->createChildSceneNode();
@@ -406,8 +392,8 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateCar()
     {
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
 
         Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
         Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
@@ -433,7 +419,7 @@ namespace Demo
 
         for (int i=0; i < carParts; ++i)
         {
-            Item *item = sceneManager->createItem( car + carPart[i],
+            Item *item = mgr->createItem( car + carPart[i],
                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
 
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
@@ -453,7 +439,7 @@ namespace Demo
         //  wheels
         for (int i=0; i < 4; ++i)
         {
-            Item *item = sceneManager->createItem( car + sWheel,
+            Item *item = mgr->createItem( car + sWheel,
                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
 
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
@@ -486,13 +472,13 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateManualObj(Ogre::Vector3 camPos)
 	{
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
 
         LogO("---- new Manual object");
         ManualObject *m;
         std::vector<Vector3> mVertices;
 
-        m = sceneManager->createManualObject();
+        m = mgr->createManualObject();
         m->begin("jungle_tree", OT_TRIANGLE_LIST);
         //m->begin("ParSmoke", OT_TRIANGLE_LIST);
 
@@ -541,8 +527,7 @@ namespace Demo
         }
         m->end();
 
-        SceneNode *sceneNodeGrid = sceneManager->getRootSceneNode( SCENE_DYNAMIC )->
-                                     createChildSceneNode( SCENE_DYNAMIC );
+        SceneNode *sceneNodeGrid = mgr->getRootSceneNode( SCENE_DYNAMIC )->createChildSceneNode( SCENE_DYNAMIC );
         sceneNodeGrid->attachObject(m);
         sceneNodeGrid->scale(4.0f, 4.0f, 4.0f);
         Vector3 objPos = camPos + Vector3( 0.f, -5.f, -10.f);
