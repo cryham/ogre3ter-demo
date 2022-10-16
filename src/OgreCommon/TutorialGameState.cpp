@@ -56,14 +56,14 @@ namespace Demo
         Ogre::v1::OverlayContainer *panel = static_cast<Ogre::v1::OverlayContainer*>(
             overlayManager.createOverlayElement("Panel", "DebugPanel"));
         mDebugText = static_cast<Ogre::v1::TextAreaOverlayElement*>(
-                    overlayManager.createOverlayElement( "TextArea", "DebugText" ) );
+            overlayManager.createOverlayElement( "TextArea", "DebugText" ) );
         mDebugText->setFontName( "DebugFont" );
-        mDebugText->setCharHeight( 0.025f );
+        mDebugText->setCharHeight( 0.022f );
 
         mDebugTextShadow= static_cast<Ogre::v1::TextAreaOverlayElement*>(
-                    overlayManager.createOverlayElement( "TextArea", "0DebugTextShadow" ) );
+            overlayManager.createOverlayElement( "TextArea", "0DebugTextShadow" ) );
         mDebugTextShadow->setFontName( "DebugFont" );
-        mDebugTextShadow->setCharHeight( 0.025f );
+        mDebugTextShadow->setCharHeight( 0.022f );
         mDebugTextShadow->setColour( Ogre::ColourValue::Black );
         mDebugTextShadow->setPosition( 0.002f, 0.002f );
 
@@ -77,46 +77,23 @@ namespace Demo
     {
         if( mDisplayHelpMode == 0 )
         {
-            outText = mHelpDescription;
-            outText += "\n\nPress F1 to toggle help";
-            outText += "\n\nCtrl+F1 reload PBS shaders.\n"
-                       "Ctrl+F2 reloads Unlit shaders.\n"
-                       "Ctrl+F3 reloads Compute shaders.\n";
-            return;
+            //outText = mHelpDescription;
+            outText = "F1 toggle help\n";
+            outText += "Reload shaders:\n"
+                       "Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
+            outText += "V add Vegetation  C clear it\n";
+            outText += "T terrain / flat  R wireframe\n";
+            outText += "K next Sky  G add next Car  F add Fire\n\n";
         }
-
-        const Ogre::FrameStats *frameStats = mGraphicsSystem->getRoot()->getFrameStats();
-
-        Ogre::String finalText;
-        finalText.reserve( 128 );
-        /*finalText  = "Frame time:\t";
-        finalText += Ogre::StringConverter::toString( timeSinceLast * 1000.0f );
-        finalText += " ms\n";
-        finalText += "Frame FPS:\t";
-        finalText += Ogre::StringConverter::toString( 1.0f / timeSinceLast );
-        finalText += "\nAvg time:\t";
-        finalText += Ogre::StringConverter::toString( frameStats->getAvgTime() );
-        finalText += " ms\n";
-        finalText += "Avg FPS:\t";*/
-        finalText += Ogre::StringConverter::toString( (int)frameStats->getAvgFps() ) + "\n";
-        //finalText += "\n\nPress F1 to toggle help";
-
-        outText.swap( finalText );
-
-        mDebugText->setCaption( finalText );
-        mDebugTextShadow->setCaption( finalText );
     }
     //-----------------------------------------------------------------------------------
     void TutorialGameState::update( float timeSinceLast )
     {
-        if( mDisplayHelpMode != 0 )
-        {
-            //Show FPS
-            Ogre::String finalText;
-            generateDebugText( timeSinceLast, finalText );
-            mDebugText->setCaption( finalText );
-            mDebugTextShadow->setCaption( finalText );
-        }
+        //Show FPS etc
+        Ogre::String finalText;
+        generateDebugText( timeSinceLast, finalText );
+        mDebugText->setCaption( finalText );
+        mDebugTextShadow->setCaption( finalText );
 
         if( mCameraController )
             mCameraController->update( timeSinceLast );

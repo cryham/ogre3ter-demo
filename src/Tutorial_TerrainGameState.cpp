@@ -1,31 +1,3 @@
-/*
------------------------------------------------------------------------------
-This source file is part of OGRE-Next
-    (Object-oriented Graphics Rendering Engine)
-For the latest info, see http://www.ogre3d.org/
-
-Copyright (c) 2000-2021 Torus Knot Software Ltd
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
------------------------------------------------------------------------------
-*/
-
 #include "Tutorial_TerrainGameState.h"
 #include "CameraController.h"
 #include "GraphicsSystem.h"
@@ -33,23 +5,22 @@ THE SOFTWARE.
 #include "Utils/MeshUtils.h"
 
 #include "OgreSceneManager.h"
-
 #include "OgreRoot.h"
-#include "Vao/OgreVaoManager.h"
-#include "Vao/OgreVertexArrayObject.h"
+// #include "Vao/OgreVaoManager.h"
+// #include "Vao/OgreVertexArrayObject.h"
 
 #include "OgreCamera.h"
 #include "OgreWindow.h"
 #include "OgreFrameStats.h"
 
-#include "Terra/Hlms/OgreHlmsTerra.h"
-#include "Terra/Hlms/PbsListener/OgreHlmsPbsTerraShadows.h"
+// #include "Terra/Hlms/OgreHlmsTerra.h"
+// #include "Terra/Hlms/PbsListener/OgreHlmsPbsTerraShadows.h"
 #include "Terra/Terra.h"
-#include "Terra/TerraShadowMapper.h"
+// #include "Terra/TerraShadowMapper.h"
 #include "OgreHlmsManager.h"
 #include "OgreHlms.h"
-#include "Compositor/OgreCompositorManager2.h"
-#include "Compositor/OgreCompositorWorkspace.h"
+// #include "Compositor/OgreCompositorManager2.h"
+// #include "Compositor/OgreCompositorWorkspace.h"
 
 #include "OgreTextureGpuManager.h"
 
@@ -80,14 +51,10 @@ using namespace Ogre;
 
 namespace Demo
 {
-    Tutorial_TerrainGameState::Tutorial_TerrainGameState( const String &helpDescription ) :
-        TutorialGameState( helpDescription ),
-        mLockCameraToGround( false ),
-        mPitch( Math::PI * 0.55f ),  // par
-        mYaw( 0 ),
-        mTerra( 0 ),
-        mSunLight( 0 ),
-        mHlmsPbsTerraShadows( 0 )
+    Tutorial_TerrainGameState::Tutorial_TerrainGameState( const String &helpDescription )
+        : TutorialGameState( helpDescription )
+        , mPitch( Math::PI * 0.55f )  // par
+        , mYaw( 0 )
     {
         macroblockWire.mPolygonMode = PM_WIREFRAME;
         SetupTrees();
@@ -98,97 +65,19 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::createScene01()
     {
-        Root *root = mGraphicsSystem->getRoot();
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        
-        HlmsManager *hlmsManager = root->getHlmsManager();
-        HlmsDatablock *datablock = 0;
-        
-       
         SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
 
         LogManager::getSingleton().setLogDetail(LoggingLevel::LL_BOREME);
 
         LogO("---- createScene");
-
-        RenderSystem *renderSystem = root->getRenderSystem();  //**
+        Root *root = mGraphicsSystem->getRoot();
+        RenderSystem *renderSystem = root->getRenderSystem();
         renderSystem->setMetricsRecordingEnabled( true );
 
 
-        LogO("---- new Terra");
-
-        // Render terrain after most objects, to improve performance by taking advantage of early Z
-
-    #if 1  //** 1 terrain
-        mTerra = new Terra( Id::generateNewId<MovableObject>(),
-                            &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
-                            sceneManager, 11u, root->getCompositorManager2(),
-                            mGraphicsSystem->getCamera(), false );
-        mTerra->setCastShadows( false );
-
-        LogO("---- Terra load");
-
-        //  Heightmap  ------------------------------------------------
-        //  64  flat
-        //mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
-        //  1k  600 fps  4 tex
-        mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
-        // mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f ), Vector3( 1024.f, 1.f, 1024.f ), false, false );
-        //  2k
-        //mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f ), Vector3( 12096.0f, 6096.0f, 12096.0f ), false, false );
-        //  4k
-        //mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f ), 2.f* Vector3( 4096.0f, 4096.0f, 4096.0f ), false, false );
-
-        SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
-        node->attachObject( mTerra );
-
-        LogO("---- Terra attach");
-
-        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
-        mTerra->setDatablock( datablock );
-
-        {
-            mHlmsPbsTerraShadows = new HlmsPbsTerraShadows();
-            mHlmsPbsTerraShadows->setTerra( mTerra );
-            //Set the PBS listener so regular objects also receive terrain shadows
-            Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
-            hlmsPbs->setListener( mHlmsPbsTerraShadows );
-        }
-    #else
-        //  Plane  ------------------------------------------------
-        v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane( "Plane v1",
-            ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            Plane( Vector3::UNIT_Y, 1.0f ), 2000.0f, 2000.0f,
-            10, 10, true, 1, 40.0f, 40.0f, Vector3::UNIT_Z,
-            v1::HardwareBuffer::HBU_STATIC, v1::HardwareBuffer::HBU_STATIC );
-
-        MeshPtr planeMesh = MeshManager::getSingleton().createByImportingV1(
-            "Plane", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            planeMeshV1.get(), true, true, true );
-        {
-            Item *item = sceneManager->createItem( planeMesh, SCENE_STATIC );
-            item->setDatablock( "Ground" );
-            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
-            node->setPosition( 0, 0, 0 );
-            node->attachObject( item );
-
-            //  Change the addressing mode to wrap
-            /*assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
-            HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(item->getSubItem(0)->getDatablock() );
-            HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
-            samplerblock.mU = TAM_WRAP;
-            samplerblock.mV = TAM_WRAP;
-            samplerblock.mW = TAM_WRAP;
-            datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
-            datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
-            datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
-            datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
-        }
-    #endif
-
-        LogO("---- new light");
-
         //  Light  ------------------------------------------------
+        LogO("---- new light");
         mSunLight = sceneManager->createLight();
         SceneNode *lightNode = rootNode->createChildSceneNode();
         lightNode->attachObject( mSunLight );
@@ -205,7 +94,9 @@ namespace Demo
             ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
             Vector3::UNIT_Y );
 
-#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+        //  atmosphere  ------------------------------------------------
+    #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+        LogO("---- new Atmosphere");
         mGraphicsSystem->createAtmosphere( mSunLight );
         OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
         AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
@@ -226,7 +117,7 @@ namespace Demo
         // p.linkedSceneAmbientLowerPower = 0.01f * Math::PI;
         p.envmapScale = 1.0f;
         atmosphere->setPreset( p );
-#endif
+    #endif
 
         //  camera  ------------------------------------------------
         mCameraController = new CameraController( mGraphicsSystem, false );
@@ -241,10 +132,10 @@ namespace Demo
         Vector3 objPos;
 
 
-    #if 0  //  Sky Dome
-        CreateSkyDome("sky-clearday1", 0.f);
-        //CreateSkyDome("sky_photo6", 0.f);  // clouds
-    #endif
+        //  Terrain  ------------------------------------------------
+        CreatePlane();  // fast
+        // CreateTerrain();  // 5sec
+        // CreateTrees();
 
         LogO("---- tutorial createScene");
 
@@ -257,19 +148,9 @@ namespace Demo
     void Tutorial_TerrainGameState::destroyScene()
     {
         LogO("---- destroyScene");
-        Root *root = mGraphicsSystem->getRoot();
-        Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
 
-        //Unset the PBS listener and destroy it
-        if( hlmsPbs->getListener() == mHlmsPbsTerraShadows )
-        {
-            hlmsPbs->setListener( 0 );
-            delete mHlmsPbsTerraShadows;
-            mHlmsPbsTerraShadows = 0;
-        }
-
-        delete mTerra;
-        mTerra = 0;
+        DestroyTerrain();
+        DestroyPlane();
 
         LogO("---- tutorial destroyScene");
 
@@ -359,16 +240,6 @@ namespace Demo
         }
 
         TutorialGameState::update( timeSinceLast );
-
-        //  Camera must be locked to ground after we've moved it.
-        //  Otherwise fast motion may go below the terrain for 1 or 2 frames.
-        if( mLockCameraToGround && mTerra )
-        {
-            mTerra->getHeightAt( camPos );
-            Camera *camera = mGraphicsSystem->getCamera();
-            Vector3 camPos = camera->getPosition();
-            camera->setPosition( camPos + Vector3::UNIT_Y * 10.0f );
-        }
     }
 
 
@@ -376,69 +247,64 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::generateDebugText( float timeSinceLast, String &outText )
     {
-        //TutorialGameState::generateDebugText( timeSinceLast, outText );
-        #define toStr(v, p)  StringConverter::toString(v,p)
         //auto toStr = [](auto v, auto p=1) {  return StringConverter::toString(v,p);  };
+        #define toStr(v, p)  StringConverter::toString(v,p)
         outText = "";
 
         if( mDisplayHelpMode == 0 )
         {
-            //  F1 still help
-            outText += "\nCtrl+F4 will reload Terra's shaders.";
+            TutorialGameState::generateDebugText( timeSinceLast, outText );
             
-            outText += "\nF2 Lock Ground: ";
-            outText += mLockCameraToGround ? "Yes" : "No";
-
             Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
-            outText += "\n\nPos: " + toStr( camPos.x, 1) +" "+ toStr( camPos.y, 1) +" "+ toStr( camPos.z, 1);
+            outText += "Pos: " + toStr( camPos.x, 4) +" "+ toStr( camPos.y, 4) +" "+ toStr( camPos.z, 4) + "\n\n";
+
+            #if 1  // list all veget cnts
+            for (const auto& lay : vegetLayers)
+                outText += toStr( lay.count, 4 ) + " " + lay.mesh + "\n";
+            #endif
         }
         else if( mDisplayHelpMode == 1 )
         {
-            //  fps stats
+            //  fps stats  ------------------------------------------------
             RenderSystem *rs = mGraphicsSystem->getRoot()->getRenderSystem();
-            const RenderingMetrics& rm = rs->getMetrics();  //**
+            const RenderingMetrics& rm = rs->getMetrics();  //** fps
             const FrameStats *st = mGraphicsSystem->getRoot()->getFrameStats();
             
-            outText += toStr( (int)st->getAvgFps(), 0) +"  "+ //"\n" +
+            outText += toStr( (int)st->getAvgFps(), 4) +"  "+ //"\n" +
                 "f " + toStr( rm.mFaceCount/1000, 0) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
-                "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0) + 
-                " b " + toStr( rm.mBatchCount, 0) + "\n";
+                "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0)
+                +"\n";
+                // +" b " + toStr( rm.mBatchCount, 0) + "\n";
 
-            outText += "Veget: " + toStr(vegetNodes.size(), 5);
-            outText += "\n+ - sun Pitch " + toStr( mPitch * 180.f / Math::PI, 3 );
-            outText += "\n/ * sun Yaw   " + toStr( mYaw * 180.f / Math::PI, 3 );
+            outText += "Veget all: " + toStr(vegetNodes.size(), 5);
+            outText += "\n- + Sun Pitch " + toStr( mPitch * 180.f / Math::PI, 3 );
+            outText += "\n/ * Sun Yaw   " + toStr( mYaw * 180.f / Math::PI, 3 );
 
-            outText += "\nParam: " + toStr( param, 0 );
+            outText += "\n^ v Param: " + toStr( param, 0 );
             
             SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
             AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
             AtmosphereNpr::Preset p = atmosphere->getPreset();
             
-            outText += "\n";
+            outText += "\n< > ";  const int d = 3;
             switch (param)
             {
-            case 0:   outText += "Fog density: " + toStr( p.fogDensity, 5 );  break;
-            case 1:   outText += "density coeff: " + toStr( p.densityCoeff, 5 );  break;
-            case 2:   outText += "density diffusion: " + toStr( p.densityDiffusion, 5 );  break;
-            case 3:   outText += "horizon limit: " + toStr( p.horizonLimit, 5 );  break;
-            case 4:   outText += "Sun Power: " + toStr( p.sunPower, 5 );  break;
-            case 5:   outText += "sky Power: " + toStr( p.skyPower, 5 );  break;
-            case 6:   outText += "sky Colour R: " + toStr( p.skyColour.x, 5 );  break;
-            case 7:   outText += "sky Colour G: " + toStr( p.skyColour.y, 5 );  break;
-            case 8:   outText += "sky Colour B: " + toStr( p.skyColour.z, 5 );  break;
-            case 9:   outText += "fog break MinBright: " + toStr( p.fogBreakMinBrightness, 5 );  break;
-            case 10:  outText += "fog break Falloff: " + toStr( p.fogBreakFalloff, 5 );  break;
-            case 11:  outText += "linked LightPower: " + toStr( p.linkedLightPower, 5 );  break;
-            case 12:  outText += "ambient UpperPower: " + toStr( p.linkedSceneAmbientUpperPower, 5 );  break;
-            case 13:  outText += "ambient LowerPower: " + toStr( p.linkedSceneAmbientLowerPower, 5 );  break;
-            case 14:  outText += "envmap Scale: " + toStr( p.envmapScale, 5 );  break;
+            case 0:   outText += "Fog density: " + toStr( p.fogDensity, d );  break;
+            case 1:   outText += "density coeff: " + toStr( p.densityCoeff, d );  break;
+            case 2:   outText += "density diffusion: " + toStr( p.densityDiffusion, d );  break;
+            case 3:   outText += "horizon limit: " + toStr( p.horizonLimit, d );  break;
+            case 4:   outText += "Sun Power: " + toStr( p.sunPower, d );  break;
+            case 5:   outText += "sky Power: " + toStr( p.skyPower, d );  break;
+            case 6:   outText += "sky Colour   Red: " + toStr( p.skyColour.x, d );  break;
+            case 7:   outText += "sky Colour Green: " + toStr( p.skyColour.y, d );  break;
+            case 8:   outText += "sky Colour   Blu: " + toStr( p.skyColour.z, d );  break;
+            case 9:   outText += "fog break MinBright: " + toStr( p.fogBreakMinBrightness, d );  break;
+            case 10:  outText += "fog break Falloff: " + toStr( p.fogBreakFalloff, d );  break;
+            case 11:  outText += "linked LightPower: " + toStr( p.linkedLightPower, d );  break;
+            case 12:  outText += "ambient UpperPower: " + toStr( p.linkedSceneAmbientUpperPower, d );  break;
+            case 13:  outText += "ambient LowerPower: " + toStr( p.linkedSceneAmbientLowerPower, d );  break;
+            case 14:  outText += "envmap Scale: " + toStr( p.envmapScale, d );  break;
             }
-            
-            //**  veget cnt
-            #if 0  // list all cnts
-            for (const auto& lay : vegetLayers)
-                outText += StringConverter::toString( lay.count ) + " " + lay.mesh + "\n";
-            #endif
         }
     }
 
@@ -478,6 +344,13 @@ namespace Demo
             mTerra->setDatablock( datablock );
         }   break;
 
+        case SDL_SCANCODE_T:
+            if (mTerra)
+            {   DestroyTerrain();  CreatePlane();  }
+            else
+            {   CreateTerrain();  DestroyPlane();  }
+            break;
+
         //  Trees add, destroy all
         case SDL_SCANCODE_V:  CreateTrees();  break;
         case SDL_SCANCODE_C:  DestroyTrees();  break;
@@ -485,10 +358,23 @@ namespace Demo
         //  other
         case SDL_SCANCODE_F:  CreateParticles();  break;
         case SDL_SCANCODE_G:  CreateCar();  break;
+
+        case SDL_SCANCODE_K:  
+            if (ndSky)
+                DestroySkyDome();
+            else
+            {
+                switch (iSky)
+                {
+                case 0:  CreateSkyDome("sky-clearday1", 0.f);  ++iSky;  break;
+                case 1:  CreateSkyDome("sky_photo6", 0.f);  iSky = 0;  break;  // clouds
+                }
+            }
+            break;
         
         case SDL_SCANCODE_M:
         {
-            Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
+            // Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
             CreateManualObj(camPos);
         }   break;
         }
@@ -523,10 +409,6 @@ namespace Demo
             GpuProgramManager::getSingleton().clearMicrocodeCache();
             hlms->reloadFrom( hlms->getDataFolder() );
         }   break;
-
-        case SDL_SCANCODE_F2:
-            mLockCameraToGround = !mLockCameraToGround;
-            break;
         }
 
         TutorialGameState::keyReleased( arg );

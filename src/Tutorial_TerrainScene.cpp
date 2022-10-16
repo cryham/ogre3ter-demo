@@ -92,8 +92,8 @@ namespace Demo
         //pbsdatablock->setMacroblock( macroblockWire );
     #endif
 
-		const Real mult    = !mTerra ? 0.1f : 1.f;
-        const Real scaleXZ = !mTerra ? 1000.f : 4095.f/2.f;  //par world
+		const Real mult  = !mTerra ? 0.1f : 1.f;
+        const Real scale = sizeXZ * 0.49f;  // world
 		
         for (auto& lay : vegetLayers)
         {
@@ -127,8 +127,8 @@ namespace Demo
                 
                 //  pos
 				Vector3 objPos = Vector3(
-                    Math::RangeRandom(-scaleXZ, scaleXZ), 0.f,
-                    Math::RangeRandom(-scaleXZ, scaleXZ));
+                    Math::RangeRandom(-scale, scale), 0.f,
+                    Math::RangeRandom(-scale, scale));
                 if (mTerra)
                     mTerra->getHeightAt( objPos );
                 objPos.y += std::min( item->getLocalAabb().getMinimum().y, Real(0.0f) ) * -0.1f + lay.down;  //par
@@ -165,10 +165,135 @@ namespace Demo
 	}
 
 
+    //  Terrain
+    //-----------------------------------------------------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreateTerrain()
+    {
+        if (mTerra) return;
+        Root *root = mGraphicsSystem->getRoot();
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        
+        HlmsManager *hlmsManager = root->getHlmsManager();
+        HlmsDatablock *datablock = 0;
+
+        LogO("---- new Terra");
+
+        mTerra = new Terra( Id::generateNewId<MovableObject>(),
+                            &sceneManager->_getEntityMemoryManager( SCENE_STATIC ),
+                            sceneManager, 11u, root->getCompositorManager2(),
+                            mGraphicsSystem->getCamera(), false );
+        mTerra->setCastShadows( false );
+
+        LogO("---- Terra load");
+
+        //  Heightmap  ------------------------------------------------
+        switch (1)
+        {
+        case 0:  //  64  flat
+            sizeXZ = 12096.f;
+            mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f), Vector3(sizeXZ, 6096.0f, sizeXZ), false, false);  break;
+        case 1:  //  1k  600 fps  4 tex
+            sizeXZ = 4096.f;
+            mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);  break;
+        case 2:  //  1k
+            sizeXZ = 1024.f;
+            mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f), Vector3(sizeXZ, 1.f, sizeXZ), false, false);  break;
+        case 3:  //  2k
+            sizeXZ = 12096.f;
+            mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f), Vector3(sizeXZ, 6096.0f, sizeXZ), false, false);  break;
+        case 4:  //  4k
+            sizeXZ = 2.f* 4096.f;
+            mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 2.f* 4096.0f, sizeXZ), false, false);  break;
+        }
+
+        SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+        node->attachObject( mTerra );
+
+        LogO("---- Terra attach");
+
+        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
+        mTerra->setDatablock( datablock );
+
+        mHlmsPbsTerraShadows = new HlmsPbsTerraShadows();
+        mHlmsPbsTerraShadows->setTerra( mTerra );
+        //Set the PBS listener so regular objects also receive terrain shadows
+        Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
+        hlmsPbs->setListener( mHlmsPbsTerraShadows );
+    }
+
+    void Tutorial_TerrainGameState::DestroyTerrain()
+    {
+        LogO("---- destroy Terrain");
+        Root *root = mGraphicsSystem->getRoot();
+        Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
+
+        if( hlmsPbs->getListener() == mHlmsPbsTerraShadows )
+        {
+            hlmsPbs->setListener( 0 );
+            delete mHlmsPbsTerraShadows;  mHlmsPbsTerraShadows = 0;
+        }
+        delete mTerra;  mTerra = 0;
+    }
+
+
+    //  Plane
+    //-----------------------------------------------------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreatePlane()
+    {
+        sizeXZ = 2000.0f;
+        v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane(
+            "Plane v1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            Plane( Vector3::UNIT_Y, 1.0f ), sizeXZ, sizeXZ,
+            10, 10, true, 1, 40.0f, 40.0f, Vector3::UNIT_Z,
+            v1::HardwareBuffer::HBU_STATIC, v1::HardwareBuffer::HBU_STATIC );
+
+        planeMesh = MeshManager::getSingleton().createByImportingV1(
+            "Plane", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            planeMeshV1.get(), true, true, true );
+
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+
+        planeItem = sceneManager->createItem( planeMesh, SCENE_STATIC );
+        planeItem->setDatablock( "Ground" );
+        
+        planeNode = rootNode->createChildSceneNode( SCENE_STATIC );
+        planeNode->setPosition( 0, 0, 0 );
+        planeNode->attachObject( planeItem );
+
+        //  Change the addressing mode to wrap
+        /*assert( dynamic_cast<HlmsPbsDatablock*>( item->getSubItem(0)->getDatablock() ) );
+        HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(item->getSubItem(0)->getDatablock() );
+        HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
+        samplerblock.mU = TAM_WRAP;
+        samplerblock.mV = TAM_WRAP;
+        samplerblock.mW = TAM_WRAP;
+        datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
+        datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
+        datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
+        datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
+    }
+
+    void Tutorial_TerrainGameState::DestroyPlane()
+    {
+        LogO("---- destroy Plane");
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        // if (planeMesh)
+        // {   MeshManager::getSingleton().destroy();  // ?
+        //     planeMesh = 0;  }
+        if (planeItem)
+        {   sceneManager->destroyItem(planeItem);  planeItem = 0;  }
+        if (planeNode)
+        {   sceneManager->destroySceneNode(planeNode);  planeNode = 0;  }
+    }
+
+
     //  Sky dome
     //-----------------------------------------------------------------------------------------------------------------------------
     void Tutorial_TerrainGameState::CreateSkyDome(String sMater, float yaw)
     {
+        if (moSky)  return;
     	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
         
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
@@ -206,6 +331,7 @@ namespace Demo
             }
         }
         m->end();
+        moSky = m;
 
         //AxisAlignedBox aab;  aab.setInfinite();
         //m->setBoundingBox(aab);
@@ -214,7 +340,7 @@ namespace Demo
         //m->setRenderQueueGroup(230);  //?
         m->setCastShadows(false);
 
-        SceneNode *ndSky = sceneManager->getRootSceneNode()->createChildSceneNode();
+        ndSky = sceneManager->getRootSceneNode()->createChildSceneNode();
         ndSky->attachObject(m);  // SCENE_DYNAMIC
         ndSky->setScale(scale);
         Quaternion q;  q.FromAngleAxis(Degree(-yaw), Vector3::UNIT_Y);
@@ -233,6 +359,126 @@ namespace Demo
         datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
         datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
         datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
+    }
+
+    void Tutorial_TerrainGameState::DestroySkyDome()
+    {
+        LogO("---- destroy SkyDome");
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        if (moSky)
+        {   sceneManager->destroyManualObject(moSky);  moSky = 0;  }
+        if (ndSky)
+        {   sceneManager->destroySceneNode(ndSky);  ndSky = 0;  }
+    }
+
+
+    //  Particles
+    //-----------------------------------------------------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreateParticles()
+    {
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+        LogO("---- new Particles");
+
+        Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
+        Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
+        camPos += dir * 40.f;
+
+        for (int i=0; i < 2; ++i)  // 20
+        {
+            ParticleSystem* parSys = sceneManager->createParticleSystem(
+                i%2 ? "Smoke" : "Fire");
+            //parHit->setVisibilityFlags(RV_Particles);
+            SceneNode* node = rootNode->createChildSceneNode();
+            node->attachObject( parSys );
+            parSys->setRenderQueueGroup( 225 );  //? after trees
+
+            Vector3 objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, 0.f);
+            // if (mTerra)
+            //     objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
+            node->setPosition( objPos );
+            //parHit->getEmitter(0)->setEmissionRate(20);
+        }
+    }
+
+
+    //  Car
+    //-----------------------------------------------------------------------------------------------------------------------------
+    void Tutorial_TerrainGameState::CreateCar()
+    {
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
+
+        Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
+        Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
+        camPos += dir * 40.f;
+
+        const String cars[nCars] = { "ES", "SX", "HI" };
+        const String car = cars[iCar];
+        ++iCar;  if (iCar == nCars)  iCar = 0;  // next
+
+        const int carParts = 3;
+        const String carPart[carParts] = {"_body.mesh", "_interior.mesh", "_glass.mesh"}, sWheel = "_wheel.mesh";
+
+        //  scale
+        Real s = 6.f;
+
+        //  pos
+        Vector3 objPos = camPos, pos = objPos;
+        if (mTerra)
+            mTerra->getHeightAt( pos );
+        Real ymin = !mTerra ? 0.85f * s : pos.y + 0.68f * s;
+        // if (objPos.y < ymin)
+            objPos.y = ymin;
+
+        for (int i=0; i < carParts; ++i)
+        {
+            Item *item = sceneManager->createItem( car + carPart[i],
+                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+
+            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+            node->attachObject( item );
+            if (i==2)
+                item->setRenderQueueGroup( 202 );  // glass after trees
+            
+            node->scale( s, s, s );
+            
+            node->setPosition( objPos );
+            
+            //  rot
+            Quaternion q;  q.FromAngleAxis( Degree(180), Vector3::UNIT_Z );
+            node->setOrientation( q );
+        }
+
+        //  wheels
+        for (int i=0; i < 4; ++i)
+        {
+            Item *item = sceneManager->createItem( car + sWheel,
+                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+
+            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+            node->attachObject( item );
+            
+            node->scale( s, s, s );
+            
+            if (car == "SX")
+                node->setPosition( objPos + s * Vector3(
+                    i/2 ? -1.29f : 1.28f,  -0.34f,
+                    i%2 ? -0.8f : 0.8f ) );
+            else if (car == "HI")
+                node->setPosition( objPos + s * Vector3(
+                    i/2 ? -1.29f : 1.30f,  -0.34f,   // front+
+                    i%2 ? -0.88f : 0.88f ) );
+            if (car == "ES")
+                node->setPosition( objPos + s * Vector3(
+                    i/2 ? -1.21f : 1.44f,  -0.36f,
+                    i%2 ? -0.71f : 0.71f ) );
+            
+            //  rot
+            Quaternion q;  q.FromAngleAxis( Degree(-180), Vector3::UNIT_Z );
+            Quaternion r;  r.FromAngleAxis( Degree(i%2 ? 90 : -90), Vector3::UNIT_Y );
+            node->setOrientation( r * q );
+        }
     }
 
 
@@ -302,104 +548,5 @@ namespace Demo
         Vector3 objPos = camPos + Vector3( 0.f, -5.f, -10.f);
         sceneNodeGrid->translate(objPos, SceneNode::TS_LOCAL);
 	}
-
-
-    //  Particles
-    //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateParticles()
-    {
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
-        LogO("---- new Particles");
-
-        Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
-        Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
-        camPos += dir * 40.f;
-
-        for (int i=0; i < 2; ++i)  // 20
-        {
-            ParticleSystem* parSys = sceneManager->createParticleSystem(
-                i%2 ? "Smoke" : "Fire");
-            //parHit->setVisibilityFlags(RV_Particles);
-            SceneNode* node = rootNode->createChildSceneNode();
-            node->attachObject( parSys );
-            parSys->setRenderQueueGroup( 225 );  //? after trees
-
-            Vector3 objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, 0.f);
-            // if (mTerra)
-            //     objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
-            node->setPosition( objPos );
-            //parHit->getEmitter(0)->setEmissionRate(20);
-        }
-    }
-
-
-    //  Car
-    //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateCar()
-    {
-        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        SceneNode *rootNode = sceneManager->getRootSceneNode( SCENE_STATIC );
-
-        Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
-        Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
-        camPos += dir * 40.f;
-
-        const String cars[3] = { "ES", "SX", "HI" };
-        const String car = cars[1];  // par
-
-        const int carParts = 3;
-        const String carPart[carParts] = {"_body.mesh", "_interior.mesh", "_glass.mesh"}, sWheel = "_wheel.mesh";
-
-        //  scale
-        Real s = 6.f;
-
-        //  pos
-        Vector3 objPos = camPos;
-        Real ymin = !mTerra ? 0.85f * s : mTerra->getHeightAt( objPos ) + 12.85f * s;
-        if (objPos.y < ymin)
-            objPos.y = ymin;
-
-        for (int i=0; i < carParts; ++i)
-        {
-            Item *item = sceneManager->createItem( car + carPart[i],
-                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
-
-            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
-            node->attachObject( item );
-            if (i==2)
-                item->setRenderQueueGroup( 202 );  // glass after trees
-            
-            node->scale( s, s, s );
-            
-            node->setPosition( objPos );
-            
-            //  rot
-            Quaternion q;  q.FromAngleAxis( Degree(180), Vector3::UNIT_Z );
-            node->setOrientation( q );
-        }
-
-        //  wheels
-        for (int i=0; i < 4; ++i)
-        {
-            Item *item = sceneManager->createItem( car + sWheel,
-                ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
-
-            SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
-            node->attachObject( item );
-            
-            node->scale( s, s, s );
-            
-            //if (car == "SX")  // todo rest
-            node->setPosition( objPos + s * Vector3(
-                i/2 ? -1.29f : 1.28f,  -0.34f, 
-                i%2 ? -0.8f : 0.8f ) );
-            
-            //  rot
-            Quaternion q;  q.FromAngleAxis( Degree(-180), Vector3::UNIT_Z );
-            Quaternion r;  r.FromAngleAxis( Degree(i%2 ? 90 : -90), Vector3::UNIT_Y );
-            node->setOrientation( r * q );
-        }
-    }
 
 }
