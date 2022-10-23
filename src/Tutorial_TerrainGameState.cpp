@@ -80,14 +80,12 @@ namespace Demo
         // explicitly generate the mipmaps by calling generate_mipmaps. It's just an API
         // hint to tell the GPU we will be using the mipmaps auto generation routines.
         TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
-        mDynamicCubemap =
-            textureManager->createOrRetrieveTexture( "DynamicCubemap",
-                                                     GpuPageOutStrategy::Discard,          //
-                                                     TextureFlags::RenderToTexture |       //
-                                                         TextureFlags::AllowAutomipmaps |  //
-                                                         iblSpecularFlag,                  //
-                                                     TextureTypes::TypeCube );
+        mDynamicCubemap = textureManager->createOrRetrieveTexture( "DynamicCubemap",
+            GpuPageOutStrategy::Discard,
+            TextureFlags::RenderToTexture | TextureFlags::AllowAutomipmaps | iblSpecularFlag,
+            TextureTypes::TypeCube );
         mDynamicCubemap->scheduleTransitionTo( GpuResidency::OnStorage );
+
         uint32 resolution = 512u;
         if( mIblQuality == MipmapsLowest )
             resolution = 1024u;
@@ -118,6 +116,7 @@ namespace Demo
             mCubeCamera->setAspectRatio( 1 );
             mCubeCamera->setFixedYawAxis( false );
             mCubeCamera->setNearClipDistance( 0.5 );
+            mCubeCamera->setVisibilityFlags(0xFFFFFFFF - RV_Car);
             // The default far clip distance is way too big for a cubemap-capable camera,
             // hich prevents Ogre from better culling.
             mCubeCamera->setFarClipDistance( 10000 );

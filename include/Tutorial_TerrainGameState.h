@@ -115,6 +115,7 @@ namespace Demo
         void CreateCar();
         int iCar = 1;
         const static int nCars = 3;
+        const static Ogre::uint32 RV_Car = 2;
     };
 }
 

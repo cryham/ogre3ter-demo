@@ -405,10 +405,12 @@ namespace Demo
         // if (objPos.y < ymin)
             objPos.y = ymin;
 
+        //  car  ------------------------
         for (int i=0; i < carParts; ++i)
         {
             Item *item = mgr->createItem( car + carPart[i],
                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+            item->setVisibilityFlags(RV_Car);
 
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
             node->attachObject( item );
@@ -433,11 +435,12 @@ namespace Demo
                 mCubeCamera->setPosition(objPos);
         }
 
-        //  wheels
+        //  wheels  ------------------------
         for (int i=0; i < 4; ++i)
         {
             Item *item = mgr->createItem( car + sWheel,
                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
+            item->setVisibilityFlags(RV_Car);
 
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
             node->attachObject( item );
@@ -461,6 +464,12 @@ namespace Demo
             Quaternion q;  q.FromAngleAxis( Degree(-180), Vector3::UNIT_Z );
             Quaternion r;  r.FromAngleAxis( Degree(i%2 ? 90 : -90), Vector3::UNIT_Y );
             node->setOrientation( r * q );
+
+            //  set reflection cube
+            assert( dynamic_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() ) );
+            Ogre::HlmsPbsDatablock *datablock =
+                static_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() );
+            datablock->setTexture( Ogre::PBSM_REFLECTION, mDynamicCubemap );
         }
     }
 
