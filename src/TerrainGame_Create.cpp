@@ -1,33 +1,27 @@
-#include "TerrainGameState.h"
+#include "TerrainGame.h"
 #include "CameraController.h"
-#include "Compositor/OgreCompositorManager2.h"
 #include "GraphicsSystem.h"
 #include "SDL_scancode.h"
+#include "OgreLogManager.h"
 
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
-#include "OgreLogManager.h"
-
 #include "OgreCamera.h"
 #include "OgreWindow.h"
 #include "OgreFrameStats.h"
 
 #include "Terra/Terra.h"
-#include "OgreHlms.h"
-#include "OgreGpuProgramManager.h"
 #include "OgreItem.h"
+#include "OgreHlms.h"
+#include "OgreHlmsPbs.h"
+#include "OgreHlmsManager.h"
+#include "OgreGpuProgramManager.h"
+#include "OgreTextureGpuManager.h"
+#include "OgrePixelFormatGpuUtils.h"
 
 #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
 #    include "OgreAtmosphereNpr.h"
 #endif
-#include "OgreTextureGpuManager.h"
-#include "OgrePixelFormatGpuUtils.h"
-#include "OgreHlmsPbs.h"
-#include "OgreHlmsManager.h"
-#include "Compositor/OgreCompositorManager2.h"
-#include "Compositor/OgreCompositorNodeDef.h"
-#include "Compositor/OgreCompositorWorkspaceDef.h"
-#include "Compositor/Pass/PassIblSpecular/OgreCompositorPassIblSpecularDef.h"
 
 using namespace Demo;
 using namespace Ogre;
@@ -35,7 +29,7 @@ using namespace Ogre;
 
 namespace Demo
 {
-    Tutorial_TerrainGameState::Tutorial_TerrainGameState( const String &helpDescription )
+    TerrainGame::TerrainGame( const String &helpDescription )
         : TutorialGameState( helpDescription )
         , mPitch( 50.f * Math::PI / 180.f )  // par
         , mYaw( 102 * Math::PI / 180.f )
@@ -49,7 +43,7 @@ namespace Demo
     
     //  Create
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::createScene01()
+    void TerrainGame::createScene01()
     {
         mGraphicsSystem->mWorkspace = setupCompositor();
 
@@ -131,7 +125,7 @@ namespace Demo
 
     //  Destroy
     //-----------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::destroyScene()
+    void TerrainGame::destroyScene()
     {
         LogO("---- destroyScene");
 

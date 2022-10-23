@@ -1,5 +1,5 @@
-#ifndef _Demo_Tutorial_TerrainGameState_H_
-#define _Demo_Tutorial_TerrainGameState_H_
+#ifndef _Demo_TerrainGame_H_
+#define _Demo_TerrainGame_H_
 
 #include "OgreHlmsDatablock.h"
 #include "OgrePrerequisites.h"
@@ -21,8 +21,8 @@ namespace Demo
     {
         std::string mesh;
         float scaleMin, scaleMax, density;
-        float visFar, down;
-        bool rotAll;
+        float visFar, down;  // visibility max, down offset
+        bool rotAll;  // allow all axes rotation
         int count;  // auto
         // range ter angle, height..
         
@@ -40,7 +40,7 @@ namespace Demo
         IblHigh
     };
 
-    class Tutorial_TerrainGameState : public TutorialGameState
+    class TerrainGame : public TutorialGameState
     {
         float mPitch;  // sun dir
         float mYaw;
@@ -64,7 +64,7 @@ namespace Demo
         void generateDebugText( float timeSinceLast, Ogre::String &outText ) override;
 
     public:
-        Tutorial_TerrainGameState( const Ogre::String &helpDescription );
+        TerrainGame( const Ogre::String &helpDescription );
 
         //  main
         void createScene01() override;

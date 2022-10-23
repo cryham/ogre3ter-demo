@@ -27,7 +27,7 @@ THE SOFTWARE.
 */
 
 #include "GraphicsSystem.h"
-#include "TerrainGameState.h"
+#include "TerrainGame.h"
 
 #include "OgreRoot.h"
 #include "Compositor/OgreCompositorManager2.h"
@@ -188,7 +188,7 @@ namespace Demo
             //Add Terra's piece files that customize the PBS implementation.
             //These pieces are coded so that they will be activated when
             //we set the HlmsPbsTerraShadows listener and there's an active Terra
-            //(see Tutorial_TerrainGameState::createScene01)
+            //(see TerrainGame::createScene01)
             Ogre::Hlms *hlmsPbs = hlmsManager->getHlms( Ogre::HLMS_PBS );
             Ogre::Archive *archivePbs = hlmsPbs->getDataFolder();
             Ogre::ArchiveVec libraryPbs = hlmsPbs->getPiecesLibraryAsArchiveVec();
@@ -212,7 +212,7 @@ namespace Demo
                                          GameState **outLogicGameState,
                                          LogicSystem **outLogicSystem )
     {
-        Tutorial_TerrainGameState *gfxGameState = new Tutorial_TerrainGameState(
+        TerrainGame *gfxGameState = new TerrainGame(
         "   * Info\n" );
 
         Tutorial_TerrainGraphicsSystem *graphicsSystem =

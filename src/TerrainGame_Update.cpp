@@ -1,33 +1,23 @@
-#include "TerrainGameState.h"
+#include "TerrainGame.h"
 #include "CameraController.h"
-#include "Compositor/OgreCompositorManager2.h"
 #include "GraphicsSystem.h"
 #include "SDL_scancode.h"
+#include "OgreLogManager.h"
 
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
-#include "OgreLogManager.h"
-
 #include "OgreCamera.h"
 #include "OgreWindow.h"
 #include "OgreFrameStats.h"
 
 #include "Terra/Terra.h"
 #include "OgreHlms.h"
+#include "OgreHlmsManager.h"
 #include "OgreGpuProgramManager.h"
-#include "OgreItem.h"
 
 #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
 #    include "OgreAtmosphereNpr.h"
 #endif
-#include "OgreTextureGpuManager.h"
-#include "OgrePixelFormatGpuUtils.h"
-#include "OgreHlmsPbs.h"
-#include "OgreHlmsManager.h"
-#include "Compositor/OgreCompositorManager2.h"
-#include "Compositor/OgreCompositorNodeDef.h"
-#include "Compositor/OgreCompositorWorkspaceDef.h"
-#include "Compositor/Pass/PassIblSpecular/OgreCompositorPassIblSpecularDef.h"
 
 using namespace Demo;
 using namespace Ogre;
@@ -38,7 +28,7 @@ namespace Demo
 
     //  Update  frame
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::update( float timeSinceLast )
+    void TerrainGame::update( float timeSinceLast )
     {
         // if (mCubeCamera)
         //     mCubeCamera->setPosition(camPos);
@@ -126,7 +116,7 @@ namespace Demo
 
     //  text
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::generateDebugText( float timeSinceLast, String &outText )
+    void TerrainGame::generateDebugText( float timeSinceLast, String &outText )
     {
         //auto toStr = [](auto v, auto p=1) {  return StringConverter::toString(v,p);  };
         #define toStr(v, p)  StringConverter::toString(v,p)
@@ -192,7 +182,7 @@ namespace Demo
 
     //  Key events
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::keyPressed( const SDL_KeyboardEvent &arg )
+    void TerrainGame::keyPressed( const SDL_KeyboardEvent &arg )
     {
         switch (arg.keysym.scancode)
         {
@@ -263,7 +253,7 @@ namespace Demo
         TutorialGameState::keyPressed( arg );
     }
     
-    void Tutorial_TerrainGameState::keyReleased( const SDL_KeyboardEvent &arg )
+    void TerrainGame::keyReleased( const SDL_KeyboardEvent &arg )
     {
         switch (arg.keysym.scancode)
         {

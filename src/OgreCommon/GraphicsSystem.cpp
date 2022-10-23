@@ -910,6 +910,7 @@ namespace Demo
 
         return compositorManager->addWorkspace( mSceneManager, mRenderWindow->getTexture(), mCamera,
                                                 workspaceName, true );*/
+        return 0;    
     }
 
     //-----------------------------------------------------------------------------------

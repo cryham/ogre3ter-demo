@@ -1,27 +1,21 @@
-#include "TerrainGameState.h"
+#include "TerrainGame.h"
 #include "CameraController.h"
 #include "GraphicsSystem.h"
+#include "OgreLogManager.h"
 
 #include "OgreSceneManager.h"
 #include "OgreRoot.h"
-#include "OgreLogManager.h"
-
 #include "OgreCamera.h"
 #include "OgreWindow.h"
-#include "OgreFrameStats.h"
 
-#include "Terra/Terra.h"
-#include "OgreHlms.h"
-#include "OgreGpuProgramManager.h"
-#include "OgreItem.h"
-
-#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
-#    include "OgreAtmosphereNpr.h"
-#endif
 #include "OgreTextureGpuManager.h"
 #include "OgrePixelFormatGpuUtils.h"
 #include "OgreHlmsPbs.h"
 #include "OgreHlmsManager.h"
+
+#ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+#    include "OgreAtmosphereNpr.h"
+#endif
 #include "Compositor/OgreCompositorManager2.h"
 #include "Compositor/OgreCompositorNodeDef.h"
 #include "Compositor/OgreCompositorWorkspaceDef.h"
@@ -36,7 +30,7 @@ namespace Demo
 
     
     //-----------------------------------------------------------------------------------
-    CompositorWorkspace *Tutorial_TerrainGameState::setupCompositor()
+    CompositorWorkspace *TerrainGame::setupCompositor()
     {
         // We first create the Cubemap workspace and pass it to the final workspace
         // that does the real rendering.

@@ -1,4 +1,4 @@
-#include "TerrainGameState.h"
+#include "TerrainGame.h"
 #include "CameraController.h"
 #include "GraphicsSystem.h"
 
@@ -35,7 +35,7 @@ namespace Demo
 {
 
     //  Trees setup
-    void Tutorial_TerrainGameState::SetupTrees()
+    void TerrainGame::SetupTrees()
     {
         vegetLayers.clear();   //  OgreMeshTool args
         // sc min, max, dens, down
@@ -70,7 +70,7 @@ namespace Demo
 
     //  Trees
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateTrees()
+    void TerrainGame::CreateTrees()
 	{
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
@@ -139,7 +139,7 @@ namespace Demo
 	}
 
     //-----------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::DestroyTrees()
+    void TerrainGame::DestroyTrees()
 	{
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
 		
@@ -155,7 +155,7 @@ namespace Demo
 
     //  Terrain
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateTerrain()
+    void TerrainGame::CreateTerrain()
     {
         if (mTerra) return;
         Root *root = mGraphicsSystem->getRoot();
@@ -210,7 +210,7 @@ namespace Demo
         hlmsPbs->setListener( mHlmsPbsTerraShadows );
     }
 
-    void Tutorial_TerrainGameState::DestroyTerrain()
+    void TerrainGame::DestroyTerrain()
     {
         LogO("---- destroy Terrain");
         Root *root = mGraphicsSystem->getRoot();
@@ -227,7 +227,7 @@ namespace Demo
 
     //  Plane
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreatePlane()
+    void TerrainGame::CreatePlane()
     {
         sizeXZ = 2000.0f;
         v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane(
@@ -251,7 +251,7 @@ namespace Demo
         planeNode->attachObject( planeItem );
     }
 
-    void Tutorial_TerrainGameState::DestroyPlane()
+    void TerrainGame::DestroyPlane()
     {
         LogO("---- destroy Plane");
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
@@ -267,7 +267,7 @@ namespace Demo
 
     //  Sky dome
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateSkyDome(String sMater, float yaw)
+    void TerrainGame::CreateSkyDome(String sMater, float yaw)
     {
         if (moSky)  return;
     	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
@@ -335,7 +335,7 @@ namespace Demo
         datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
     }
 
-    void Tutorial_TerrainGameState::DestroySkyDome()
+    void TerrainGame::DestroySkyDome()
     {
         LogO("---- destroy SkyDome");
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
@@ -348,7 +348,7 @@ namespace Demo
 
     //  Particles
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateParticles()
+    void TerrainGame::CreateParticles()
     {
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
@@ -378,7 +378,7 @@ namespace Demo
 
     //  Car
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateCar()
+    void TerrainGame::CreateCar()
     {
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
@@ -476,7 +476,7 @@ namespace Demo
 
     //  Manual object
     //-----------------------------------------------------------------------------------------------------------------------------
-    void Tutorial_TerrainGameState::CreateManualObj(Ogre::Vector3 camPos)
+    void TerrainGame::CreateManualObj(Ogre::Vector3 camPos)
 	{
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
 
