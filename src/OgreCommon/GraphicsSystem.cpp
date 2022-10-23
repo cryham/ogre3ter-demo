@@ -899,7 +899,7 @@ namespace Demo
     //--------------------------------------------------------------------------------------------------------------------------------
     Ogre::CompositorWorkspace* GraphicsSystem::setupCompositor()
     {
-        Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
+        /*Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
 
         const Ogre::String workspaceName( "Demo Workspace" );
         if( !compositorManager->hasWorkspaceDefinition( workspaceName ) )
@@ -909,7 +909,7 @@ namespace Demo
         }
 
         return compositorManager->addWorkspace( mSceneManager, mRenderWindow->getTexture(), mCamera,
-                                                workspaceName, true );
+                                                workspaceName, true );*/
     }
 
     //-----------------------------------------------------------------------------------

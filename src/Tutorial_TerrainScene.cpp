@@ -24,6 +24,9 @@
 #include "OgreMeshManager2.h"
 #include "OgreManualObject2.h"
 
+#include "OgreHlmsPbs.h"
+#include "OgreHlmsPbsDatablock.h"
+
 using namespace Demo;
 using namespace Ogre;
 
@@ -419,6 +422,15 @@ namespace Demo
             //  rot
             Quaternion q;  q.FromAngleAxis( Degree(180), Vector3::UNIT_Z );
             node->setOrientation( q );
+
+            //  set reflection cube
+            assert( dynamic_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() ) );
+            Ogre::HlmsPbsDatablock *datablock =
+                static_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() );
+            datablock->setTexture( Ogre::PBSM_REFLECTION, mDynamicCubemap );
+
+            if (mCubeCamera)
+                mCubeCamera->setPosition(objPos);
         }
 
         //  wheels

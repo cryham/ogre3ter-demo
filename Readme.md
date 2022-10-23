@@ -10,9 +10,9 @@ Showing:
 * **Terrain** with 4 layers
 * **Vegetation**, 9 layers: tree, palm, 4 rocks, 2 ferns, plant
 * **Atmosphere** component with adjustable parameters
-* **Car** models, **particles**
+* **Car** 3 models, with dynamic reflections, **particles**
 
-No reflection or real PBR textures yet.  
+No real PBR textures yet just values.  
 Specular light is somewhat broken, too much still.  
 Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
 
@@ -53,5 +53,5 @@ Veget - total vegetation models on scene
 
 ## Building from sources
 
-Only tested on Linux, Debian 11.
-See CMake
+Only tested on Linux, Debian 11.  
+See [CMakeLists.txt](/CMakeLists.txt) for details.

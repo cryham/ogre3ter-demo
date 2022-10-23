@@ -1,6 +1,91 @@
+//  reflections
+abstract target cubemap_target
+{
+	pass render_scene
+	{
+		load
+		{
+			all				clear
+			clear_colour	0 0 0 1
+		}
+		store
+		{
+			//We only care about the contents of the colour target
+			depth			dont_care
+			stencil			dont_care
+		}
+
+		expose cubemap
+
+		//Filter stuff that shouldn't be reflected (vampires?)
+		visibility_mask		0x00000005
+		overlays			off
+		camera_cubemap_reorient true
+	}
+
+}
+
+compositor_node CubemapRendererNode
+{
+	in 0 cubemap
+
+	texture tmpCubemap target_width target_height target_format cubemap mipmaps 0
+
+	target tmpCubemap +X : cubemap_target { }
+	target tmpCubemap -X : cubemap_target { }
+	target tmpCubemap +Y : cubemap_target { }
+	target tmpCubemap -Y : cubemap_target { }
+	target tmpCubemap +Z : cubemap_target { }
+	target tmpCubemap -Z : cubemap_target
+	{
+		pass ibl_specular
+		{
+			input tmpCubemap
+			output cubemap
+		}
+	}
+}
+
+// MSAA Cubemaps do not exist. Therefore we have to manually define the RTV (RenderTextureView)
+// To render to a temporary MSAA surface and tell Ogre to resolve the MSAA contents into a cubemap
+compositor_node CubemapRendererNodeMsaa
+{
+	in 0 cubemap
+
+	// Note: IF you wish to preserve the MSAA contents of all 6 faces, then use
+	//	'texture tmpMsaa target_width target_height 6 target_format 2d_array msaa 4 explicit_resolve'
+	// instead
+	texture tmpMsaa		target_width target_height target_format msaa 4 explicit_resolve
+	texture tmpCubemap	target_width target_height target_format cubemap mipmaps 0
+
+	rtv mixedCubemapRtv
+	{
+		// Specify we want to render to tmpMsaa at slot[0] but we want to resolve to tmpCubemap
+		colour	0 tmpMsaa resolve tmpCubemap
+	}
+
+	target mixedCubemapRtv +X : cubemap_target { }
+	target mixedCubemapRtv -X : cubemap_target { }
+	target mixedCubemapRtv +Y : cubemap_target { }
+	target mixedCubemapRtv -Y : cubemap_target { }
+	target mixedCubemapRtv +Z : cubemap_target { }
+	target mixedCubemapRtv -Z : cubemap_target
+	{
+		pass ibl_specular
+		{
+			input tmpCubemap
+			output cubemap
+		}
+	}
+}
+//------------------------------------------------------------------------------------
+
+
+//  render
 compositor_node Tutorial_TerrainRenderingNode
 {
 	in 0 rt_renderwindow
+	in 1 demo_dynamic_cubemap
 
 	target rt_renderwindow
 	{
@@ -23,12 +108,18 @@ compositor_node Tutorial_TerrainRenderingNode
 				stencil	dont_care
 			}
 
+			// Our materials in this pass will be using this cubemap,
+			// so we need to expose it to the pass.
+			expose demo_dynamic_cubemap
+
 			overlays	on
 			shadows		Tutorial_TerrainShadowNode
 		}
 	}
 }
 
+
+//  shadows
 compositor_node_shadow Tutorial_TerrainShadowNode
 {
 	technique pssm
@@ -60,7 +151,12 @@ compositor_node_shadow Tutorial_TerrainShadowNode
 	}
 }
 
+
+//  workspace
 workspace Tutorial_TerrainWorkspace
 {
+	// Render Window on channel #0
 	connect_external 0 Tutorial_TerrainRenderingNode 0
+	// Cubemap on channel #1
+	connect_external 1 Tutorial_TerrainRenderingNode 1
 }

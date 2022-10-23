@@ -39,7 +39,9 @@ namespace Demo
         Ogre::Window                *mRenderWindow;
         Ogre::SceneManager          *mSceneManager;
         Ogre::Camera                *mCamera;
+    public:
         Ogre::CompositorWorkspace   *mWorkspace;
+    protected:
         Ogre::String                mPluginsFolder;
         Ogre::String                mWriteAccessFolder;
         Ogre::String                mResourcePath;

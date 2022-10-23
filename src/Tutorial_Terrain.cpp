@@ -70,14 +70,14 @@ namespace Demo
 
         Ogre::CompositorWorkspace *setupCompositor() override
         {
-            using namespace Ogre;
+            /*using namespace Ogre;
             CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
 
             //+ pbs
             CompositorWorkspace *workspace = compositorManager->addWorkspace(
                 mSceneManager, mRenderWindow->getTexture(), mCamera,
-                "PbsMaterialsWorkspace", true );
-                //"Tutorial_TerrainWorkspace", true );
+                // "PbsMaterialsWorkspace", true );
+                "Tutorial_TerrainWorkspace", true );
 
             if( !mTerraWorkspaceListener )
             {
@@ -88,7 +88,8 @@ namespace Demo
             }
             workspace->addListener( mTerraWorkspaceListener );
 
-            return workspace;
+            return workspace;*/
+            return 0;
         }
 
         void setupResources() override
