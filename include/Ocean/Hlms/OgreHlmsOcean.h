@@ -142,8 +142,13 @@ namespace Ogre
                                            bool casterPass, uint32 lastCacheHash,
                                            CommandBuffer *commandBuffer, bool isV1 );
 
+        virtual void setupRootLayout( RootLayout &rootLayout )
+        {   } // fixme ?
+
+        Root* mRoot = 0;
+
     public:
-        HlmsOcean( Archive *dataFolder, ArchiveVec *libraryFolders );
+        HlmsOcean( Archive *dataFolder, ArchiveVec *libraryFolders, Root* root );
         virtual ~HlmsOcean();
 
         virtual void _changeRenderSystem( RenderSystem *newRs );

@@ -87,7 +87,7 @@ namespace Ogre
     const IdString OceanProperty::GgxHeightCorrelated     = IdString( "GGX_height_correlated" );
 
 
-    HlmsOcean::HlmsOcean( Archive *dataFolder, ArchiveVec *libraryFolders ) :
+    HlmsOcean::HlmsOcean( Archive *dataFolder, ArchiveVec *libraryFolders, Root* root ) :
         HlmsBufferManager( HLMS_USER2, "Ocean", dataFolder, libraryFolders ),
         ConstBufferPool( HlmsOceanDatablock::MaterialSizeInGpuAligned,
                          ConstBufferPool::ExtraBufferParams() ),
@@ -101,7 +101,8 @@ namespace Ogre
         mLastMovableObject( 0 ),
         mDebugPssmSplits( false ),
         mShadowFilter( PCF_3x3 ),
-        mAmbientLightMode( AmbientAuto )
+        mAmbientLightMode( AmbientAuto ),
+        mRoot(root)
     {
         //Override defaults
         mLightGatheringMode = LightGatherForwardPlus;
@@ -378,12 +379,12 @@ namespace Ogre
             setProperty( HlmsBaseProp::LightsDirectional, shadowCasterDirectional );
         }
 
-        // RenderTarget *renderTarget = sceneManager->getCurrentViewport0()->getCurrentTarget();  // fixme
+        TextureGpu *renderTarget = sceneManager->getCurrentViewport0()->getCurrentTarget();  // fixme ?
 
         const RenderSystemCapabilities *capabilities = mRenderSystem->getCapabilities();
         setProperty( OceanProperty::HwGammaRead, capabilities->hasCapability( RSC_HW_GAMMA ) );
         setProperty( OceanProperty::HwGammaWrite, capabilities->hasCapability( RSC_HW_GAMMA ) &&
-                                                       false /*renderTarget->isHardwareGammaEnabled()*/ );  // fixme
+                                                       true /*false /*renderTarget->isHardwareGammaEnabled()*/ );  // fixme
         setProperty( OceanProperty::SignedIntTex, capabilities->hasCapability(
                                                             RSC_TEXTURE_SIGNED_INT ) );
         retVal.setProperties = mSetProperties;
@@ -393,7 +394,7 @@ namespace Ogre
 
         Matrix4 projectionMatrix = camera->getProjectionMatrixWithRSDepth();
 
-        if( false /*renderTarget->requiresTextureFlipping()*/ )  // fixme
+        if( renderTarget->requiresTextureFlipping()/**/ )  // fixme ?
         {
             projectionMatrix[1][0] = -projectionMatrix[1][0];
             projectionMatrix[1][1] = -projectionMatrix[1][1];
@@ -729,11 +730,12 @@ namespace Ogre
             }
         }
 
-        /*if( forwardPlus )  // fixme
+        if( forwardPlus )
         {
-            forwardPlus->fillConstBufferData( renderTarget, passBufferPtr );
+            // fixme
+            //forwardPlus->fillConstBufferData( /*renderTarget*/sceneManager->getCurrentViewport0(), passBufferPtr );
             passBufferPtr += forwardPlus->getConstBufferSize() >> 2;
-        }*/
+        }
 
         //Timer
         *passBufferPtr++ = Ogre::Root::getSingletonPtr()->getTimer()->getMilliseconds()*0.0005;
@@ -745,6 +747,7 @@ namespace Ogre
         passBufferPtr = mListener->preparePassBuffer( shadowNode, casterPass, dualParaboloid,
                                                       sceneManager, passBufferPtr );
 
+        // fixme crash in debug ..
         assert( (size_t)(passBufferPtr - startupPtr) * 4u == mapSize );
 
         passBuffer->unmap( UO_KEEP_PERSISTENT );
@@ -830,8 +833,8 @@ namespace Ogre
             while( itor != end )
             {
                 // fixme
-                // *commandBuffer->addCommand<CbTexture>() = CbTexture( texUnit, true, *itor,
-                //                                                      mCurrentShadowmapSamplerblock );
+                *commandBuffer->addCommand<CbTexture>() = CbTexture(
+                    texUnit, /*true,*/ *itor, mCurrentShadowmapSamplerblock );
                 ++texUnit;
                 ++itor;
             }
@@ -871,40 +874,46 @@ namespace Ogre
         if( mLastMovableObject != queuedRenderable.movableObject )
         {
             // fixme
-        #if 0
-            // TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
+            TextureGpuManager *m_textureManager = mRoot->getRenderSystem()->getTextureGpuManager();
             {
-                Ogre::TextureGpu* tex = Ogre::TextureGpuManager::findTextureNoThrow("oceanData.dds");
-                if (tex){
-                    tex = Ogre::TextureGpuManager::getSingleton().load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
+
+                Ogre::TextureGpu* tex = m_textureManager->findTextureNoThrow("oceanData.dds");
+                if (!tex){
+                    // tex = m_textureManager->load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
+                    tex = m_textureManager->createOrRetrieveTexture("oceanData.dds",
+                        GpuPageOutStrategy::Discard,
+                        0, TextureTypes::Type3D,
+                        ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
                 }
                 Ogre::HlmsSamplerblock samplerblock;
                 samplerblock.mU = Ogre::TextureAddressingMode::TAM_WRAP;
                 samplerblock.mV = Ogre::TextureAddressingMode::TAM_WRAP;
                 samplerblock.mW = Ogre::TextureAddressingMode::TAM_WRAP;
                 const Ogre::HlmsSamplerblock* finalSamplerblock = Ogre::Root::getSingleton().getHlmsManager()->getSamplerblock(samplerblock);
-                *commandBuffer->addCommand<Ogre::CbTexture>() = Ogre::CbTexture( 0, true, tex.getPointer(), finalSamplerblock);
+                *commandBuffer->addCommand<Ogre::CbTexture>() = Ogre::CbTexture( 0, /*true,*/ tex, finalSamplerblock);
             }
             {
-                Ogre::TextureGpu* tex = Ogre::TextureGpuManager::getSingletonPtr()->getByName("weight.dds");
-                if (tex){
-                    tex = Ogre::TextureGpuManager::getSingleton().load("weight.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D);
+                Ogre::TextureGpu* tex = m_textureManager->findTextureNoThrow("weight.dds");
+                if (!tex){
+                    // tex = m_textureManager->load("weight.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D);
+                    tex = m_textureManager->createOrRetrieveTexture("weight.dds",
+                        GpuPageOutStrategy::Discard,
+                        0, TextureTypes::Type2D,
+                        ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
                 }
                 Ogre::HlmsSamplerblock samplerblock;
                 samplerblock.mU = Ogre::TextureAddressingMode::TAM_WRAP;
                 samplerblock.mV = Ogre::TextureAddressingMode::TAM_WRAP;
                 const Ogre::HlmsSamplerblock* finalSamplerblock = Ogre::Root::getSingleton().getHlmsManager()->getSamplerblock(samplerblock);
-                *commandBuffer->addCommand<Ogre::CbTexture>() = Ogre::CbTexture( 1, true, tex.getPointer(), finalSamplerblock);
+                *commandBuffer->addCommand<Ogre::CbTexture>() = Ogre::CbTexture( 1, /*true,*/ tex, finalSamplerblock);
             }
             if( !mProbe ){
 
                 size_t texUnit = mPreparedPass.shadowMaps.size() + (!mGridBuffer ? 3 : 5);
 
-                *commandBuffer->addCommand<CbTexture>() =
-                        CbTexture( texUnit, true, mProbe.get(), mOceanSamplerblock );
+                *commandBuffer->addCommand<CbTexture>() = CbTexture(
+                    texUnit, /*true,*/ mProbe/*.get()*/, mOceanSamplerblock );
             }
-        #endif
-
 
             mLastMovableObject = queuedRenderable.movableObject;
         }

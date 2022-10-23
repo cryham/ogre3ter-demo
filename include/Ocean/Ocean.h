@@ -49,6 +49,7 @@ namespace Ogre
 
         Ogre::TextureGpu*    m_heightMapTex;
         Ogre::TextureGpu*    m_normalMapTex;
+        TextureGpuManager*   m_textureManager;
 
         Vector3             m_prevLightDir;
 
@@ -67,6 +68,7 @@ namespace Ogre
 
     public:
         Ocean( IdType id, ObjectMemoryManager *objectMemoryManager, SceneManager *sceneManager,
+               TextureGpuManager *textureManager,
                uint8 renderQueueId, CompositorManager2 *compositorManager, Camera *camera );
         ~Ocean();
 

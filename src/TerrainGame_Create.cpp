@@ -121,10 +121,11 @@ namespace Demo
         // CreateTerrain();  // 5sec
         // CreateVeget();
 
+
+        //  Ocean  ------------------------------------------------
         LogO("---- create Ocean");
         TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
 
-		//Create ocean
 		mOcean = new Ocean(Id::generateNewId<MovableObject>(),
 			&sceneManager->_getEntityMemoryManager(SCENE_STATIC),
             sceneManager, textureManager,
@@ -147,7 +148,8 @@ namespace Demo
                 GpuPageOutStrategy::Discard,
                 CommonTextureTypes::EnvMap,
                 ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
-			// probeTexture = TextureGpuManager::getSingleton().load("oceanData.dds", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_3D);
+			// probeTexture = TextureGpuManager::getSingleton().load(
+            //    "oceanData.dds", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_3D);
 		}
 
 		HlmsOcean* hlmsOcean = static_cast<HlmsOcean*>(
