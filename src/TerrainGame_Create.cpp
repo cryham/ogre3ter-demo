@@ -123,7 +123,7 @@ namespace Demo
 
 
         //  Ocean  ------------------------------------------------
-    #if 1  // disable, crashes
+    #if 0  // disable, crashes
         LogO("---- create Ocean");
         TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
 
