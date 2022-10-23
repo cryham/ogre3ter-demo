@@ -23,6 +23,10 @@
 #    include "OgreAtmosphereNpr.h"
 #endif
 
+#include "Ocean/Ocean.h"
+#include "Ocean/Hlms/OgreHlmsOceanDatablock.h"
+#include "Ocean/Hlms/OgreHlmsOcean.h"
+
 using namespace Demo;
 using namespace Ogre;
 
@@ -116,6 +120,40 @@ namespace Demo
         CreatePlane();  // fast
         // CreateTerrain();  // 5sec
         // CreateVeget();
+
+        LogO("---- create Ocean");
+
+		//Create ocean
+		mOcean = new Ogre::Ocean(Ogre::Id::generateNewId<Ogre::MovableObject>(),
+			&sceneManager->_getEntityMemoryManager(Ogre::SCENE_STATIC),
+			sceneManager, 0, root->getCompositorManager2(),
+			mGraphicsSystem->getCamera());
+		mOcean->setCastShadows(false);
+
+		Ogre::Vector3 center;  center = 0;
+		Ogre::Vector2 size;  size = 2;
+
+		mOcean->create(center, size);
+
+		Ogre::SceneNode *oceanNode = sceneManager->getRootSceneNode(Ogre::SCENE_STATIC);
+
+		oceanNode->attachObject(mOcean);
+
+		Ogre::TextureGpu* probeTexture = Ogre::TextureGpuManager::getSingletonPtr()->getByName("oceanData.dds");
+		if (!probeTexture) {
+			probeTexture = Ogre::TextureGpuManager::getSingleton().load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
+		}
+
+		Ogre::HlmsOcean* hlmsOcean = static_cast<Ogre::HlmsOcean*>(
+			Ogre::Root::getSingletonPtr()->getHlmsManager()->getHlms(Ogre::HLMS_USER2)
+			);
+		hlmsOcean->setEnvProbe(probeTexture);
+
+		Ogre::String datablockName = "testOcean";
+		Ogre::HlmsDatablock *datablockOcean = static_cast<Ogre::HlmsOceanDatablock*>(hlmsOcean->createDatablock(datablockName, datablockName, Ogre::HlmsMacroblock(), Ogre::HlmsBlendblock(), Ogre::HlmsParamVec()));
+
+		mOcean->setDatablock(datablockOcean);/**/
+
 
         LogO("---- tutorial createScene");
 
