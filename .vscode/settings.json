@@ -1,7 +1,18 @@
 {
 	"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     
-	"files.exclude": {
+  "files.associations": {
+    "*.any": "c",
+    "*.glsl": "c",
+    "*.material": "json",
+    "*.compositor": "json",
+    "*.particle": "c",
+    "*.mat": "c",
+    "*.car": "ini",
+    "*.ini": "ruby",
+    "*.layout": "xml",
+  },
+  "files.exclude": {
         ".vscode": false,
         "CMake/": true,
         "build/": true,
@@ -15,4 +26,16 @@
         "**/*.cache": true,
         "**/*.zip": true,
     },
+    "C_Cpp.autocomplete": "Disabled",
+    "C_Cpp.formatting": "Disabled",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "C_Cpp.intelliSenseEngine": "Disabled",
+    "clangd.arguments": [
+      "-clang-tidy-checks=-*,modernize-use-override",
+      "--suggest-missing-includes",
+      "--header-insertion=iwyu"
+    ],
+    "python.pythonPath": "/usr/bin/python3",
+    "editor.suggest.localityBonus": true,
+    "editor.cursorWidth": 2,
 }

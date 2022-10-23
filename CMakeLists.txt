@@ -62,6 +62,7 @@ add_recursive( ./include HEADERS )
 
 add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${RESOURCES} )
 
+target_compile_options( ${PROJECT_NAME} PRIVATE -Wswitch)
 
 target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
 ## Fix 3 sdl

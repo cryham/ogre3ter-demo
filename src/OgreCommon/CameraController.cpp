@@ -69,6 +69,8 @@ namespace Demo
         }
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
     //-----------------------------------------------------------------------------------
     bool CameraController::keyPressed( const SDL_KeyboardEvent &arg )
     {
@@ -104,6 +106,7 @@ namespace Demo
         }    
         return false;
     }
+#pragma GCC diagnostic pop
 
     //-----------------------------------------------------------------------------------
     void CameraController::mouseMoved( const SDL_Event &arg )

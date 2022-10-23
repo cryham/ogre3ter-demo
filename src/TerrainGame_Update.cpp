@@ -180,6 +180,8 @@ namespace Demo
     }
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
     //  Key events
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::keyPressed( const SDL_KeyboardEvent &arg )
@@ -285,3 +287,4 @@ namespace Demo
         TutorialGameState::keyReleased( arg );
     }
 }
+#pragma GCC diagnostic pop
