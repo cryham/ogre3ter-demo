@@ -12,6 +12,7 @@
             "max_anisotropic" : 16
         }
     },
+    
     "Terra" :
     {
         "TerraExampleMaterial" :

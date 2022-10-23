@@ -123,6 +123,7 @@ namespace Demo
 
 
         //  Ocean  ------------------------------------------------
+    #if 1  // disable, crashes
         LogO("---- create Ocean");
         TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
 
@@ -161,7 +162,7 @@ namespace Demo
             hlmsOcean->createDatablock(datablockName, datablockName, HlmsMacroblock(), HlmsBlendblock(), HlmsParamVec()));
 
 		mOcean->setDatablock(datablockOcean);/**/
-
+    #endif
 
         LogO("---- tutorial createScene");
 
