@@ -27,7 +27,7 @@ THE SOFTWARE.
 */
 
 #include "GraphicsSystem.h"
-#include "Tutorial_TerrainGameState.h"
+#include "TerrainGameState.h"
 
 #include "OgreRoot.h"
 #include "Compositor/OgreCompositorManager2.h"

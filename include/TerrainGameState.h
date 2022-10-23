@@ -82,7 +82,7 @@ namespace Demo
         Ogre::TextureGpu *mDynamicCubemap = 0;
         Ogre::CompositorWorkspace *mDynamicCubemapWorkspace = 0;
 
-        IblQuality mIblQuality = MipmapsLowest;  // par
+        IblQuality mIblQuality = IblLow;  // par
         Ogre::CompositorWorkspace *setupCompositor();
 
 

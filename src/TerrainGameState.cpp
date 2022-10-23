@@ -1,4 +1,4 @@
-#include "Tutorial_TerrainGameState.h"
+#include "TerrainGameState.h"
 #include "CameraController.h"
 #include "Compositor/OgreCompositorManager2.h"
 #include "GraphicsSystem.h"
@@ -39,6 +39,8 @@ namespace Demo
         : TutorialGameState( helpDescription )
         , mPitch( 50.f * Math::PI / 180.f )  // par
         , mYaw( 102 * Math::PI / 180.f )
+        //, mIblQuality( IblHigh )  // par
+        , mIblQuality( MipmapsLowest )
     {
         macroblockWire.mPolygonMode = PM_WIREFRAME;
         SetupTrees();
@@ -112,20 +114,18 @@ namespace Demo
         if( !mCubeCamera )
         {
             mCubeCamera = sceneManager->createCamera( "CubeMapCamera", true, true );
-            mCubeCamera->setFOVy( Degree( 90 ) );
-            mCubeCamera->setAspectRatio( 1 );
+            mCubeCamera->setFOVy( Degree( 90 ) );  mCubeCamera->setAspectRatio( 1 );
             mCubeCamera->setFixedYawAxis( false );
+            mCubeCamera->setPosition( 0, 1.0, 0 );  // upd in car
             mCubeCamera->setNearClipDistance( 0.5 );
-            mCubeCamera->setVisibilityFlags(0xFFFFFFFF - RV_Car);
-            // The default far clip distance is way too big for a cubemap-capable camera,
-            // hich prevents Ogre from better culling.
-            mCubeCamera->setFarClipDistance( 10000 );
-            mCubeCamera->setPosition( 0, 1.0, 0 );
+            mCubeCamera->setVisibilityFlags(0xFFFFFFFF - RV_Car);  // no car parts in reflections
+
+            mCubeCamera->setFarClipDistance( 100 );  // par
+            mCubeCamera->setShadowRenderingDistance( 50 );  // par
+            mCubeCamera->setCastShadows(false);
         }
 
-        // Note: You don't necessarily have to tie RenderWindow's use of MSAA with cubemap's MSAA
-        // You could always use MSAA for the cubemap, or never use MSAA for the cubemap.
-        // That's up to you. This sample is tying them together in order to showcase them. That's all.
+        // No need to tie RenderWindow's use of MSAA with cubemap's MSAA. Could never use MSAA for cubemap.
         const IdString cubemapRendererNode = renderWindow->getSampleDescription().isMultisample()
             ? "CubemapRendererNodeMsaa" : "CubemapRendererNode";
         {
@@ -143,31 +143,25 @@ namespace Demo
 
         // Setup the cubemap's compositor.
         CompositorChannelVec cubemapExternalChannels( 1 );
-        // Any of the cubemap's render targets will do
         cubemapExternalChannels[0] = mDynamicCubemap;
 
-        const Ogre::String workspaceName( "Tutorial_DynamicCubemap_cubemap" );
+        const Ogre::String workspaceName( "Tutorial_DynamicCubemap_cubemap" );  // created from code
         if( !compositorManager->hasWorkspaceDefinition( workspaceName ) )
         {
-            CompositorWorkspaceDef *workspaceDef =
-                compositorManager->addWorkspaceDefinition( workspaceName );
-            //"CubemapRendererNode" has been defined in scripts.
-            // Very handy (as it 99% the same for everything)
+            CompositorWorkspaceDef *workspaceDef = compositorManager->addWorkspaceDefinition( workspaceName );
             workspaceDef->connectExternal( 0, cubemapRendererNode, 0 );
         }
 
         mDynamicCubemapWorkspace = compositorManager->addWorkspace(
             sceneManager, cubemapExternalChannels, mCubeCamera, workspaceName, true );
 
-        // Now setup the regular renderer
+        // Now setup the regular Render window
         CompositorChannelVec externalChannels( 2 );
-        // Render window
         externalChannels[0] = renderWindow->getTexture();
         externalChannels[1] = mDynamicCubemap;
 
         return compositorManager->addWorkspace( sceneManager, externalChannels, camera,
-            "Tutorial_TerrainWorkspace", true );
-            // "Tutorial_DynamicCubemapWorkspace", true );
+            "Tutorial_TerrainWorkspace", true );  // in .compositor
     }
     
     
