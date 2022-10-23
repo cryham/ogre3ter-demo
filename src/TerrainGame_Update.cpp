@@ -224,9 +224,9 @@ namespace Demo
             {   CreateTerrain();  DestroyPlane();  }
             break;
 
-        //  Trees add, destroy all
-        case SDL_SCANCODE_V:  CreateTrees();  break;
-        case SDL_SCANCODE_C:  DestroyTrees();  break;
+        //  Vegetation add, destroy all
+        case SDL_SCANCODE_V:  CreateVeget();  break;
+        case SDL_SCANCODE_C:  DestroyVeget();  break;
 
         //  other
         case SDL_SCANCODE_F:  CreateParticles();  break;
@@ -236,8 +236,7 @@ namespace Demo
             if (ndSky)
                 DestroySkyDome();
             else
-            {
-                switch (iSky)
+            {   switch (iSky)
                 {
                 case 0:  CreateSkyDome("sky-clearday1", 0.f);  ++iSky;  break;
                 case 1:  CreateSkyDome("sky_photo6", 0.f);  iSky = 0;  break;  // clouds

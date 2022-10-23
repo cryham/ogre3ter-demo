@@ -34,8 +34,8 @@ using namespace Ogre;
 namespace Demo
 {
 
-    //  Trees setup
-    void TerrainGame::SetupTrees()
+    //  Vegetation setup
+    void TerrainGame::SetupVeget()
     {
         vegetLayers.clear();   //  OgreMeshTool args
         // sc min, max, dens, down
@@ -68,9 +68,9 @@ namespace Demo
         //    2.5f,4.f, 10.f ));  //  -v2 -l 9 -d 100 -p 9 pine2_tall_norm.mesh
     }
 
-    //  Trees
+    //  Veget
     //-----------------------------------------------------------------------------------------------------------------------------
-    void TerrainGame::CreateTrees()
+    void TerrainGame::CreateVeget()
 	{
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
@@ -139,7 +139,7 @@ namespace Demo
 	}
 
     //-----------------------------------------------------------------------------------
-    void TerrainGame::DestroyTrees()
+    void TerrainGame::DestroyVeget()
 	{
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
 		

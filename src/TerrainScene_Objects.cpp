@@ -51,7 +51,7 @@ namespace Demo
             //parHit->setVisibilityFlags(RV_Particles);
             SceneNode* node = rootNode->createChildSceneNode();
             node->attachObject( parSys );
-            parSys->setRenderQueueGroup( 225 );  //? after trees
+            parSys->setRenderQueueGroup( 225 );  //? after Veget
 
             Vector3 objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, 0.f);
             // if (mTerra)
@@ -102,7 +102,7 @@ namespace Demo
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
             node->attachObject( item );
             if (i==2)
-                item->setRenderQueueGroup( 202 );  // glass after trees
+                item->setRenderQueueGroup( 202 );  // glass after Veget
             
             node->scale( s, s, s );
             

@@ -40,18 +40,22 @@ namespace Demo
         IblHigh
     };
 
+
     class TerrainGame : public TutorialGameState
     {
+        //  vars
         float mPitch;  // sun dir
         float mYaw;
         Ogre::Vector3 camPos;
 
+        //  input
         int mKeys[4] = {0,0,0,0};  // sun keys
         int param = 0;  // to adjust
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
 
-        Ogre::Terra *mTerra = 0;  // terrain
+        //  terrain
+        Ogre::Terra *mTerra = 0;
         Ogre::Light *mSunLight = 0;
 
         // Listener to make PBS objects also be affected by terrain's shadows
@@ -75,18 +79,18 @@ namespace Demo
         //  events
         void keyPressed( const SDL_KeyboardEvent &arg ) override;
         void keyReleased( const SDL_KeyboardEvent &arg ) override;
-
+    protected:
 
         //  reflection cube  ----
         Ogre::Camera *mCubeCamera = 0;
         Ogre::TextureGpu *mDynamicCubemap = 0;
         Ogre::CompositorWorkspace *mDynamicCubemapWorkspace = 0;
 
-        IblQuality mIblQuality = IblLow;  // par
+        IblQuality mIblQuality = IblLow;  // par in ctor
         Ogre::CompositorWorkspace *setupCompositor();
 
 
-        //  scene  ----
+        //  terrain  ----
         Ogre::Real sizeXZ = 1000.f;
         void CreateTerrain(), DestroyTerrain();
         Ogre::SceneNode *nodeTerrain = 0;
@@ -96,6 +100,7 @@ namespace Demo
         Ogre::Item *planeItem = 0;
         Ogre::SceneNode *planeNode = 0;
 
+        //  sky
         void CreateSkyDome(Ogre::String sMater, float yaw);
         int iSky = 0;
         Ogre::ManualObject* moSky = 0;
@@ -103,15 +108,17 @@ namespace Demo
         void DestroySkyDome();
     
         //  vegetation  ----
-        void SetupTrees(), CreateTrees(), DestroyTrees();
+        void SetupVeget(), CreateVeget(), DestroyVeget();
 
         std::vector<VegetLayer> vegetLayers;
 		std::vector<Ogre::Item*> vegetItems;
     	std::vector<Ogre::SceneNode*> vegetNodes;
 
+        //  other
         void CreateManualObj(Ogre::Vector3 camPos);
         void CreateParticles();
 
+        //  cars  ----
         void CreateCar();
         int iCar = 1;
         const static int nCars = 3;

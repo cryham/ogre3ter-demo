@@ -37,7 +37,7 @@ namespace Demo
         , mIblQuality( MipmapsLowest )
     {
         macroblockWire.mPolygonMode = PM_WIREFRAME;
-        SetupTrees();
+        SetupVeget();
     }
 
     
@@ -115,7 +115,7 @@ namespace Demo
         //  Terrain  ------------------------------------------------
         CreatePlane();  // fast
         // CreateTerrain();  // 5sec
-        // CreateTrees();
+        // CreateVeget();
 
         LogO("---- tutorial createScene");
 
