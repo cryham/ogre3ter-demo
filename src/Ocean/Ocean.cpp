@@ -17,7 +17,9 @@
 namespace Ogre
 {
     Ocean::Ocean( IdType id, ObjectMemoryManager *objectMemoryManager,
-                  SceneManager *sceneManager, uint8 renderQueueId,
+                  SceneManager *sceneManager,
+                  TextureGpuManager *textureManager,
+                  uint8 renderQueueId,
                   CompositorManager2 *compositorManager, Camera *camera ) :
         MovableObject( id, objectMemoryManager, sceneManager, renderQueueId ),
         m_width( 0u ),
@@ -36,7 +38,8 @@ namespace Ogre
         m_currentCell( 0u ),
         m_prevLightDir( Vector3::ZERO ),
         m_compositorManager( compositorManager ),
-        m_camera( camera )
+        m_camera( camera ),
+        m_textureManager( textureManager )
     {
     }
     //-----------------------------------------------------------------------------------

@@ -122,38 +122,43 @@ namespace Demo
         // CreateVeget();
 
         LogO("---- create Ocean");
+        TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
 
 		//Create ocean
-		mOcean = new Ogre::Ocean(Ogre::Id::generateNewId<Ogre::MovableObject>(),
-			&sceneManager->_getEntityMemoryManager(Ogre::SCENE_STATIC),
-			sceneManager, 0, root->getCompositorManager2(),
+		mOcean = new Ocean(Id::generateNewId<MovableObject>(),
+			&sceneManager->_getEntityMemoryManager(SCENE_STATIC),
+            sceneManager, textureManager,
+			0, root->getCompositorManager2(),
 			mGraphicsSystem->getCamera());
 		mOcean->setCastShadows(false);
 
-		Ogre::Vector3 center;  center = 0;
-		Ogre::Vector2 size;  size = 12000;
+		Vector3 center;  center = 0;
+		Vector2 size;  size = 2000;
 
 		mOcean->create(center, size);
 
-		Ogre::SceneNode *oceanNode = sceneManager->getRootSceneNode(Ogre::SCENE_STATIC);
+		SceneNode *oceanNode = sceneManager->getRootSceneNode(SCENE_STATIC);
 
 		oceanNode->attachObject(mOcean);
 
-		// fixme
-        /**Ogre::TextureGpu* probeTexture = Ogre::TextureGpuManager::getSingletonPtr()->getByName("oceanData.dds");
+        TextureGpu* probeTexture = textureManager->findTextureNoThrow("oceanData.dds");
 		if (!probeTexture) {
-			probeTexture = Ogre::TextureGpuManager::getSingleton().load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
-		}**
+            probeTexture = textureManager->createOrRetrieveTexture("oceanData.dds",
+                GpuPageOutStrategy::Discard,
+                CommonTextureTypes::EnvMap,
+                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+			// probeTexture = TextureGpuManager::getSingleton().load("oceanData.dds", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_3D);
+		}
 
-		Ogre::HlmsOcean* hlmsOcean = static_cast<Ogre::HlmsOcean*>(
-			Ogre::Root::getSingletonPtr()->getHlmsManager()->getHlms(Ogre::HLMS_USER2)
-			);
+		HlmsOcean* hlmsOcean = static_cast<HlmsOcean*>(
+			Root::getSingletonPtr()->getHlmsManager()->getHlms(HLMS_USER2) );
 		hlmsOcean->setEnvProbe(probeTexture);
 
-		Ogre::String datablockName = "testOcean";
-		Ogre::HlmsDatablock *datablockOcean = static_cast<Ogre::HlmsOceanDatablock*>(hlmsOcean->createDatablock(datablockName, datablockName, Ogre::HlmsMacroblock(), Ogre::HlmsBlendblock(), Ogre::HlmsParamVec()));
+		String datablockName = "testOcean";
+		HlmsDatablock *datablockOcean = static_cast<HlmsOceanDatablock*>(
+            hlmsOcean->createDatablock(datablockName, datablockName, HlmsMacroblock(), HlmsBlendblock(), HlmsParamVec()));
 
-		mOcean->setDatablock(datablockOcean);**/
+		mOcean->setDatablock(datablockOcean);/**/
 
 
         LogO("---- tutorial createScene");
