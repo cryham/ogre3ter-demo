@@ -28,11 +28,12 @@ THE SOFTWARE.
 #ifndef _OgreHlmsOceanDatablock_H_
 #define _OgreHlmsOceanDatablock_H_
 
-#include "OgreHlmsDatablock.h"
-#include "OgreHlmsTextureManager.h"
+#include "OgreTextureGpuManager.h"
 #include "OgreConstBufferPool.h"
 #include "OgreVector4.h"
 #include "OgreHeaderPrefix.h"
+#include "OgreHlmsDatablock.h"
+#include "OgreHlmsOcean.h"
 
 namespace Ogre
 {
@@ -148,6 +149,12 @@ namespace Ogre
 
         /// Overloaded to tell it's unsupported
         virtual void setAlphaTestThreshold( float threshold );
+
+        /// Derived class must fill dstPtr. Amount of bytes written can't
+        /// exceed the value passed to ConstBufferPool::uploadDirtyDatablocks
+        virtual void uploadToConstBuffer( char *dstPtr, uint8 dirtyFlags )  //new
+        {   }   // fixme
+        // virtual void uploadToExtraBuffer( char *dstPtr ) {}
 
         /// Changes the BRDF in use. Calling this function may trigger an
         /// HlmsDatablock::flushRenderables

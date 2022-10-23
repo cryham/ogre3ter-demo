@@ -32,14 +32,15 @@ THE SOFTWARE.
 #include "OgreHlmsListener.h"
 #include "OgreLwString.h"
 
+#include "OgreRenderQueue.h"
+#include "OgreTextureGpuManager.h"
 #include "OgreViewport.h"
-#include "OgreRenderTarget.h"
+// #include "OgreRenderTarget.h"
 #include "OgreHighLevelGpuProgramManager.h"
 #include "OgreHighLevelGpuProgram.h"
 #include "OgreForward3D.h"
 #include "OgreCamera.h"
 #include <OgreRoot.h>
-#include <OgreTextureManager.h>
 
 #include "OgreSceneManager.h"
 #include "Compositor/OgreCompositorShadowNode.h"
@@ -104,7 +105,7 @@ namespace Ogre
     {
         //Override defaults
         mLightGatheringMode = LightGatherForwardPlus;
-        mProbe.setNull();
+        mProbe = 0;
     }
     //-----------------------------------------------------------------------------------
     HlmsOcean::~HlmsOcean()
@@ -184,7 +185,7 @@ namespace Ogre
         }
 
         //Set samplers.
-        if( !retVal->pso.pixelShader.isNull() )
+        if( retVal->pso.pixelShader )
         {
             GpuProgramParametersSharedPtr psParams = retVal->pso.pixelShader->getDefaultParameters();
 
@@ -236,7 +237,7 @@ namespace Ogre
         mRenderSystem->_setPipelineStateObject( &retVal->pso );
 
         mRenderSystem->bindGpuProgramParameters( GPT_VERTEX_PROGRAM, vsParams, GPV_ALL );
-        if( !retVal->pso.pixelShader.isNull() )
+        if( retVal->pso.pixelShader )
         {
             GpuProgramParametersSharedPtr psParams = retVal->pso.pixelShader->getDefaultParameters();
             mRenderSystem->bindGpuProgramParameters( GPT_FRAGMENT_PROGRAM, psParams, GPV_ALL );
@@ -377,22 +378,22 @@ namespace Ogre
             setProperty( HlmsBaseProp::LightsDirectional, shadowCasterDirectional );
         }
 
-        RenderTarget *renderTarget = sceneManager->getCurrentViewport()->getTarget();
+        // RenderTarget *renderTarget = sceneManager->getCurrentViewport0()->getCurrentTarget();  // fixme
 
         const RenderSystemCapabilities *capabilities = mRenderSystem->getCapabilities();
         setProperty( OceanProperty::HwGammaRead, capabilities->hasCapability( RSC_HW_GAMMA ) );
         setProperty( OceanProperty::HwGammaWrite, capabilities->hasCapability( RSC_HW_GAMMA ) &&
-                                                        renderTarget->isHardwareGammaEnabled() );
+                                                       false /*renderTarget->isHardwareGammaEnabled()*/ );  // fixme
         setProperty( OceanProperty::SignedIntTex, capabilities->hasCapability(
                                                             RSC_TEXTURE_SIGNED_INT ) );
         retVal.setProperties = mSetProperties;
 
-        Camera *camera = sceneManager->getCameraInProgress();
+        const Camera *camera = sceneManager->getCamerasInProgress().renderingCamera;// getCameraInProgress();
         Matrix4 viewMatrix = camera->getViewMatrix(true);
 
         Matrix4 projectionMatrix = camera->getProjectionMatrixWithRSDepth();
 
-        if( renderTarget->requiresTextureFlipping() )
+        if( false /*renderTarget->requiresTextureFlipping()*/ )  // fixme
         {
             projectionMatrix[1][0] = -projectionMatrix[1][0];
             projectionMatrix[1][1] = -projectionMatrix[1][1];
@@ -436,7 +437,7 @@ namespace Ogre
 
         //float pssmSplitPoints N times.
         mapSize += numPssmSplits * 4;
-        mapSize = alignToNextMultiple( mapSize, 16 );
+        mapSize = alignToNextMultiple<size_t>( mapSize, 16 );
 
         if( shadowNode )
         {
@@ -488,7 +489,7 @@ namespace Ogre
             *passBufferPtr++ = (float)viewMatrix[0][i];
 
         size_t shadowMapTexIdx = 0;
-        const TextureVec &contiguousShadowMapTex = shadowNode->getContiguousShadowMapTex();
+        const TextureGpuVec &contiguousShadowMapTex = shadowNode->getContiguousShadowMapTex();
 
         for( int32 i=0; i<numShadowMapLights; ++i )
         {
@@ -718,21 +719,21 @@ namespace Ogre
         {
             mPreparedPass.shadowMaps.reserve( contiguousShadowMapTex.size() );
 
-            TextureVec::const_iterator itShadowMap = contiguousShadowMapTex.begin();
-            TextureVec::const_iterator enShadowMap = contiguousShadowMapTex.end();
+            TextureGpuVec::const_iterator itShadowMap = contiguousShadowMapTex.begin();
+            TextureGpuVec::const_iterator enShadowMap = contiguousShadowMapTex.end();
 
             while( itShadowMap != enShadowMap )
             {
-                mPreparedPass.shadowMaps.push_back( itShadowMap->get() );
+                mPreparedPass.shadowMaps.push_back( *itShadowMap );
                 ++itShadowMap;
             }
         }
 
-        if( forwardPlus )
+        /*if( forwardPlus )  // fixme
         {
             forwardPlus->fillConstBufferData( renderTarget, passBufferPtr );
             passBufferPtr += forwardPlus->getConstBufferSize() >> 2;
-        }
+        }*/
 
         //Timer
         *passBufferPtr++ = Ogre::Root::getSingletonPtr()->getTimer()->getMilliseconds()*0.0005;
@@ -824,12 +825,13 @@ namespace Ogre
             }
 
             //We changed HlmsType, rebind the shared textures.
-            FastArray<Texture*>::const_iterator itor = mPreparedPass.shadowMaps.begin();
-            FastArray<Texture*>::const_iterator end  = mPreparedPass.shadowMaps.end();
+            FastArray<TextureGpu*>::const_iterator itor = mPreparedPass.shadowMaps.begin();
+            FastArray<TextureGpu*>::const_iterator end  = mPreparedPass.shadowMaps.end();
             while( itor != end )
             {
-                *commandBuffer->addCommand<CbTexture>() = CbTexture( texUnit, true, *itor,
-                                                                     mCurrentShadowmapSamplerblock );
+                // fixme
+                // *commandBuffer->addCommand<CbTexture>() = CbTexture( texUnit, true, *itor,
+                //                                                      mCurrentShadowmapSamplerblock );
                 ++texUnit;
                 ++itor;
             }
@@ -849,7 +851,7 @@ namespace Ogre
                         CbShaderBuffer( PixelShader, 2, mConstBuffers[mCurrentConstBuffer], 0, 0 );
             }
 
-            mListener->hlmsTypeChanged( casterPass, commandBuffer, datablock );
+            mListener->hlmsTypeChanged( casterPass, commandBuffer, datablock, 0/*?*/ );
         }
 
         //Don't bind the material buffer on caster passes (important to keep
@@ -868,10 +870,13 @@ namespace Ogre
 
         if( mLastMovableObject != queuedRenderable.movableObject )
         {
+            // fixme
+        #if 0
+            // TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
             {
-                Ogre::TexturePtr tex = Ogre::TextureManager::getSingletonPtr()->getByName("oceanData.dds");
-                if (tex.isNull()){
-                    tex = Ogre::TextureManager::getSingleton().load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
+                Ogre::TextureGpu* tex = Ogre::TextureGpuManager::findTextureNoThrow("oceanData.dds");
+                if (tex){
+                    tex = Ogre::TextureGpuManager::getSingleton().load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
                 }
                 Ogre::HlmsSamplerblock samplerblock;
                 samplerblock.mU = Ogre::TextureAddressingMode::TAM_WRAP;
@@ -881,9 +886,9 @@ namespace Ogre
                 *commandBuffer->addCommand<Ogre::CbTexture>() = Ogre::CbTexture( 0, true, tex.getPointer(), finalSamplerblock);
             }
             {
-                Ogre::TexturePtr tex = Ogre::TextureManager::getSingletonPtr()->getByName("weight.dds");
-                if (tex.isNull()){
-                    tex = Ogre::TextureManager::getSingleton().load("weight.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D);
+                Ogre::TextureGpu* tex = Ogre::TextureGpuManager::getSingletonPtr()->getByName("weight.dds");
+                if (tex){
+                    tex = Ogre::TextureGpuManager::getSingleton().load("weight.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_2D);
                 }
                 Ogre::HlmsSamplerblock samplerblock;
                 samplerblock.mU = Ogre::TextureAddressingMode::TAM_WRAP;
@@ -891,13 +896,14 @@ namespace Ogre
                 const Ogre::HlmsSamplerblock* finalSamplerblock = Ogre::Root::getSingleton().getHlmsManager()->getSamplerblock(samplerblock);
                 *commandBuffer->addCommand<Ogre::CbTexture>() = Ogre::CbTexture( 1, true, tex.getPointer(), finalSamplerblock);
             }
-            if( !mProbe.isNull() ){
+            if( !mProbe ){
 
                 size_t texUnit = mPreparedPass.shadowMaps.size() + (!mGridBuffer ? 3 : 5);
 
                 *commandBuffer->addCommand<CbTexture>() =
                         CbTexture( texUnit, true, mProbe.get(), mOceanSamplerblock );
             }
+        #endif
 
 
             mLastMovableObject = queuedRenderable.movableObject;
@@ -973,7 +979,7 @@ namespace Ogre
         mAmbientLightMode = mode;
     }
     //-----------------------------------------------------------------------------------
-    void HlmsOcean::setEnvProbe( Ogre::TexturePtr probe ){
+    void HlmsOcean::setEnvProbe( Ogre::TextureGpu* probe ){
         mProbe = probe;
     }
     //-----------------------------------------------------------------------------------

@@ -131,7 +131,7 @@ namespace Demo
 		mOcean->setCastShadows(false);
 
 		Ogre::Vector3 center;  center = 0;
-		Ogre::Vector2 size;  size = 2;
+		Ogre::Vector2 size;  size = 12000;
 
 		mOcean->create(center, size);
 
@@ -139,10 +139,11 @@ namespace Demo
 
 		oceanNode->attachObject(mOcean);
 
-		Ogre::TextureGpu* probeTexture = Ogre::TextureGpuManager::getSingletonPtr()->getByName("oceanData.dds");
+		// fixme
+        /**Ogre::TextureGpu* probeTexture = Ogre::TextureGpuManager::getSingletonPtr()->getByName("oceanData.dds");
 		if (!probeTexture) {
 			probeTexture = Ogre::TextureGpuManager::getSingleton().load("oceanData.dds", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, Ogre::TEX_TYPE_3D);
-		}
+		}**
 
 		Ogre::HlmsOcean* hlmsOcean = static_cast<Ogre::HlmsOcean*>(
 			Ogre::Root::getSingletonPtr()->getHlmsManager()->getHlms(Ogre::HLMS_USER2)
@@ -152,7 +153,7 @@ namespace Demo
 		Ogre::String datablockName = "testOcean";
 		Ogre::HlmsDatablock *datablockOcean = static_cast<Ogre::HlmsOceanDatablock*>(hlmsOcean->createDatablock(datablockName, datablockName, Ogre::HlmsMacroblock(), Ogre::HlmsBlendblock(), Ogre::HlmsParamVec()));
 
-		mOcean->setDatablock(datablockOcean);/**/
+		mOcean->setDatablock(datablockOcean);**/
 
 
         LogO("---- tutorial createScene");

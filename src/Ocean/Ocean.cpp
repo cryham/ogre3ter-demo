@@ -1,9 +1,9 @@
 
 #include "Ocean/Ocean.h"
 
-#include "OgreImage.h"
-#include "OgreTextureManager.h"
-#include "OgreHardwarePixelBuffer.h"
+// #include "OgreImage.h"
+#include "OgreTextureGpuManager.h"
+// #include "OgreHardwarePixelBuffer.h"
 
 #include "OgreCamera.h"
 #include "OgreSceneManager.h"
@@ -12,7 +12,7 @@
 #include "Compositor/OgreCompositorChannel.h"
 #include "OgreMaterialManager.h"
 #include "OgreTechnique.h"
-#include "OgreRenderTexture.h"
+// #include "OgreRenderTexture.h"
 
 namespace Ogre
 {

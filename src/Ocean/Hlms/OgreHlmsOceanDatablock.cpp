@@ -29,15 +29,15 @@ THE SOFTWARE.
 #include "Ocean/Hlms/OgreHlmsOceanDatablock.h"
 #include "Ocean/Hlms/OgreHlmsOcean.h"
 #include "OgreHlmsManager.h"
-#include "OgreHlmsTextureManager.h"
-#include "OgreTexture.h"
-#include "OgreTextureManager.h"
+// #include "OgreHlmsTextureGpuManager.h"
+#include "OgreTextureGpu.h"
+#include "OgreTextureGpuManager.h"
 #include "OgreLogManager.h"
 
 namespace Ogre
 {
     const size_t HlmsOceanDatablock::MaterialSizeInGpu          = 4 * 2 * 4;
-    const size_t HlmsOceanDatablock::MaterialSizeInGpuAligned   = alignToNextMultiple(
+    const size_t HlmsOceanDatablock::MaterialSizeInGpuAligned   = alignToNextMultiple<size_t>(
                                                                     HlmsOceanDatablock::MaterialSizeInGpu,
                                                                     4 * 4 );
 

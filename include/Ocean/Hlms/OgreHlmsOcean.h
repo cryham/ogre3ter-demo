@@ -92,7 +92,7 @@ namespace Ogre
 
         struct PassData
         {
-            FastArray<Texture*> shadowMaps;
+            FastArray<TextureGpu*> shadowMaps;
             FastArray<float>    vertexShaderSharedBuffer;
             FastArray<float>    pixelShaderSharedBuffer;
 
@@ -109,7 +109,7 @@ namespace Ogre
         uint32                  mCurrentPassBuffer;     /// Resets every to zero every new frame.
 
         TexBufferPacked         *mGridBuffer;
-        TexBufferPacked         *mGlobalLightListBuffer;
+        ReadOnlyBufferPacked    *mGlobalLightListBuffer;
 
         ConstBufferPool::BufferPool const *mLastBoundPool;
 
@@ -121,7 +121,7 @@ namespace Ogre
         ShadowFilter mShadowFilter;
         AmbientLightMode mAmbientLightMode;
 
-        Ogre::TexturePtr mProbe;
+        Ogre::TextureGpu* mProbe;
 
         virtual const HlmsCache* createShaderCacheEntry( uint32 renderableHash,
                                                          const HlmsCache &passCache,
@@ -179,7 +179,7 @@ namespace Ogre
         void setAmbientLightMode( AmbientLightMode mode );
         AmbientLightMode getAmbientLightMode(void) const    { return mAmbientLightMode; }
 
-        void setEnvProbe( Ogre::TexturePtr probe );
+        void setEnvProbe( Ogre::TextureGpu* probe );
     };
 
     struct OceanProperty

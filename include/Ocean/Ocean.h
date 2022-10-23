@@ -45,10 +45,10 @@ namespace Ogre
 
         std::vector<OceanCell>   m_OceanCells;
         std::vector<OceanCell*>  m_collectedCells[2];
-        size_t                     m_currentCell;
+        size_t                   m_currentCell;
 
-        Ogre::TexturePtr    m_heightMapTex;
-        Ogre::TexturePtr    m_normalMapTex;
+        Ogre::TextureGpu*    m_heightMapTex;
+        Ogre::TextureGpu*    m_normalMapTex;
 
         Vector3             m_prevLightDir;
 
