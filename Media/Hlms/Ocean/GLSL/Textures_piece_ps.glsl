@@ -1,3 +1,4 @@
+	#version 450
 
 @undefpiece( kD )
 @piece( kD )diffuseCol@end

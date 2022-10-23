@@ -1,3 +1,5 @@
+	#version 450
+
 @insertpiece( SetCrossPlatformSettings )
 @insertpiece( SetCompatibilityLayer )
 

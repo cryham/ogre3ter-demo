@@ -1,3 +1,4 @@
+	#version 450
 
 @piece( TerraMaterialDecl )
 layout_constbuffer(binding = 1) uniform MaterialBuf
