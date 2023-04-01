@@ -783,6 +783,7 @@ namespace Demo
             //Create and register the unlit Hlms
             hlmsUnlit = OGRE_NEW Ogre::HlmsUnlit( archiveUnlit, &archiveUnlitLibraryFolders );
             Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsUnlit );
+            hlmsUnlit->setDebugOutputPath(true, false, "shaders/");
         }
 
         {
@@ -807,6 +808,7 @@ namespace Demo
             //Create and register
             hlmsPbs = OGRE_NEW Ogre::HlmsPbs( archivePbs, &archivePbsLibraryFolders );
             Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsPbs );
+            hlmsPbs->setDebugOutputPath(true, false, "shaders/");
         }
 
 
