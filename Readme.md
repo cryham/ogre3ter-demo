@@ -68,24 +68,29 @@ Guide below has setup steps for empty Debian 11:
 
 3. Build **Ogre-Next** from sources, using [scripts](https://github.com/OGRECave/ogre-next/tree/master/Scripts/BuildScripts/output).  
 
-- Save the Linux latest [script file](https://raw.githubusercontent.com/OGRECave/ogre-next/master/Scripts/BuildScripts/output/build_ogre_linux_c%2B%2Blatest.sh) and put it inside root folder, called here e.g. `dev/`
+- Save the file [build_ogre_linux_c++latest.sh](https://raw.githubusercontent.com/OGRECave/ogre-next/master/Scripts/BuildScripts/output/build_ogre_linux_c%2B%2Blatest.sh) and put it inside our root folder, called here e.g. `dev/`
 
 - Go into `dev/` and start it:  
 ```
 cd dev/
+chmod +x ./build_ogre_linux_c++latest.sh
 ./build_ogre_linux_c++latest.sh
 ```
 
 - This should succeed after a longer while and build Ogre-Next with its dependencies.
 
+- If so you can start and check Ogre demos and samples inside:  
+`dev/Ogre/ogre-next/build/Release/bin/`
+
 4. Go into `dev/`, clone **this repo**, and build:  
 ```
-git clone git@github.com:cryham/ogre3ter-demo.git demo
+git clone https://github.com/cryham/ogre3ter-demo.git demo
 cd demo
 mkdir build
 cd build
-cmake ..
-ninja
+cmake ../ -DCMAKE_BUILD_TYPE="Release"
+make -j5
+(or: ninja - if not using makefile)
 ```
 
 ----
