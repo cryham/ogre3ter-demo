@@ -57,7 +57,9 @@ namespace Demo
         GameEntityVec       mGameEntities[Ogre::NUM_SCENE_MEMORY_MANAGER_TYPES];
         GameEntityVec const *mThreadGameEntityToUpdate;
         float               mThreadWeight;
-
+    public:
+        bool                mGrabMouse;
+    protected:
         bool                mQuit;
         bool                mAlwaysAskForConfig;
         bool                mUseHlmsDiskCache;
