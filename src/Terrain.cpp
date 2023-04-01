@@ -186,6 +186,7 @@ namespace Demo
                 //Create and register the terra Hlms
                 hlmsTerra = OGRE_NEW Ogre::HlmsTerra( archiveTerra, &archiveTerraLibraryFolders );
                 hlmsManager->registerHlms( hlmsTerra );
+                hlmsTerra->setDebugOutputPath(true, false, "shaders/");
             }
 
             //Add Terra's piece files that customize the PBS implementation.
@@ -214,6 +215,7 @@ namespace Demo
 
             Ogre::HlmsOcean *mHlmsOcean = OGRE_NEW Ogre::HlmsOcean(archiveOcean, &library, mRoot);
             hlmsManager->registerHlms(mHlmsOcean);
+            mHlmsOcean->setDebugOutputPath(true, false, "shaders/");
             // todo: delete?
         }
 
