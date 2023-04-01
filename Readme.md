@@ -16,6 +16,7 @@ No real PBR textures yet just values.
 Specular light is somewhat broken, too much still.  
 Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
 
+----
 ## Keys
 
 F1 - Toggle Help text  
@@ -51,7 +52,50 @@ Top line meaning:
 **Fps** (frames per second), **f** face (triangles) count [k = 1000], **d** draw count, **i** instances  
 Veget - total vegetation models on scene
 
+----
 ## Building from sources
 
+See [CMakeLists.txt](/CMakeLists.txt) for details, and adjust fixes if needed.
+
 Only tested on Linux, Debian 11.  
-See [CMakeLists.txt](/CMakeLists.txt) for details.
+Guide below has setup steps for empty Debian 11:
+
+1. Basic setup for building C++ etc:  
+`sudo apt-get install g++ binutils gdb git make cmake ninja-build`
+
+2. First install Ogre dependencies, as in [here](https://github.com/OGRECave/ogre-next#dependencies-linux)  
+`sudo apt-get install libfreetype6-dev libfreeimage-dev libzzip-dev libxrandr-dev libxaw7-dev freeglut3-dev libgl1-mesa-dev libglu1-mesa-dev libx11-xcb-dev libxcb-keysyms1-dev doxygen graphviz python-clang libsdl2-dev`
+
+3. Build **Ogre-Next** from sources, using [scripts](https://github.com/OGRECave/ogre-next/tree/master/Scripts/BuildScripts/output).  
+
+- Save the Linux latest [script file](https://raw.githubusercontent.com/OGRECave/ogre-next/master/Scripts/BuildScripts/output/build_ogre_linux_c%2B%2Blatest.sh) and put it inside root folder, called here e.g. `dev/`
+
+- Go into `dev/` and start it:  
+```
+cd dev/
+./build_ogre_linux_c++latest.sh
+```
+
+- This should succeed after a longer while and build Ogre-Next with its dependencies.
+
+4. Go into `dev/`, clone **this repo**, and build:  
+```
+git clone git@github.com:cryham/ogre3ter-demo.git demo
+cd demo
+mkdir build
+cd build
+cmake ..
+ninja
+```
+
+----
+## My folder tree
+```
+dev/
+    demo - this repo inside
+    Ogre
+        ogre-next - Ogre-Next build inside
+        ogre-next-deps
+```
+
+Note: CMake default is `Dependencies/Ogre` inside demo. On Windows, it can be as link, if this doesn't work.
