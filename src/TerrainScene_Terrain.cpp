@@ -16,6 +16,7 @@
 #include "Terra/TerraShadowMapper.h"
 #include "OgreGpuProgramManager.h"
 
+#include "OgreCommon.h"
 #include "OgreItem.h"
 #include "OgreMesh.h"
 #include "OgreMeshManager.h"
@@ -25,6 +26,9 @@
 
 #include "OgreHlmsPbs.h"
 #include "OgreHlmsPbsDatablock.h"
+#include "OgreHlmsCommon.h"
+#include "OgreHlmsUnlit.h"
+#include "OgreHlmsUnlitDatablock.h"
 
 using namespace Demo;
 using namespace Ogre;
@@ -215,7 +219,7 @@ namespace Demo
     	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
         
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
-        ManualObject* m = mgr->createManualObject();
+        ManualObject* m = mgr->createManualObject(SCENE_STATIC);
         m->begin(sMater, OT_TRIANGLE_LIST);
 
         //  divisions- quality
@@ -256,25 +260,22 @@ namespace Demo
         //m->setRenderQueueGroup(230);  //?
         m->setCastShadows(false);
 
-        ndSky = mgr->getRootSceneNode()->createChildSceneNode();
+        ndSky = mgr->getRootSceneNode(SCENE_STATIC)->createChildSceneNode(SCENE_STATIC);
         ndSky->attachObject(m);  // SCENE_DYNAMIC
         ndSky->setScale(scale);
         Quaternion q;  q.FromAngleAxis(Degree(-yaw), Vector3::UNIT_Y);
         ndSky->setOrientation(q);
 
-        //  Change the addressing mode to wrap  ?
-        /*Root *root = mGraphicsSystem->getRoot();
-        Hlms *hlms = root->getHlmsManager()->getHlms( HLMS_UNLIT );
-        HlmsUnlitDatablock *datablock = static_cast<HlmsUnlitDatablock*>(hlms->getDatablock(sMater));
-        // HlmsPbsDatablock *datablock = static_cast<HlmsPbsDatablock*>(m->getDatablock() );
-        HlmsSamplerblock samplerblock( *datablock->getSamplerblock( PBSM_DIFFUSE ) );  // hard copy
-        samplerblock.mU = TAM_WRAP;
-        samplerblock.mV = TAM_WRAP;
-        samplerblock.mW = TAM_WRAP;
-        datablock->setSamplerblock( PBSM_DIFFUSE, samplerblock );
-        datablock->setSamplerblock( PBSM_NORMAL, samplerblock );
-        datablock->setSamplerblock( PBSM_ROUGHNESS, samplerblock );
-        datablock->setSamplerblock( PBSM_METALLIC, samplerblock );/**/
+        //  set wrap
+        HlmsSamplerblock sb;
+        sb.mMinFilter = FO_ANISOTROPIC;  sb.mMagFilter = FO_ANISOTROPIC;
+        sb.mMipFilter = FO_LINEAR;       sb.mMaxAnisotropy = 4;
+        sb.mU = TAM_MIRROR;  sb.mV = TAM_MIRROR;  sb.mW = TAM_MIRROR;
+
+        HlmsUnlit* hlms = (HlmsUnlit*) Ogre::Root::getSingleton().getHlmsManager()->getHlms( HLMS_UNLIT );
+        HlmsUnlitDatablock* db = (HlmsUnlitDatablock*) hlms->getDatablock(sMater);
+	
+        db->setSamplerblock( 0, sb );
     }
 
     void TerrainGame::DestroySkyDome()
