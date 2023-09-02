@@ -27,14 +27,15 @@ THE SOFTWARE.
 */
 
 #include "Terra/Hlms/OgreHlmsTerraDatablock.h"
-#include "Terra/Hlms/OgreHlmsTerra.h"
+
 #include "OgreHlmsManager.h"
+#include "OgreLogManager.h"
+#include "OgreRenderSystem.h"
+#include "OgreShaderPrimitives.h"
+#include "OgreTextureFilters.h"
 #include "OgreTextureGpu.h"
 #include "OgreTextureGpuManager.h"
-#include "OgreRenderSystem.h"
-#include "OgreTextureFilters.h"
-#include "OgreLogManager.h"
-#include "OgreShaderPrimitives.h"
+#include "Terra/Hlms/OgreHlmsTerra.h"
 
 #define _OgreHlmsTextureBaseClassExport
 #define OGRE_HLMS_TEXTURE_BASE_CLASS HlmsTerraBaseTextureDatablock
@@ -64,7 +65,11 @@ namespace Ogre
         mkDg( 0.318309886f ),
         mkDb( 0.318309886f ),  // Max Diffuse = 1 / PI
         mShadowConstantBiasGpu( 0.0f ),
-        mBrdf( TerraBrdf::Default )
+        mBrdf( TerraBrdf::Default ),
+        mDetailTriplanarDiffuseEnabled( true ),  //** param
+        mDetailTriplanarNormalEnabled( false ),  //** todo
+        mDetailTriplanarRoughnessEnabled( false ),
+        mDetailTriplanarMetalnessEnabled( false )
     {
         mShadowConstantBiasGpu = mShadowConstantBias = 0.01f;
 
@@ -116,13 +121,13 @@ namespace Ogre
             HlmsTerra::LowerGpuOverhead )
         {
             const size_t poolIdx = static_cast<HlmsTerra*>(mCreator)->getPoolIndex( this );
-            const uint32 finalHash = (hash.mHash & 0xFFFFFE00) | (poolIdx & 0x000001FF);
+            const uint32 finalHash = ( hash.getU32Value() & 0xFFFFFE00 ) | ( poolIdx & 0x000001FF );
             mTextureHash = finalHash;
         }
         else
         {
             const size_t poolIdx = static_cast<HlmsTerra*>(mCreator)->getPoolIndex( this );
-            const uint32 finalHash = (hash.mHash & 0xFFFFFFF0) | (poolIdx & 0x0000000F);
+            const uint32 finalHash = ( hash.getU32Value() & 0xFFFFFFF0 ) | ( poolIdx & 0x0000000F );
             mTextureHash = finalHash;
         }
     }
@@ -227,8 +232,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     void HlmsTerraDatablock::setAlphaTestThreshold( float threshold )
     {
-        OGRE_EXCEPT( Exception::ERR_NOT_IMPLEMENTED,
-                     "Alpha testing not supported on Terra Hlms",
+        OGRE_EXCEPT( Exception::ERR_NOT_IMPLEMENTED, "Alpha testing not supported on Terra Hlms",
                      "HlmsTerraDatablock::setAlphaTestThreshold" );
 
         HlmsDatablock::setAlphaTestThreshold( threshold );
@@ -250,9 +254,46 @@ namespace Ogre
         }
     }
     //-----------------------------------------------------------------------------------
-    uint32 HlmsTerraDatablock::getBrdf() const
+    uint32 HlmsTerraDatablock::getBrdf() const { return mBrdf; }
+    //-----------------------------------------------------------------------------------
+    void HlmsTerraDatablock::setDetailTriplanarDiffuseEnabled( bool enabled )
     {
-        return mBrdf;
+        if( mDetailTriplanarDiffuseEnabled != enabled )
+        {
+            mDetailTriplanarDiffuseEnabled = enabled;
+
+            flushRenderables();
+        }
+    }
+    //-----------------------------------------------------------------------------------
+    void HlmsTerraDatablock::setDetailTriplanarNormalEnabled( bool enabled )
+    {
+        if( mDetailTriplanarNormalEnabled != enabled )
+        {
+            mDetailTriplanarNormalEnabled = enabled;
+
+            flushRenderables();
+        }
+    }
+    //-----------------------------------------------------------------------------------
+    void HlmsTerraDatablock::setDetailTriplanarRoughnessEnabled( bool enabled )
+    {
+        if( mDetailTriplanarRoughnessEnabled != enabled )
+        {
+            mDetailTriplanarRoughnessEnabled = enabled;
+
+            flushRenderables();
+        }
+    }
+    //-----------------------------------------------------------------------------------
+    void HlmsTerraDatablock::setDetailTriplanarMetalnessEnabled( bool enabled )
+    {
+        if( mDetailTriplanarMetalnessEnabled != enabled )
+        {
+            mDetailTriplanarMetalnessEnabled = enabled;
+
+            flushRenderables();
+        }
     }
     //-----------------------------------------------------------------------------------
     bool HlmsTerraDatablock::suggestUsingSRGB( TerraTextureTypes type ) const
@@ -346,4 +387,4 @@ namespace Ogre
 
         return retVal;
     }*/
-}
+}  // namespace Ogre

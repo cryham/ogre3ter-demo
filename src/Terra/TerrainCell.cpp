@@ -27,6 +27,7 @@ THE SOFTWARE.
 */
 
 #include "Terra/TerrainCell.h"
+
 #include "Terra/Terra.h"
 
 #include "Vao/OgreVaoManager.h"
@@ -69,8 +70,8 @@ namespace Ogre
 
         //Setup bufferless vao
         VertexBufferPackedVec vertexBuffers;
-        VertexArrayObject *vao = vaoManager->createVertexArrayObject(
-            vertexBuffers, 0, OT_TRIANGLE_STRIP );
+        VertexArrayObject *vao =
+            vaoManager->createVertexArrayObject( vertexBuffers, 0, OT_TRIANGLE_STRIP );
         mVaoPerLod[VpNormal].push_back( vao );
         mVaoPerLod[VpShadow].push_back( vao );
     }
@@ -82,8 +83,10 @@ namespace Ogre
         m_gridZ             = gridPos.z;
         m_lodLevel          = lodLevel;
 
-        horizontalPixelDim  = std::min( horizontalPixelDim, m_parentTerra->m_width - m_gridX );
-        verticalPixelDim    = std::min( verticalPixelDim, m_parentTerra->m_depth - m_gridZ );
+        horizontalPixelDim =
+            std::min( horizontalPixelDim, m_parentTerra->m_width - static_cast<uint32>( m_gridX ) );
+        verticalPixelDim =
+            std::min( verticalPixelDim, m_parentTerra->m_depth - static_cast<uint32>( m_gridZ ) );
 
         m_sizeX = horizontalPixelDim;
         m_sizeZ = verticalPixelDim;
@@ -173,8 +176,8 @@ namespace Ogre
         //ivec4 xzTexPosBounds
         ((int32*RESTRICT_ALIAS)gpuPtr)[4] = m_gridX;
         ((int32*RESTRICT_ALIAS)gpuPtr)[5] = m_gridZ;
-        ((int32*RESTRICT_ALIAS)gpuPtr)[6] = m_parentTerra->m_width - 1u;
-        ((int32*RESTRICT_ALIAS)gpuPtr)[7] = m_parentTerra->m_depth - 1u;
+        ( ( uint32 * RESTRICT_ALIAS ) gpuPtr )[6] = m_parentTerra->m_width - 1u;
+        ( ( uint32 * RESTRICT_ALIAS ) gpuPtr )[7] = m_parentTerra->m_depth - 1u;
 
         ((float*RESTRICT_ALIAS)gpuPtr)[8]  = m_parentTerra->m_terrainOrigin.x;
         ((float*RESTRICT_ALIAS)gpuPtr)[9]  = m_parentTerra->m_terrainOrigin.y;
@@ -187,10 +190,7 @@ namespace Ogre
         ((float*RESTRICT_ALIAS)gpuPtr)[15] = m_parentTerra->m_invDepth;
     }
     //-----------------------------------------------------------------------
-    const LightList& TerrainCell::getLights() const
-    {
-        return m_parentTerra->queryLights();
-    }
+    const LightList &TerrainCell::getLights() const { return m_parentTerra->queryLights(); }
     //-----------------------------------------------------------------------------
     void TerrainCell::getRenderOperation( v1::RenderOperation& op, bool casterPass )
     {
@@ -218,4 +218,4 @@ namespace Ogre
                      "v1::Entity). Do not mix Items and Entities",
                      "TerrainCell::getCastsShadows" );
     }
-}
+}  // namespace Ogre

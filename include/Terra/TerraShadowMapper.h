@@ -30,6 +30,7 @@ THE SOFTWARE.
 #define _OgreTerraShadowMapper_H_
 
 #include "OgrePrerequisites.h"
+
 #include "OgreMovableObject.h"
 #include "OgreShaderParams.h"
 
@@ -167,6 +168,6 @@ namespace Ogre
 
         Ogre::TextureGpu* getShadowMapTex() const           { return m_shadowMapTex; }
     };
-}
+}  // namespace Ogre
 
 #endif

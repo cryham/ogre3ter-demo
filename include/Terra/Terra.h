@@ -30,6 +30,7 @@ THE SOFTWARE.
 #define _OgreTerra_H_
 
 #include "OgrePrerequisites.h"
+
 #include "OgreMovableObject.h"
 #include "OgreShaderParams.h"
 
@@ -261,7 +262,6 @@ namespace Ogre
         Vector2 getTerrainXZCenter() const;
     };
 
-
     /** Terra during creation requires a number of temporary surfaces that are used then discarded.
         These resources can be shared by all the Terra 'islands' since as long as they have the
         same resolution and format.
@@ -350,6 +350,6 @@ namespace Ogre
         */
         static void destroyTempTexture( TerraSharedResources *sharedResources, TextureGpu *tmpRtt );
     };
-}
+}  // namespace Ogre
 
 #endif

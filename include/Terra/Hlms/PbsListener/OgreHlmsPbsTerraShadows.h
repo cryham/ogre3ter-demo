@@ -78,6 +78,6 @@ namespace Ogre
     {
         static const IdString TerraEnabled;
     };
-}
+}  // namespace Ogre
 
 #endif

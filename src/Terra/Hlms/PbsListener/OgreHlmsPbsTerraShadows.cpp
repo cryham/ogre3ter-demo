@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -31,11 +31,10 @@ THE SOFTWARE.
 #include "Terra/Hlms/OgreHlmsTerra.h"
 #include "Terra/Terra.h"
 
-#include "CommandBuffer/OgreCommandBuffer.h"
 #include "CommandBuffer/OgreCbTexture.h"
-
-#include "OgreHlmsPbs.h"
+#include "CommandBuffer/OgreCommandBuffer.h"
 #include "OgreHlmsManager.h"
+#include "OgreHlmsPbs.h"
 #include "OgreRoot.h"
 
 namespace Ogre
@@ -43,10 +42,11 @@ namespace Ogre
     const IdString PbsTerraProperty::TerraEnabled   = IdString( "terra_enabled" );
 
     HlmsPbsTerraShadows::HlmsPbsTerraShadows() :
-          mTerra( 0 )
-        , mTerraSamplerblock( 0 )
+        mTerra( 0 ),
+        mTerraSamplerblock( 0 )
 #if OGRE_DEBUG_MODE
-        , mSceneManager( 0 )
+        ,
+        mSceneManager( 0 )
 #endif
     {
     }
@@ -86,8 +86,10 @@ namespace Ogre
         if( hlms->_getProperty( HlmsBaseProp::ShadowCaster ) == 0 &&
             hlms->_getProperty( PbsTerraProperty::TerraEnabled ) != 0 )
         {
-            int32 texUnit = hlms->_getProperty( PbsProperty::Set0TextureSlotEnd );
-            hlms->_setTextureReg( VertexShader, "terrainShadows", texUnit - 1 );
+			int32 texUnit = hlms->_getProperty( PbsProperty::Set0TextureSlotEnd ) - 1;
+			if( hlms->_getProperty( PbsProperty::HasPlanarReflections ) )
+				--texUnit;
+			hlms->_setTextureReg( VertexShader, "terrainShadows", texUnit );
         }
     }
     //-----------------------------------------------------------------------------------
@@ -95,7 +97,7 @@ namespace Ogre
                                                bool dualParaboloid, SceneManager *sceneManager,
                                                Hlms *hlms )
     {
-        if( !casterPass && mTerra )
+        if( !casterPass )
         {
 #if OGRE_DEBUG_MODE
             mSceneManager = sceneManager;
@@ -123,8 +125,7 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     float* HlmsPbsTerraShadows::preparePassBuffer( const CompositorShadowNode *shadowNode,
                                                    bool casterPass, bool dualParaboloid,
-                                                   SceneManager *sceneManager,
-                                                   float *passBufferPtr )
+                                                   SceneManager *sceneManager, float *passBufferPtr )
     {
         if( !casterPass && mTerra )
         {
@@ -141,6 +142,7 @@ namespace Ogre
             *passBufferPtr++ = terrainXZInvDim.y;
             *passBufferPtr++ = 1.0f;
         }
+
         return passBufferPtr;
     }
     //-----------------------------------------------------------------------------------
@@ -157,4 +159,4 @@ namespace Ogre
                 CbTexture( (uint16)texUnit++, terraShadowTex, mTerraSamplerblock );
         }
     }
-}
+}  // namespace Ogre

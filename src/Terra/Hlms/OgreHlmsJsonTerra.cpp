@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of OGRE
+This source file is part of OGRE-Next
     (Object-oriented Graphics Rendering Engine)
 For the latest info, see http://www.ogre3d.org/
 
@@ -30,14 +30,22 @@ THE SOFTWARE.
 
 #if !OGRE_NO_JSON
 
-#include "Terra/Hlms/OgreHlmsJsonTerra.h"
 #include "OgreHlmsManager.h"
 #include "OgreTextureGpuManager.h"
+#include "Terra/Hlms/OgreHlmsJsonTerra.h"
 
 #include "OgreLwString.h"
 #include "OgreStringConverter.h"
 
+#if defined( __clang__ )
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wimplicit-int-float-conversion"
+    #pragma clang diagnostic ignored "-Wdeprecated-copy"
+#endif
 #include "rapidjson/document.h"
+#if defined( __clang__ )
+    #pragma clang diagnostic pop
+#endif
 
 namespace Ogre
 {
@@ -57,12 +65,22 @@ namespace Ogre
             return TerraBrdf::BlinnPhong;
         if( !strcmp( value, "default_uncorrelated" ) )
             return TerraBrdf::DefaultUncorrelated;
+        if( !strcmp( value, "default_had_diffuse_fresnel" ) )
+            return TerraBrdf::DefaultHasDiffuseFresnel;
         if( !strcmp( value, "default_separate_diffuse_fresnel" ) )
             return TerraBrdf::DefaultSeparateDiffuseFresnel;
+        if( !strcmp( value, "cook_torrance_has_diffuse_fresnel" ) )
+            return TerraBrdf::CookTorranceHasDiffuseFresnel;
         if( !strcmp( value, "cook_torrance_separate_diffuse_fresnel" ) )
             return TerraBrdf::CookTorranceSeparateDiffuseFresnel;
+        if( !strcmp( value, "blinn_phong_has_diffuse_fresnel" ) )
+            return TerraBrdf::BlinnPhongHasDiffuseFresnel;
         if( !strcmp( value, "blinn_phong_separate_diffuse_fresnel" ) )
             return TerraBrdf::BlinnPhongSeparateDiffuseFresnel;
+        if( !strcmp( value, "blinn_phong_legacy_math" ) )
+            return TerraBrdf::BlinnPhongLegacyMath;
+        if( !strcmp( value, "blinn_phong_full_legacy" ) )
+            return TerraBrdf::BlinnPhongFullLegacy;
 
         return TerraBrdf::Default;
     }
@@ -114,10 +132,8 @@ namespace Ogre
         if( itor != json.MemberEnd() && itor->value.IsString() )
         {
             const char *textureName = itor->value.GetString();
-            texture = mTextureManager->createOrRetrieveTexture( textureName,
-                                                                GpuPageOutStrategy::Discard,
-                                                                texMapTypes[textureType],
-                                                                resourceGroup );
+            texture = mTextureManager->createOrRetrieveTexture(
+                textureName, GpuPageOutStrategy::Discard, texMapTypes[textureType], resourceGroup );
         }
 
         HlmsSamplerblock samplerBlockRef;
@@ -157,10 +173,8 @@ namespace Ogre
         if( itor != json.MemberEnd() && itor->value.IsString() )
         {
             const char *textureName = itor->value.GetString();
-            texture = mTextureManager->createOrRetrieveTexture( textureName,
-                                                                GpuPageOutStrategy::Discard,
-                                                                texMapTypes[textureType],
-                                                                resourceGroup );
+            texture = mTextureManager->createOrRetrieveTexture(
+                textureName, GpuPageOutStrategy::Discard, texMapTypes[textureType], resourceGroup );
         }
 
         itor = json.FindMember("sampler");
@@ -259,12 +273,11 @@ namespace Ogre
 
                 terraDatablock->setDetailMapOffsetScale( i, offsetScale );
 
-                loadTexture( subobj, "diffuse_map",
-                             static_cast<TerraTextureTypes>( TERRA_DETAIL0 + i ),
+                loadTexture( subobj, "diffuse_map", static_cast<TerraTextureTypes>( TERRA_DETAIL0 + i ),
                              terraDatablock, resourceGroup );
                 loadTexture( subobj, "normal_map",
-                             static_cast<TerraTextureTypes>( TERRA_DETAIL0_NM + i ),
-                             terraDatablock, resourceGroup );
+                             static_cast<TerraTextureTypes>( TERRA_DETAIL0_NM + i ), terraDatablock,
+                             resourceGroup );
                 loadTexture( subobj, "roughness_map",
                              static_cast<TerraTextureTypes>( TERRA_DETAIL_ROUGHNESS0 + i ),
                              terraDatablock, resourceGroup );
@@ -275,17 +288,20 @@ namespace Ogre
 //                itor = subobjec.FindMember("sampler");
 //                if( itor != subobjec.MemberEnd() && itor->value.IsString() )
 //                {
-//                    map<LwConstString, const HlmsSamplerblock*>::type::const_iterator it =
+                //                    map<LwConstString, const HlmsSamplerblock*>::type::const_iterator
+                //                    it =
 //                            blocks.samplerblocks.find(
-//                                LwConstString::FromUnsafeCStr( itor->value.GetString()) );
+                //                                LwConstString::FromUnsafeCStr( itor->value.GetString())
+                //                                );
 //                    if( it != blocks.samplerblocks.end() )
 //                    {
 //                        textures[TERRA_DETAIL0 + i].samplerblock = it->second;
 //                        textures[TERRA_DETAIL0_NM + i].samplerblock = it->second;
-//                        textures[TERRA_DETAIL_ROUGHNESS0 + i].samplerblock = it->second;
-//                        textures[TERRA_DETAIL_METALNESS0 + i].samplerblock = it->second;
-//                        for( int i=0; i<4; ++i )
-//                            mHlmsManager->addReference( textures[TERRA_DETAIL0 + i].samplerblock );
+                //                        textures[TERRA_DETAIL_ROUGHNESS0 + i].samplerblock =
+                //                        it->second; textures[TERRA_DETAIL_METALNESS0 + i].samplerblock
+                //                        = it->second; for( int i=0; i<4; ++i )
+                //                            mHlmsManager->addReference( textures[TERRA_DETAIL0 +
+                //                            i].samplerblock );
 //                    }
 //                }
             }
@@ -296,30 +312,50 @@ namespace Ogre
         {
             const rapidjson::Value &subobj = itor->value;
             loadTexture( subobj, blocks, TERRA_REFLECTION, terraDatablock, resourceGroup );
+		}
+
+        itor = json.FindMember( "detail_triplanar_diffuse" );
+        if( itor != json.MemberEnd() && itor->value.IsBool() )
+        {
+            terraDatablock->setDetailTriplanarDiffuseEnabled( itor->value.GetBool() );
+        }
+
+        itor = json.FindMember( "detail_triplanar_normal" );
+        if( itor != json.MemberEnd() && itor->value.IsBool() )
+        {
+            terraDatablock->setDetailTriplanarNormalEnabled( itor->value.GetBool() );
+        }
+
+        itor = json.FindMember( "detail_triplanar_roughness" );
+        if( itor != json.MemberEnd() && itor->value.IsBool() )
+        {
+            terraDatablock->setDetailTriplanarRoughnessEnabled( itor->value.GetBool() );
+        }
+
+        itor = json.FindMember( "detail_triplanar_metalness" );
+        if( itor != json.MemberEnd() && itor->value.IsBool() )
+        {
+            terraDatablock->setDetailTriplanarMetalnessEnabled( itor->value.GetBool() );
         }
     }
     //-----------------------------------------------------------------------------------
-    void HlmsJsonTerra::saveTexture( const char *blockName,
-                                   TerraTextureTypes textureType,
+    void HlmsJsonTerra::saveTexture( const char *blockName, TerraTextureTypes textureType,
                                    const HlmsTerraDatablock *datablock, String &outString,
                                    bool writeTexture )
     {
-        saveTexture( Vector3( 0.0f ), blockName, textureType,
-                     false, writeTexture, datablock, outString );
+        saveTexture( Vector3( 0.0f ), blockName, textureType, false, writeTexture, datablock,
+                     outString );
     }
     //-----------------------------------------------------------------------------------
     void HlmsJsonTerra::saveTexture( const Vector3 &value, const char *blockName,
-                                   TerraTextureTypes textureType,
-                                   const HlmsTerraDatablock *datablock, String &outString,
-                                   bool writeTexture )
+                                     TerraTextureTypes textureType, const HlmsTerraDatablock *datablock,
+                                     String &outString, bool writeTexture )
     {
-        saveTexture( value, blockName, textureType,
-                     true, writeTexture, datablock, outString );
+        saveTexture( value, blockName, textureType, true, writeTexture, datablock, outString );
     }
     //-----------------------------------------------------------------------------------
     void HlmsJsonTerra::saveTexture( const Vector3 &value, const char *blockName,
-                                   TerraTextureTypes textureType,
-                                   bool writeValue, bool writeTexture,
+                                     TerraTextureTypes textureType, bool writeValue, bool writeTexture,
                                    const HlmsTerraDatablock *datablock, String &outString )
     {
         outString += ",\n\t\t\t\"";
@@ -473,6 +509,6 @@ namespace Ogre
                 outSamplerblocks.insert( samplerblock );
         }
     }
-}
+}  // namespace Ogre
 
 #endif

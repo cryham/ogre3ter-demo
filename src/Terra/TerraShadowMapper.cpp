@@ -30,21 +30,18 @@ THE SOFTWARE.
 
 #include "Terra/Terra.h"
 
-#include "OgreTextureGpuManager.h"
-
-#include "OgreSceneManager.h"
+#include "Compositor/OgreCompositorChannel.h"
 #include "Compositor/OgreCompositorManager2.h"
 #include "Compositor/OgreCompositorWorkspace.h"
-#include "Compositor/OgreCompositorChannel.h"
-
-#include "OgreHlmsManager.h"
 #include "OgreHlmsCompute.h"
 #include "OgreHlmsComputeJob.h"
+#include "OgreHlmsManager.h"
+#include "OgreLwString.h"
+#include "OgreRoot.h"
+#include "OgreSceneManager.h"
+#include "OgreTextureGpuManager.h"
 #include "Vao/OgreConstBufferPacked.h"
 #include "Vao/OgreVaoManager.h"
-#include "OgreRoot.h"
-
-#include "OgreLwString.h"
 
 namespace Ogre
 {
@@ -69,10 +66,7 @@ namespace Ogre
     {
     }
     //-----------------------------------------------------------------------------------
-    ShadowMapper::~ShadowMapper()
-    {
-        destroyShadowMap();
-    }
+    ShadowMapper::~ShadowMapper() { destroyShadowMap(); }
     //-----------------------------------------------------------------------------------
     void ShadowMapper::createCompositorWorkspace()
     {
@@ -148,12 +142,9 @@ namespace Ogre
         //TODO: Mipmaps
         TextureGpuManager *textureManager =
                 m_sceneManager->getDestinationRenderSystem()->getTextureGpuManager();
-        m_shadowMapTex = textureManager->createTexture(
-                             "ShadowMap" + StringConverter::toString( id ),
+        m_shadowMapTex = textureManager->createTexture( "ShadowMap" + StringConverter::toString( id ),
                              GpuPageOutStrategy::SaveToSystemRam,
-                             TextureFlags::Uav,
-                             TextureTypes::Type2D );
-        //m_shadowMapTex->_setToDisplayDummyTexture();  //?
+                             TextureFlags::Uav, TextureTypes::Type2D );
 
         uint32 width = m_heightMapTex->getWidth();
         uint32 height = m_heightMapTex->getHeight();
@@ -198,7 +189,6 @@ namespace Ogre
         else
             setGaussianFilterParams( 8, 0.5f );
     }
-
     //-----------------------------------------------------------------------------------
     void ShadowMapper::destroyShadowMap()
     {
@@ -232,7 +222,6 @@ namespace Ogre
             m_shadowMapTex = 0;
         }
     }
-
     //-----------------------------------------------------------------------------------
     inline size_t ShadowMapper::getStartsPtrCount( int32 *starts, int32 *startsBase )
     {
@@ -257,7 +246,6 @@ namespace Ogre
         const double newErrorAtX = ceil(accumulatedError / dx) * dx - accumulatedError;
         return static_cast<float>( newErrorAtX );
     }
-
     //-----------------------------------------------------------------------------------
     void ShadowMapper::updateShadowMap( const Vector3 &lightDir, const Vector2 &xzDimensions,
                                         float heightScale )
@@ -285,8 +273,8 @@ namespace Ogre
 
         assert( m_shadowStarts->getNumElements() >= (m_heightMapTex->getHeight() << 4u) );
 
-        int32 *startsBase = reinterpret_cast<int32*>(
-                    m_shadowStarts->map( 0, m_shadowStarts->getNumElements() ) );
+        int32 *startsBase =
+            reinterpret_cast<int32 *>( m_shadowStarts->map( 0, m_shadowStarts->getNumElements() ) );
         PerGroupData *perGroupData = reinterpret_cast<PerGroupData*>(
                     m_shadowPerGroupData->map( 0, m_shadowPerGroupData->getNumElements() ) );
 
@@ -354,11 +342,7 @@ namespace Ogre
             m_jobParamDelta->setManualValue( Vector2( dx, dy ) );
         }
 
-        const int32 xyStep[2] =
-        {
-            (x0 < x1) ? 1 : -1,
-            (y0 < y1) ? 1 : -1
-        };
+        const int32 xyStep[2] = { ( x0 < x1 ) ? 1 : -1, ( y0 < y1 ) ? 1 : -1 };
         m_jobParamXYStep->setManualValue( xyStep, 2u );
 
         heightDelta = ( -heightDelta * ( xzDimensions.x / float( width ) ) ) / heightScale;
@@ -409,7 +393,9 @@ namespace Ogre
                     starts -= (4096u << 2u) - 2u;
             }
 
-            perGroupData->iterations = widthOrHeight - std::max<int32>( 0, idy - (heightOrWidth - startY) );
+            perGroupData->iterations =
+                static_cast<int32>( widthOrHeight ) -
+                std::max<int32>( 0, idy - static_cast<int32>( heightOrWidth - startY ) );
             perGroupData->deltaErrorStart = 0;
             perGroupData->padding0 = 0;
             perGroupData->padding1 = 0;
@@ -453,13 +439,11 @@ namespace Ogre
         ShaderParams &shaderParams = m_shadowJob->getShaderParams( "default" );
         shaderParams.setDirty();
 
-        if (m_shadowWorkspace)
-            m_shadowWorkspace->_update();
+        m_shadowWorkspace->_update();
 
         if( m_minimizeMemoryConsumption )
             destroyCompositorWorkspace();
     }
-
     //-----------------------------------------------------------------------------------
     void ShadowMapper::fillUavDataForCompositorChannel( TextureGpu **outChannel ) const
     {
@@ -502,7 +486,6 @@ namespace Ogre
                 destroyCompositorWorkspace();
         }
     }
-
     //-----------------------------------------------------------------------------------
     void ShadowMapper::setGaussianFilterParams( HlmsComputeJob *job, uint8 kernelRadius,
                                                 float gaussianDeviationFactor )
@@ -586,4 +569,4 @@ namespace Ogre
 
         shaderParams.setDirty();
     }
-}
+}  // namespace Ogre

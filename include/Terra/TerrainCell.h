@@ -30,6 +30,7 @@ THE SOFTWARE.
 #define _OgreTerrainCell_H_
 
 #include "OgrePrerequisites.h"
+
 #include "OgreRenderable.h"
 
 namespace Ogre
@@ -63,8 +64,8 @@ namespace Ogre
 
         void initialize( VaoManager *vaoManager, bool useSkirts );
 
-        void setOrigin( const GridPoint &gridPos, uint32 horizontalPixelDim,
-                        uint32 verticalPixelDim, uint32 lodLevel );
+        void setOrigin( const GridPoint &gridPos, uint32 horizontalPixelDim, uint32 verticalPixelDim,
+                        uint32 lodLevel );
 
         /** Merges another TerrainCell into 'this' for reducing batch counts.
             e.g.
@@ -91,6 +92,6 @@ namespace Ogre
         void             getWorldTransforms( Matrix4 *xform ) const override;
         bool             getCastsShadows() const override;
     };
-}
+}  // namespace Ogre
 
 #endif

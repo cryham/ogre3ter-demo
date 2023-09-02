@@ -140,12 +140,18 @@ namespace Ogre
         static const char *DetailMapNmN;
         static const char *RoughnessMap;
         static const char *MetalnessMap;
+
+        static const IdString DetailTriplanar;
+        static const IdString DetailTriplanarDiffuse;
+        static const IdString DetailTriplanarNormal;
+        static const IdString DetailTriplanarRoughness;
+        static const IdString DetailTriplanarMetalness;
     };
 
     /** @} */
     /** @} */
 
-}
+}  // namespace Ogre
 
 #include "OgreHeaderSuffix.h"
 

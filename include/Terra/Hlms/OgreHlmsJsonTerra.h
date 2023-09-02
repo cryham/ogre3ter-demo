@@ -66,19 +66,16 @@ namespace Ogre
                           TerraTextureTypes textureType, HlmsTerraDatablock *datablock,
                           const String &resourceGroup );
 
-        void saveTexture( const char *blockName,
-                          TerraTextureTypes textureType,
+        void saveTexture( const char *blockName, TerraTextureTypes textureType,
                           const HlmsTerraDatablock *datablock, String &outString,
                           bool writeTexture=true );
-        void saveTexture( const Vector3 &value, const char *blockName,
-                          TerraTextureTypes textureType,
+        void saveTexture( const Vector3 &value, const char *blockName, TerraTextureTypes textureType,
                           const HlmsTerraDatablock *datablock, String &outString,
                           bool writeTexture=true );
 
-        void saveTexture( const Vector3 &value, const char *blockName,
-                          TerraTextureTypes textureType,
-                          bool writeValue, bool writeTexture,
-                          const HlmsTerraDatablock *datablock, String &outString );
+        void saveTexture( const Vector3 &value, const char *blockName, TerraTextureTypes textureType,
+                          bool writeValue, bool writeTexture, const HlmsTerraDatablock *datablock,
+                          String &outString );
 
     public:
         HlmsJsonTerra( HlmsManager *hlmsManager, TextureGpuManager *textureManager );
@@ -94,7 +91,7 @@ namespace Ogre
     /** @} */
     /** @} */
 
-}
+}  // namespace Ogre
 
 #include "OgreHeaderSuffix.h"
 
