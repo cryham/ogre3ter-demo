@@ -22,15 +22,19 @@ namespace Demo
     {
         std::string mesh;
         float scaleMin, scaleMax, density;
+        float angleMax, heightMax;  // terrain
         float visFar, down;  // visibility max, down offset
         bool rotAll;  // allow all axes rotation
         int count;  // auto
         // range ter angle, height..
         
-        VegetLayer(std::string mesh1, float scMin, float scMax,
-                float dens, float dn, float vis, bool rot)
-            : mesh(mesh1), scaleMin(scMin), scaleMax(scMax)
-            , density(dens), visFar(vis), down(dn), rotAll(rot), count(0)
+        VegetLayer(std::string mesh1,
+                float scMin, float scMax,
+                float dens, float angMax, float hMax,
+                float dn, float vis, bool rot)
+            : mesh(mesh1), scaleMin(scMin), scaleMax(scMax), density(dens)
+            , angleMax(angMax), heightMax(hMax)
+            , visFar(vis), down(dn), rotAll(rot), count(0)
         {   }
     };
 
@@ -87,9 +91,10 @@ namespace Demo
         //  events
         void keyPressed( const SDL_KeyboardEvent &arg ) override;
         void keyReleased( const SDL_KeyboardEvent &arg ) override;
+    
     protected:
 
-        //  reflection cube  ----
+        //  Reflection cube  ----
         Ogre::Camera *mCubeCamera = 0;
         Ogre::TextureGpu *mDynamicCubemap = 0;
         Ogre::CompositorWorkspace *mDynamicCubemapWorkspace = 0;
@@ -99,17 +104,22 @@ namespace Demo
         Ogre::CompositorWorkspace *setupCompositor();
 
 
-        //  terrain  ----
+        //  Terrain  ----
         Ogre::Real sizeXZ = 1000.f;
         void CreateTerrain(), DestroyTerrain();
         Ogre::SceneNode *nodeTerrain = 0;
 
         void CreatePlane(), DestroyPlane();
+        Ogre::v1::MeshPtr planeMeshV1 = 0;
         Ogre::MeshPtr planeMesh = 0;
         Ogre::Item *planeItem = 0;
         Ogre::SceneNode *planeNode = 0;
 
-        //  sky
+        //  util
+        Ogre::Real getHeight( Ogre::Real x, Ogre::Real z ) const;
+        Ogre::Real getAngle( Ogre::Real x, Ogre::Real z, Ogre::Real s ) const;
+
+        //  Sky  ----
         void CreateSkyDome(Ogre::String sMater, float yaw);
         int iSky = 0;
         Ogre::ManualObject* moSky = 0;

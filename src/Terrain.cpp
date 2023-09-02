@@ -256,7 +256,7 @@ namespace Demo
 
     const char* MainEntryPoints::getWindowTitle()
     {
-        return "Terrain Demo";
+        return "CryHam's Terrain Demo using Ogre-Next";
     }
 }
 
