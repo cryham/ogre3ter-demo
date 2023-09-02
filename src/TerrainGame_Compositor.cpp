@@ -102,14 +102,17 @@ namespace Demo
             mCubeCamera->setNearClipDistance( 0.5 );
             mCubeCamera->setVisibilityFlags(0xFFFFFFFF - RV_Car);  // no car parts in reflections
 
-            mCubeCamera->setFarClipDistance( 100 );  // par
+            mCubeCamera->setFarClipDistance( 100 );  //** par
             mCubeCamera->setShadowRenderingDistance( 50 );  // par
             mCubeCamera->setCastShadows(false);
         }
 
         // No need to tie RenderWindow's use of MSAA with cubemap's MSAA. Could never use MSAA for cubemap.
-        const IdString cubemapRendererNode = renderWindow->getSampleDescription().isMultisample()
-            ? "CubemapRendererNodeMsaa" : "CubemapRendererNode";
+        const IdString cubemapRendererNode =
+        #if 0  // disabled
+            renderWindow->getSampleDescription().isMultisample() ? "CubemapRendererNodeMsaa" :
+        #endif
+            "CubemapRendererNode";
         {
             CompositorNodeDef *nodeDef = compositorManager->getNodeDefinitionNonConst( cubemapRendererNode );
             const CompositorPassDefVec &passes =
@@ -119,11 +122,11 @@ namespace Demo
             CompositorPassIblSpecularDef *iblSpecPassDef =
                 static_cast<CompositorPassIblSpecularDef *>( passes.back() );
             iblSpecPassDef->mForceMipmapFallback = mIblQuality == MipmapsLowest;
-            iblSpecPassDef->mSamplesPerIteration = mIblQuality == IblLow ? 32.0f : 128.0f;
+            iblSpecPassDef->mSamplesPerIteration = 4.0f;  // mIblQuality == IblLow ? 32.0f : 128.0f;
             iblSpecPassDef->mSamplesSingleIterationFallback = iblSpecPassDef->mSamplesPerIteration;
         }
 
-        // Setup the cubemap's compositor.
+        //  Cubemap  render
         CompositorChannelVec cubemapExternalChannels( 1 );
         cubemapExternalChannels[0] = mDynamicCubemap;
 
@@ -135,9 +138,10 @@ namespace Demo
         }
 
         mDynamicCubemapWorkspace = compositorManager->addWorkspace(
-            sceneManager, cubemapExternalChannels, mCubeCamera, workspaceName, true );
+            sceneManager, cubemapExternalChannels, mCubeCamera, workspaceName, false );  // manual update
 
-        // Now setup the regular Render window
+        
+        //  Main  render window
         CompositorChannelVec externalChannels( 2 );
         externalChannels[0] = renderWindow->getTexture();
         externalChannels[1] = mDynamicCubemap;

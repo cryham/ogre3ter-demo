@@ -65,10 +65,10 @@ namespace Demo
         //  Light  ------------------------------------------------
         LogO("---- new light");
         mSunLight = sceneManager->createLight();
-        SceneNode *lightNode = rootNode->createChildSceneNode();
-        lightNode->attachObject( mSunLight );
+        mSunNode = rootNode->createChildSceneNode();
+        mSunNode->attachObject( mSunLight );
         
-        mSunLight->setPowerScale( Math::PI * 3 );  //** par! 1.5 2 3* 4  should be * 1..
+        mSunLight->setPowerScale( Math::PI * 2 );  //** par! 1.5 2 3* 4  should be * 1..
         mSunLight->setType( Light::LT_DIRECTIONAL );
         mSunLight->setDirection( Vector3( 0, -1, 0 ).normalisedCopy() );  //-
 
@@ -87,7 +87,7 @@ namespace Demo
         OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
         AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
         AtmosphereNpr::Preset p = atmosphere->getPreset();
-        p.fogDensity = 0.0002f;  //** par
+        p.fogDensity = 0.00012f;  //** par
         p.densityCoeff = 0.27f;  //0.47f;
         p.densityDiffusion = 0.75f;  //2.0f;
         p.horizonLimit = 0.025f;

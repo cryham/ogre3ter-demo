@@ -85,11 +85,11 @@ namespace Demo
         mCurrentTransformIdx( 0 ),
         mThreadGameEntityToUpdate( 0 ),
         mThreadWeight( 0 ),
-    // #ifdef DEBUG
+    #ifdef DEBUG
         mGrabMouse( false ),
-    // #else
-    //     mGrabMouse( true ),
-    // #endif
+    #else
+        mGrabMouse( true ),
+    #endif
         mQuit( false ),
         mAlwaysAskForConfig( false ),  //** param
         mUseHlmsDiskCache( true ),
