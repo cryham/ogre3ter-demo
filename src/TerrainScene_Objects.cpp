@@ -73,10 +73,10 @@ namespace Demo
         Vector3 dir = mGraphicsSystem->getCamera()->getDirection();
         camPos += dir * 40.f;
 
-        const String cars[nCars] = { "ES", "SX", "HI" };
-        const String car = cars[iCar];
-        ++iCar;
-        if (iCar == nCars)  iCar = 0;  // next
+        const String cars[nCarTypes] = { "ES", "SX", "HI" };
+        const String car = cars[iCarType];
+        ++iCarType;  ++iCars;
+        if (iCarType == nCarTypes)  iCarType = 0;  // next
 
         const int carParts = 3;
         const String carPart[carParts] = {"_body.mesh", "_interior.mesh", "_glass.mesh"}, sWheel = "_wheel.mesh";
@@ -98,6 +98,7 @@ namespace Demo
             Item *item = mgr->createItem( car + carPart[i],
                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
             item->setVisibilityFlags(RV_Car);
+			carItems.push_back(item);
 
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
             node->attachObject( item );
@@ -105,12 +106,12 @@ namespace Demo
                 item->setRenderQueueGroup( 202 );  // glass after Veget
             
             node->scale( s, s, s );
-            
             node->setPosition( objPos );
             
             //  rot
             Quaternion q;  q.FromAngleAxis( Degree(180), Vector3::UNIT_Z );
             node->setOrientation( q );
+			carNodes.push_back(node);
 
             //  set reflection cube
             assert( dynamic_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() ) );
@@ -128,6 +129,7 @@ namespace Demo
             Item *item = mgr->createItem( car + sWheel,
                 ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME, SCENE_STATIC );
             item->setVisibilityFlags(RV_Car);
+			carItems.push_back(item);
 
             SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
             node->attachObject( item );
@@ -151,6 +153,7 @@ namespace Demo
             Quaternion q;  q.FromAngleAxis( Degree(-180), Vector3::UNIT_Z );
             Quaternion r;  r.FromAngleAxis( Degree(i%2 ? 90 : -90), Vector3::UNIT_Y );
             node->setOrientation( r * q );
+			carNodes.push_back(node);
 
             //  set reflection cube
             assert( dynamic_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() ) );
@@ -159,6 +162,19 @@ namespace Demo
             datablock->setTexture( Ogre::PBSM_REFLECTION, mDynamicCubemap );
         }
     }
+
+    void TerrainGame::DestroyCars()
+	{
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+		
+		for (auto node : carNodes)
+			mgr->destroySceneNode(node);
+		carNodes.clear();
+		
+		for (auto item : carItems)
+			mgr->destroyItem(item);
+		carItems.clear();
+	}
 
 
     //  Manual object

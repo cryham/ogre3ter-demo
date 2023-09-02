@@ -1,3 +1,4 @@
+#include "OgreColourValue.h"
 #include "TerrainGame.h"
 #include "CameraController.h"
 #include "GraphicsSystem.h"
@@ -236,6 +237,7 @@ namespace Demo
         //  other
         case SDL_SCANCODE_F:  CreateParticles();  break;
         case SDL_SCANCODE_G:  CreateCar();  break;
+        case SDL_SCANCODE_H:  DestroyCars();  break;
 
         case SDL_SCANCODE_K:  
             if (ndSky)
@@ -290,5 +292,6 @@ namespace Demo
 
         TutorialGameState::keyReleased( arg );
     }
+
 }
 #pragma GCC diagnostic pop

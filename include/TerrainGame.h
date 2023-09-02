@@ -122,8 +122,14 @@ namespace Demo
 
         //  cars  ----
         void CreateCar();
-        int iCar = 1;
-        const static int nCars = 3;
+        void DestroyCars();
+
+		std::vector<Ogre::Item*> carItems;
+    	std::vector<Ogre::SceneNode*> carNodes;
+        int iCars = 0;
+
+        int iCarType = 1;
+        const static int nCarTypes = 3;
         const static Ogre::uint32 RV_Car = 2;
     };
 }
