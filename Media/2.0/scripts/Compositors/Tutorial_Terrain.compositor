@@ -1,4 +1,5 @@
-//  reflections
+//  reflections cube
+//------------------------------------------------------------------------------------
 abstract target cubemap_target
 {
 	pass render_scene
@@ -17,7 +18,6 @@ abstract target cubemap_target
 
 		expose cubemap
 
-		//Filter stuff that shouldn't be reflected (vampires?)
 		visibility_mask		0x00000005
 		overlays			off
 		camera_cubemap_reorient true
@@ -120,6 +120,7 @@ compositor_node Tutorial_TerrainRenderingNode
 
 
 //  shadows
+//------------------------------------------------------------------------------------
 compositor_node_shadow Tutorial_TerrainShadowNode
 {
 	technique pssm

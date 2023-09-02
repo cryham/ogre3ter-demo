@@ -894,10 +894,14 @@ namespace Demo
     {
         mCamera = mSceneManager->createCamera( "Main Camera" );
 
-        // Position it at 500 in Z direction
-        mCamera->setPosition( Ogre::Vector3( 0, 5, 15 ) );
-        // Look back along -Z
+    #if 0  // plane
+        mCamera->setPosition( Ogre::Vector3( 0, 3, 12 ) );
         mCamera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
+    #else  // terrain view from screen-
+        mCamera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
+        mCamera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
+        mCamera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
+    #endif
         mCamera->setNearClipDistance( 0.2f );
         mCamera->setFarClipDistance( 1000.0f );
         mCamera->setAutoAspectRatio( true );

@@ -7,9 +7,9 @@
 
 Ogre-Next demo. Based on Tutorial_Terrain.
 Showing:
-* **Terrain** with 4 layers
+* **Terrain** with 4 layers and triplanar
 * **Vegetation**, 9 layers: tree, palm, 4 rocks, 2 ferns, plant
-* **Atmosphere** component with adjustable parameters
+* **Atmosphere** component with fog and adjustable parameters
 * **Car** 3 models, with dynamic reflections, **particles**
 
 No real PBR textures yet just values.  
@@ -23,19 +23,24 @@ F1 - Toggle Help text
 
 W,S, A,D, Q,E - move camera: forward,backward, left,right, down,up
 
-Hold: Shift - for smaller chages, Ctrl - for bigger chages  (for all)
+Hold:  
+Shift - for smaller chages,  
+Ctrl - for bigger chages  (for all)
 
 V - **Add** vegetation (can be used more times)  
-C - Clear all vegetation  
+C - remove all vegetation  
 
-G - Add car in front, next model.  
+G - Add **Car** in front, next model  
+H - remove all cars
+
+T - toggle **Terrain** / flat plane. _Note:_ terrain loads in 5 sec.  
+P - terrain triplanar toggle  
+R - terrain wireframe toggle  
+
+K - Add / remove **Sky** dome, next texture  
 F - Add fire with smoke particles  
 
-T - toggle Terrain / flat plane. Note: terrain loads in 5 sec.  
-R - terrain wireframe toggle  
-K - Add / remove SkyDome, next texture.  
-
-Up,Down - previous / next **parameter**  
+Up,Down - previous / next Atmosphere **parameter**  
 Left,Right - dec / increase parameter  
 
 Numpad /,* - rotate **sun** yaw  
@@ -104,3 +109,5 @@ dev/
 ```
 
 Note: CMake default is `Dependencies/Ogre` inside demo. On Windows, it can be as link, if this doesn't work.
+
+Some key locations in code are marked with `//**`

@@ -166,11 +166,11 @@ namespace Demo
                 // +" b " + toStr( rm.mBatchCount, 0);
 
             outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
-            outText += "\nCars " + toStr(iCars,1)+ " nodes "+toStr(carNodes.size(), 1)+"\n";
+            outText += "\nCars  " + toStr(iCars,1)+ " nodes "+toStr(carNodes.size(), 1)+"\n";
 
-            outText += "\n- + Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
-            outText += "\n/ * Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
-            outText += "\n^ v Param  " + toStr( param, 0 );
+            outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
+            outText += "\n/ *  Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
+            outText += "\n^ v  Param  " + toStr( param, 0 );
             
             SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
             AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
