@@ -20,6 +20,7 @@
 #    include "OgreAtmosphereNpr.h"
 #endif
 #include "Ocean/Ocean.h"
+#include "Compositor/OgreCompositorWorkspace.h"
 
 using namespace Demo;
 using namespace Ogre;
@@ -32,8 +33,17 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::update( float timeSinceLast )
     {
+        //  update reflections
         // if (mCubeCamera)
         //     mCubeCamera->setPosition(camPos);
+
+        ++updReflSkip;
+        if (updReflSkip > 60)  //** param, rarely
+        {   updReflSkip = 0;
+            mDynamicCubemapWorkspace->_beginUpdate( true );
+            mDynamicCubemapWorkspace->_update();
+            mDynamicCubemapWorkspace->_endUpdate( true );
+        }
 
         //  Keys
         float mul = shift ? 0.2f : ctrl ? 3.f : 1.f;
@@ -210,21 +220,9 @@ namespace Demo
         case SDL_SCANCODE_KP_MULTIPLY:  mKeys[2] = 1;  break;
         case SDL_SCANCODE_KP_DIVIDE:    mKeys[3] = 1;  break;
         
-        //** terrain wireframe toggle
-        case SDL_SCANCODE_R:
-        {
-            wireTerrain = !wireTerrain;
-            Root *root = mGraphicsSystem->getRoot();
-            HlmsManager *hlmsManager = root->getHlmsManager();
-            HlmsDatablock *datablock = 0;
-            datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
-            if (wireTerrain)
-            {
-                datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
-                datablock->setMacroblock( macroblockWire );
-            }
-            mTerra->setDatablock( datablock );
-        }   break;
+        //  Terrain
+        case SDL_SCANCODE_R:  ToggleWireframe();  break;
+        case SDL_SCANCODE_P:  ToggleTriplanar();  break;
 
         case SDL_SCANCODE_T:
             if (mTerra)
@@ -241,8 +239,6 @@ namespace Demo
         case SDL_SCANCODE_H:  DestroyCars();  break;
         //  other
         case SDL_SCANCODE_F:  CreateParticles();  break;
-
-        case SDL_SCANCODE_P:  ToggleTriplanar();  break;
 
         case SDL_SCANCODE_K:  
             if (ndSky)

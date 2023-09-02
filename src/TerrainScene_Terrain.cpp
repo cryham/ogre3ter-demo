@@ -105,13 +105,34 @@ namespace Demo
         delete mTerra;  mTerra = 0;
     }
 
+    void TerrainGame::ToggleWireframe()
+    {
+        if (!mTerra)
+            return;
+        wireTerrain = !wireTerrain;
+        Root *root = mGraphicsSystem->getRoot();
+        HlmsManager *hlmsManager = root->getHlmsManager();
+        HlmsDatablock *datablock = 0;
+        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
+        if (datablock && wireTerrain)
+        {
+            datablock = hlmsManager->getHlms( HLMS_USER3 )->getDefaultDatablock();
+            datablock->setMacroblock( macroblockWire );
+        }
+        mTerra->setDatablock( datablock );
+    }
+
     void TerrainGame::ToggleTriplanar()
     {
         mTriplanarMappingEnabled = !mTriplanarMappingEnabled;
+        if (!mTerra)
+            return;
 
         Ogre::HlmsManager *hlmsManager = mGraphicsSystem->getRoot()->getHlmsManager();
         Ogre::HlmsTerraDatablock *datablock = static_cast<Ogre::HlmsTerraDatablock *>(
             hlmsManager->getDatablock( "TerraExampleMaterial" ) );
+        if (!datablock)
+            return;
 
         // datablock->setBrdf(TerraBrdf::BlinnPhongLegacyMath);  //** try, rough-
         datablock->setDetailTriplanarDiffuseEnabled( mTriplanarMappingEnabled );
