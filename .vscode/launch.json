@@ -13,6 +13,14 @@
 			"cwd": "${workspaceFolder}/bin/Debug/"
 		},
 		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "RelDebug lldb",
+			"args": [],
+			"program": "${workspaceFolder}/bin/RelWithDebInfo/TerrainDemo",
+			"cwd": "${workspaceFolder}/bin/RelWithDebInfo/"
+		},
+		{
 			"type": "gdb",
 			"request": "launch",
 			"name": "Debug gdb",
