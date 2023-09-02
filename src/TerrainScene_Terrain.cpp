@@ -176,7 +176,7 @@ namespace Demo
     void TerrainGame::CreatePlane()
     {
         sizeXZ = 2000.0f;
-        v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane(
+        planeMeshV1 = v1::MeshManager::getSingleton().createPlane(
             "Plane v1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             Plane( Vector3::UNIT_Y, 1.0f ), sizeXZ, sizeXZ,
             10, 10, true, 1, 40.0f, 40.0f, Vector3::UNIT_Z,
@@ -201,13 +201,15 @@ namespace Demo
     {
         LogO("---- destroy Plane");
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
-        // if (planeMesh)
-        // {   MeshManager::getSingleton().destroy();  // todo: ?
-        //     planeMesh = 0;  }
-        if (planeItem)
-        {   mgr->destroyItem(planeItem);  planeItem = 0;  }
         if (planeNode)
         {   mgr->destroySceneNode(planeNode);  planeNode = 0;  }
+        if (planeItem)
+        {   mgr->destroyItem(planeItem);  planeItem = 0;  }
+        
+		auto& ms = MeshManager::getSingleton();
+		auto& m1 = v1::MeshManager::getSingleton();
+        if (planeMesh)  ms.remove(planeMesh);  planeMesh.reset();
+        if (planeMeshV1)  m1.remove(planeMeshV1);  planeMeshV1.reset();
     }
 
 
