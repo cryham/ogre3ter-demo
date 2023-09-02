@@ -78,25 +78,32 @@ namespace Demo
         if( mDisplayHelpMode == 0 )
         {
             //outText = mHelpDescription;
-            outText = "F1 toggle help\n";
+            outText = "F1 toggle help   CryHam's Terrain demo  using  Ogre-Next 3.0\n";
             outText += "Reload shaders:\n"
                        "Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
             outText += "V add Vegetation  C clear it\n";
-            outText += "T terrain / flat  R wireframe\n";
-            outText += "K next Sky  G add next Car  F add Fire\n\n";
+            outText += "T terrain / flat  P triplanar  R wireframe\n";
+            outText += "G add next Car  H clear all\n";
+            outText += "K next Sky  F add Fire\n\n";
         }
     }
     //-----------------------------------------------------------------------------------
     void TutorialGameState::update( float timeSinceLast )
     {
-        //Show FPS etc
+        if( mCameraController )
+            mCameraController->update( timeSinceLast );
+
+        //  update FPS etc
+        static float last = 0.f;
+        last += timeSinceLast;
+        if (last < 0.2f)  // 0.2 sec interval
+            return;
+        last = 0.f;
+
         Ogre::String finalText;
         generateDebugText( timeSinceLast, finalText );
         mDebugText->setCaption( finalText );
         mDebugTextShadow->setCaption( finalText );
-
-        if( mCameraController )
-            mCameraController->update( timeSinceLast );
     }
     //-----------------------------------------------------------------------------------
     void TutorialGameState::keyPressed( const SDL_KeyboardEvent &arg )
