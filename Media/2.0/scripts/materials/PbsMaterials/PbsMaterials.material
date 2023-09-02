@@ -32,34 +32,37 @@ hlms pine2norm pbs
 {
 	diffuse_map  pine_norm_gr1.png
 	normal_map   pine_norm_norm.jpg
-	fresnel_coeff 0.0
-	roughness 0.5
-	metalness 0.1
+
+	fresnel 0.0
+	fresnel_coeff 0.01 0.01 0.01
+	roughness 0.4
+	// metalness 0.1
 
 	cull_mode none
 	alpha_test greater 0.5
+	two_sided true
     
 	specular 0.01 0.01 0.01
-	two_sided true
 }
 
 hlms jungle_tree pbs
 {
 	diffuse_map  jungle_tree.png
 	normal_map   jungle_tree_normal.png
-	fresnel_coeff 0.1
+
+	fresnel 0.0
+	fresnel_coeff 0.01 0.01 0.01
 	roughness 0.3
-	metalness 0.5
-	workflow specular_ogre
+	// metalness 0.5
+	// workflow specular_ogre
 	
     cull_mode none
 	alpha_test greater 0.5
 	//alpha_test_threshold 0.4
+	two_sided true
     
 	//diffuse 0.7 0.7 0.7
 	specular 0.2 0.2 0.2
-	
-	two_sided true
 }
 
 hlms palm2 pbs
@@ -67,16 +70,17 @@ hlms palm2 pbs
 	diffuse_map  palm2_diffuse.png
 	normal_map   palm2_normal.png
 	specular_map palm2_specular.png
-	fresnel_coeff 0.4
-	roughness	0.3
+
+	fresnel 0.0
+	fresnel_coeff 0.01 0.01 0.01
+	roughness 0.3
 	metalness 0.5
-	workflow specular_ogre
 	
     cull_mode none
     alpha_test greater 0.5
+	two_sided true
     
 	specular 0.2 0.2 0.2
-	two_sided true
 }
 
 //  plants  ---------------------------------------------
@@ -85,16 +89,19 @@ hlms plant_tropical pbs
 	diffuse_map  plant_tropical.png
 	normal_map   plant_tropical_norm.png
 	//specular_map palm2_specular.png
-	fresnel_coeff 0.1
-	roughness	0.3
+
+	fresnel 0.0
+	fresnel_coeff 0.01 0.01 0.01
+
+	roughness 0.3
 	metalness 0.2
 	workflow specular_ogre
 	
     cull_mode none
     alpha_test greater 0.5
-    
-	specular 0.2 0.2 0.2
 	two_sided true
+
+	specular 0.2 0.2 0.2
 }
 
 hlms fern_v2 pbs
@@ -102,16 +109,19 @@ hlms fern_v2 pbs
 	diffuse_map  fern.png
 	normal_map   fern_normal.png
 	specular_map fern_spec.png
-	fresnel_coeff 0.4
-	roughness	0.3
+
+	fresnel 0.0
+	fresnel_coeff 0.01 0.01 0.01
+	
+	roughness 0.3
 	metalness 0.5
-	workflow specular_ogre
+	// workflow specular_ogre
 	
     cull_mode none
     alpha_test greater 0.5
+	two_sided true
     
 	specular 0.8 0.8 0.8
-	two_sided true
 }
 
 hlms fern2 pbs
@@ -126,9 +136,9 @@ hlms fern2 pbs
 	
     cull_mode none
     alpha_test greater 0.5
+	two_sided true
     
 	specular 0.8 0.8 0.8
-	two_sided true
 }
 
 //  rocks  ---------------------------------------------
@@ -146,10 +156,11 @@ hlms rock18black3 pbs
 {
 	diffuse_map  rock18.jpg
 	normal_map   rock18_norm.jpg
+
 	fresnel_coeff 0.1
-	roughness	0.5
+	roughness 0.5
 	metalness 0.1
-	workflow specular_ogre
+	// workflow specular_ogre
 	specular 0.2 0.2 0.2
 }
 hlms rock25dark2Harsh2 pbs
@@ -174,7 +185,7 @@ hlms rock30grayGreen pbs
 }
 hlms rock37brGr1tall pbs
 {
-	diffuse_map  rock372.jpg
+	diffuse_map  rock37.jpg
 	normal_map   rock37_norm.jpg
 	fresnel_coeff 0.1
 	roughness	0.5
@@ -232,9 +243,6 @@ hlms ParSmoke unlit
 hlms sky-clearday1 unlit
 {
 	diffuse_map sky-clearday1.jpg
-	//u wrap  ?
-	//v wrap
-	//polygon_mode wireframe
 }
 
 hlms sky_photo6 unlit
