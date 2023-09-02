@@ -10,6 +10,7 @@
 #include "OgreWindow.h"
 
 #include "Terra/Hlms/OgreHlmsTerra.h"
+#include "Terra/Hlms/OgreHlmsTerraDatablock.h"
 #include "Terra/Hlms/PbsListener/OgreHlmsPbsTerraShadows.h"
 #include "Terra/Terra.h"
 #include "Terra/TerraShadowMapper.h"
@@ -79,7 +80,8 @@ namespace Demo
 
         LogO("---- Terra attach");
 
-        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );
+        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
+        // datablock = hlmsManager->getDatablock( "TerraExampleMaterial_R_M" );  // maps
         mTerra->setDatablock( datablock );
 
         mHlmsPbsTerraShadows = new HlmsPbsTerraShadows();
@@ -101,6 +103,46 @@ namespace Demo
             delete mHlmsPbsTerraShadows;  mHlmsPbsTerraShadows = 0;
         }
         delete mTerra;  mTerra = 0;
+    }
+
+    void TerrainGame::ToggleTriplanar()
+    {
+        mTriplanarMappingEnabled = !mTriplanarMappingEnabled;
+
+        Ogre::HlmsManager *hlmsManager = mGraphicsSystem->getRoot()->getHlmsManager();
+        Ogre::HlmsTerraDatablock *datablock = static_cast<Ogre::HlmsTerraDatablock *>(
+            hlmsManager->getDatablock( "TerraExampleMaterial" ) );
+
+        // datablock->setBrdf(TerraBrdf::BlinnPhongLegacyMath);  //** try, rough-
+        datablock->setDetailTriplanarDiffuseEnabled( mTriplanarMappingEnabled );
+        // datablock->setDetailTriplanarNormalEnabled( mTriplanarMappingEnabled );  // todo fixme
+        // datablock->setDetailTriplanarRoughnessEnabled( mTriplanarMappingEnabled );  // only in TerraExampleMaterial_R_M
+        // datablock->setDetailTriplanarMetalnessEnabled( mTriplanarMappingEnabled );
+
+        Ogre::Vector2 terrainDimensions = mTerra->getXZDimensions();
+
+        Ogre::Vector4 detailMapOffsetScale[2];
+        detailMapOffsetScale[0] = datablock->getDetailMapOffsetScale( 0 );
+        detailMapOffsetScale[1] = datablock->getDetailMapOffsetScale( 1 );
+
+        // Switch between "common" UV mapping and world coordinates-based UV mapping (and vice versa)
+        if( mTriplanarMappingEnabled )
+        {
+            detailMapOffsetScale[0].z = 1.0f / ( terrainDimensions.x / detailMapOffsetScale[0].z );
+            detailMapOffsetScale[0].w = 1.0f / ( terrainDimensions.y / detailMapOffsetScale[0].w );
+            detailMapOffsetScale[1].z = 1.0f / ( terrainDimensions.x / detailMapOffsetScale[1].z );
+            detailMapOffsetScale[1].w = 1.0f / ( terrainDimensions.y / detailMapOffsetScale[1].w );
+        }
+        else
+        {
+            detailMapOffsetScale[0].z *= terrainDimensions.x;
+            detailMapOffsetScale[0].w *= terrainDimensions.y;
+            detailMapOffsetScale[1].z *= terrainDimensions.x;
+            detailMapOffsetScale[1].w *= terrainDimensions.y;
+        }
+
+        datablock->setDetailMapOffsetScale( 0, detailMapOffsetScale[0] );
+        datablock->setDetailMapOffsetScale( 1, detailMapOffsetScale[1] );
     }
 
 

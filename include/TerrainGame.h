@@ -58,7 +58,11 @@ namespace Demo
         //  terrain
         Ogre::Terra *mTerra = 0;
         Ogre::Light *mSunLight = 0;
+        Ogre::SceneNode *mSunNode = 0;
+
 		Ogre::Ocean *mOcean = 0;
+        bool mTriplanarMappingEnabled = true;
+        void ToggleTriplanar();
 
         // Listener to make PBS objects also be affected by terrain's shadows
         Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows = 0;

@@ -152,14 +152,14 @@ namespace Demo
             
             outText += toStr( (int)st->getAvgFps(), 4) +"  "+ //"\n" +
                 "f " + toStr( rm.mFaceCount/1000, 0) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
-                "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0)
-                +"\n";
-                // +" b " + toStr( rm.mBatchCount, 0) + "\n";
+                "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0);
+                // +" b " + toStr( rm.mBatchCount, 0);
 
-            outText += "Veget all  " + toStr(vegetNodes.size(), 5);
+            outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
+            outText += "\nCars " + toStr(iCars,1)+ " nodes "+toStr(carNodes.size(), 1)+"\n";
+
             outText += "\n- + Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
             outText += "\n/ * Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
-
             outText += "\n^ v Param  " + toStr( param, 0 );
             
             SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
@@ -236,11 +236,13 @@ namespace Demo
         //  Vegetation add, destroy all
         case SDL_SCANCODE_V:  CreateVeget();  break;
         case SDL_SCANCODE_C:  DestroyVeget();  break;
-
-        //  other
-        case SDL_SCANCODE_F:  CreateParticles();  break;
+        //  cars
         case SDL_SCANCODE_G:  CreateCar();  break;
         case SDL_SCANCODE_H:  DestroyCars();  break;
+        //  other
+        case SDL_SCANCODE_F:  CreateParticles();  break;
+
+        case SDL_SCANCODE_P:  ToggleTriplanar();  break;
 
         case SDL_SCANCODE_K:  
             if (ndSky)
