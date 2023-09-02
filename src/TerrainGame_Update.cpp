@@ -85,22 +85,25 @@ namespace Demo
             Vector3( cosf( mPitch ), -sinf( mPitch ), 0.0 ).normalisedCopy();
         mSunLight->setDirection( dir );
 
-
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
-        sceneManager->setAmbientLight(
-            ColourValue( 0.99f, 0.94f, 0.90f ) * 0.04f,  //** par
-            ColourValue( 0.90f, 0.93f, 0.96f ) * 0.04f,
-            // ColourValue( 0.93f, 0.91f, 0.38f ) * 0.04f,
-            // ColourValue( 0.22f, 0.53f, 0.96f ) * 0.04f,
-            // ColourValue( 0.33f, 0.61f, 0.98f ) * 0.01f,
-            // ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
-            -dir );
-
     #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
         OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
         AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
         atmosphere->setSunDir( mSunLight->getDirection(), mPitch / Math::PI );
     #endif
+
+        //  Set back Light after atmosphere
+        mSunLight->setDiffuseColour( ColourValue(0.7,0.7,0.7)* 2.1f);  //** light setup
+        mSunLight->setSpecularColour(ColourValue(0.7,0.7,0.7)* 0.75f);
+
+        sceneManager->setAmbientLight(
+            ColourValue( 1.f, 1.f, 1.f ) * 0.46f,  //** par same, good colors, no AmbientHemisphere
+            ColourValue( 1.f, 1.f, 1.f ) * 0.46f,
+            // ColourValue( 0.99f, 0.94f, 0.90f ) * 0.04f,  // gray-
+            // ColourValue( 0.90f, 0.93f, 0.96f ) * 0.04f,
+            // ColourValue( 0.93f, 0.91f, 0.38f ) * 0.04f,  // yellow-blue-
+            // ColourValue( 0.22f, 0.53f, 0.96f ) * 0.04f,
+            -dir );
 
         ///  Terrain  ----
         if (mTerra && mGraphicsSystem->getRenderWindow()->isVisible() )
