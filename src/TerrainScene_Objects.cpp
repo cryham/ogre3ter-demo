@@ -119,7 +119,16 @@ namespace Demo
                 static_cast<Ogre::HlmsPbsDatablock *>( item->getSubItem( 0 )->getDatablock() );
             datablock->setTexture( Ogre::PBSM_REFLECTION, mDynamicCubemap );
 
-            if (mCubeCamera)
+            //  random body color, after 3 cars-
+            if (i == 0 && iCars > 3)
+            {
+                Vector3 diff(Math::UnitRandom(), Math::UnitRandom(), Math::UnitRandom());
+                Vector3 spec(Math::UnitRandom(), Math::UnitRandom(), Math::UnitRandom());
+                datablock->setDiffuse( diff * spec);
+                datablock->setSpecular(diff);
+            }
+
+            if (mCubeCamera)  // use last car pos for reflections camera
                 mCubeCamera->setPosition(objPos);
         }
 
@@ -174,6 +183,7 @@ namespace Demo
 		for (auto item : carItems)
 			mgr->destroyItem(item);
 		carItems.clear();
+        iCars = 0;  //
 	}
 
 

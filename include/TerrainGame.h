@@ -70,7 +70,9 @@ namespace Demo
         //  wireframe
         Ogre::HlmsMacroblock macroblockWire;
         bool wireTerrain = false;
+        void ToggleWireframe();
 
+        //  Fps info etc
         void generateDebugText( float timeSinceLast, Ogre::String &outText ) override;
 
     public:
@@ -91,6 +93,7 @@ namespace Demo
         Ogre::Camera *mCubeCamera = 0;
         Ogre::TextureGpu *mDynamicCubemap = 0;
         Ogre::CompositorWorkspace *mDynamicCubemapWorkspace = 0;
+        int updReflSkip = 0;
 
         IblQuality mIblQuality = IblLow;  // par in ctor
         Ogre::CompositorWorkspace *setupCompositor();
