@@ -23,7 +23,7 @@ namespace Demo
     {
         std::string mesh;
         float scaleMin, scaleMax, density;
-        float angleMax, heightMax;  // terrain
+        float angleMax, heightMax, waterMax;  // terrain
         float visFar, down;  // visibility max, down offset
         bool rotAll;  // allow all axes rotation
         int count;  // auto
@@ -31,10 +31,10 @@ namespace Demo
         
         VegetLayer(std::string mesh1,
                 float scMin, float scMax,
-                float dens, float angMax, float hMax,
+                float dens, float angMax, float hMax, float wtrMax,
                 float dn, float vis, bool rot)
             : mesh(mesh1), scaleMin(scMin), scaleMax(scMax), density(dens)
-            , angleMax(angMax), heightMax(hMax)
+            , angleMax(angMax), heightMax(hMax), waterMax(wtrMax)
             , visFar(vis), down(dn), rotAll(rot), count(0)
         {   }
     };
