@@ -84,6 +84,7 @@ namespace Demo
             outText += "V add Vegetation  C clear it\n";
             outText += "T terrain / flat  P triplanar  R wireframe\n";
             outText += "G add next Car  H clear all\n";
+            outText += "N add water  M remove\n";
             outText += "K next Sky  F add Fire\n\n";
         }
     }
