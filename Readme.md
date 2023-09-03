@@ -37,10 +37,13 @@ T - toggle **Terrain** / flat plane. _Note:_ terrain loads in 5 sec.
 P - terrain triplanar toggle  
 R - terrain wireframe toggle  
 
+N - Add water, at set height (param -1)
+M - remove water  
+
 K - Add / remove **Sky** dome, next texture  
 F - Add fire with smoke particles  
 
-Up,Down - previous / next Atmosphere **parameter**  
+Up,Down - previous / next **parameter** e.g. Fog (at param 0)  
 Left,Right - dec / increase parameter  
 
 Numpad /,* - rotate **sun** yaw  

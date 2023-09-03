@@ -86,7 +86,7 @@ namespace Demo
         mThreadGameEntityToUpdate( 0 ),
         mThreadWeight( 0 ),
     #ifdef DEBUG
-        mGrabMouse( false ),
+        mGrabMouse( false ),  //**
     #else
         mGrabMouse( true ),
     #endif
