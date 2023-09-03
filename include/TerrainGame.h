@@ -17,7 +17,7 @@ namespace Ogre
 
 namespace Demo
 {
-    class PlanarReflectionsWorkspaceListener;
+    class PlanarReflectWsListener;
 
     struct VegetLayer
     {
@@ -56,7 +56,7 @@ namespace Demo
 
         //  input
         int mKeys[4] = {0,0,0,0};  // sun
-        int param = 0;  // to adjust, fog etc
+        int param = -1;  // to adjust, fog etc
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
 
@@ -77,6 +77,7 @@ namespace Demo
         void keyReleased( const SDL_KeyboardEvent &arg ) override;
     
     protected:
+        friend PlanarReflectWsListener;
 
         //  Reflection cube  ----
         Ogre::Camera *mCubeCamera = 0;
@@ -87,18 +88,28 @@ namespace Demo
         IblQuality mIblQuality = IblLow;  // par in ctor
         Ogre::CompositorWorkspace *setupCompositor();
 
+
         //  water  ----
-        Ogre::PlanarReflections *mPlanarReflections = 0;
-        PlanarReflectionsWorkspaceListener *mWorkspaceListener = 0;
-       	void setupPlanarReflections();
+		Ogre::Real yWaterHeight = 100.f, yWaterVertical = 20.f;
+       	void CreateWater(), DestroyWater();
+
+        Ogre::PlanarReflections *mPlanarReflect = 0;
+        PlanarReflectWsListener *mWorkspaceListener = 0;
+
+        Ogre::Item *waterItem = 0;
+        Ogre::SceneNode *waterNode = 0;
+		Ogre::MeshPtr waterMesh = 0;
+        Ogre::v1::MeshPtr waterMeshV1 = 0;
 
 
         //  plane ground  ----
         void CreatePlane(), DestroyPlane();
-        Ogre::v1::MeshPtr planeMeshV1 = 0;
-        Ogre::MeshPtr planeMesh = 0;
+
         Ogre::Item *planeItem = 0;
         Ogre::SceneNode *planeNode = 0;
+        Ogre::v1::MeshPtr planeMeshV1 = 0;
+        Ogre::MeshPtr planeMesh = 0;
+
 
         //  Terrain  ----
         Ogre::Real sizeXZ = 1000.f;

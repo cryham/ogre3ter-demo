@@ -2,12 +2,15 @@
 #include "TerrainGame.h"
 #include "OgrePlanarReflections.h"
 #include "GraphicsSystem.h"
+#include "Terra/Terra.h"
 
 #include "OgreLogManager.h"
 #include "OgreCamera.h"
 #include "OgreSceneNode.h"
 #include "OgreItem.h"
+#include "OgreMesh.h"
 #include "OgreMeshManager.h"
+#include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
 
 #include "OgreHlmsPbs.h"
@@ -28,16 +31,20 @@ using namespace Ogre;
 namespace Demo
 {
     
-    class PlanarReflectionsWorkspaceListener final : public CompositorWorkspaceListener
+    class PlanarReflectWsListener final : public CompositorWorkspaceListener
     {
         PlanarReflections *mPlanarReflections;
+		TerrainGame* mGame;
 
     public:
-        PlanarReflectionsWorkspaceListener( PlanarReflections *planarReflections ) :
-            mPlanarReflections( planarReflections )
+        PlanarReflectWsListener(
+                PlanarReflections *planarReflections, TerrainGame* game )
+			: mPlanarReflections( planarReflections )
+			, mGame( game )
         {
         }
-        ~PlanarReflectionsWorkspaceListener() {}
+        ~PlanarReflectWsListener()
+        {   }
 
         void workspacePreUpdate( CompositorWorkspace *workspace ) override
         {
@@ -45,27 +52,29 @@ namespace Demo
             	mPlanarReflections->beginFrame();
         }
 
+        //-----------------------------------------------------------------------------------
         void passEarlyPreExecute( CompositorPass *pass ) override
         {
-            // Ignore non-scene passes
+            //  Ignore non-scene passes
             if( pass->getType() != PASS_SCENE )
                 return;
             assert( dynamic_cast<const CompositorPassSceneDef *>( pass->getDefinition() ) );
             const CompositorPassSceneDef *passDef =
                 static_cast<const CompositorPassSceneDef *>( pass->getDefinition() );
 
-            // Ignore scene passes that belong to a shadow node.
+            //  Ignore scene passes that belong to a shadow node.
             if( passDef->mShadowNodeRecalculation == SHADOW_NODE_CASTER_PASS )
-                return;
-
-            // Ignore scene passes we haven't specifically tagged to receive reflections
-            if( passDef->mIdentifier != 25001 )
                 return;
 
             CompositorPassScene *passScene = static_cast<CompositorPassScene *>( pass );
             Camera *camera = passScene->getCamera();
 
-            // Note: The Aspect Ratio must match that of the camera we're reflecting.
+
+            //  Ignore scene passes we haven't specifically tagged to receive reflections
+            if( passDef->mIdentifier != 25001 )
+                return;
+
+            //  Note: The Aspect Ratio must match that of the camera we're reflecting.
 			if (mPlanarReflections)
             	mPlanarReflections->update( camera, camera->getAutoAspectRatio()
                                             ? pass->getViewportAspectRatio( 0u )
@@ -74,78 +83,120 @@ namespace Demo
     };
 
 
-	void TerrainGame::setupPlanarReflections()
+    //  Create
+    //-----------------------------------------------------------------------------------
+	void TerrainGame::CreateWater()
 	{
-        LogO("---- tutorial createScene");
+		if (mPlanarReflect)
+			return;
+        LogO("---- create water");
 
         Root *root = mGraphicsSystem->getRoot();
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
 
-        bool useComputeMipmaps = false;
-#if !OGRE_NO_JSON
-        useComputeMipmaps =
-            root->getRenderSystem()->getCapabilities()->hasCapability( RSC_COMPUTE_PROGRAM );
-#endif
+        bool useCompute = false;
+	#if !OGRE_NO_JSON
+        useCompute = root->getRenderSystem()->getCapabilities()->hasCapability( RSC_COMPUTE_PROGRAM );
+	#endif
 
-        // Setup PlanarReflections
-        mPlanarReflections =
-            new PlanarReflections( sceneManager, root->getCompositorManager2(), 1.0, 0 );
-        mWorkspaceListener = new PlanarReflectionsWorkspaceListener( mPlanarReflections );
-        {
-            CompositorWorkspace *workspace = mGraphicsSystem->getCompositorWorkspace();
-            workspace->addListener( mWorkspaceListener );
-        }
+        //  Setup PlanarReflections
+        //-------------------------------------------------------
+        mPlanarReflect = new PlanarReflections( sceneManager, root->getCompositorManager2(),
+			100.f, 0 );  // par?
+		
+        mWorkspaceListener = new PlanarReflectWsListener( mPlanarReflect, this );
+        CompositorWorkspace *workspace = mGraphicsSystem->getCompositorWorkspace();
+        workspace->addListener( mWorkspaceListener );
 
-        // The perfect mirror doesn't need mipmaps.
-        // mPlanarReflections->setMaxActiveActors( 1u, "PlanarReflectionsReflectiveWorkspace", true, 512,
-        //                                         512, false, PFG_RGBA8_UNORM_SRGB,
-        //                                         useComputeMipmaps );
-        // The rest of the reflections do.  2u
-        mPlanarReflections->setMaxActiveActors( 1u, "PlanarReflectionsReflectiveWorkspace", true, 512,
-                                                512, true, PFG_RGBA8_UNORM_SRGB,
-                                                useComputeMipmaps );
-        const Vector2 mirrorSize( 500.0f, 500.0f );
+        //** water params  ----
+		const Vector2 waterSize( 5000.f, 5000.f );
+		const int size = 2 * 512;
+		const int segments = 64;  // 1 !  more bad
+		const Real tile = 1.0f;
 
-        // Create the plane mesh
-        // Note that we create the plane to look towards +Z; so that sceneNode->getOrientation
-        // matches the orientation for the PlanarReflectionActor
-        v1::MeshPtr planeMeshV1 = v1::MeshManager::getSingleton().createPlane(
-            "Plane Mirror Unlit", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            Plane( Vector3::UNIT_Z, 0.0f ), mirrorSize.x, mirrorSize.y, 1, 1, true, 1, 1.0f,
-            1.0f, Vector3::UNIT_Y, v1::HardwareBuffer::HBU_STATIC,
+        mPlanarReflect->setMaxActiveActors( 1u, "PlanarReflectionsReflectiveWorkspace",
+			true, size, size, true, // accurate, with mipmaps
+			PFG_RGBA8_UNORM_SRGB, useCompute );
+
+        //  Create the plane mesh
+        //  Note that we create the plane to look towards +Z; so that sceneNode->getOrientation
+        //  matches the orientation for the PlanarReflectionActor
+        waterMeshV1 = v1::MeshManager::getSingleton().createPlane(
+            "Plane Water V1", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            Plane( Vector3::UNIT_Z, 0.0f ), waterSize.x, waterSize.y,
+			segments, segments, true, 1,
+			tile, tile,
+			Vector3::UNIT_Y, v1::HardwareBuffer::HBU_STATIC,
             v1::HardwareBuffer::HBU_STATIC );
-        MeshPtr planeMesh = MeshManager::getSingleton().createByImportingV1(
-            "Plane Mirror Unlit", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            planeMeshV1.get(), true, true, true );
+        
+		waterMesh = MeshManager::getSingleton().createByImportingV1(
+            "Plane Water", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            waterMeshV1.get(), false, false, false );
+            // waterMeshV1.get(), true, true, true );
 
 
-		//---------------------------------------------------------------------
-        // Setup mirror for PBS.
-        //---------------------------------------------------------------------
+        //  Setup mirror for PBS
+        //-------------------------------------------------------
         Hlms *hlms = root->getHlmsManager()->getHlms( HLMS_PBS );
         assert( dynamic_cast<HlmsPbs *>( hlms ) );
         HlmsPbs *pbs = static_cast<HlmsPbs *>( hlms );
-        pbs->setPlanarReflections( mPlanarReflections );
+        pbs->setPlanarReflections( mPlanarReflect );
 
-        Item* item = sceneManager->createItem( planeMesh, SCENE_DYNAMIC );
-        item->setDatablock( "GlassRoughness" );
-		SceneNode*
-        sceneNode = sceneManager->getRootSceneNode( SCENE_DYNAMIC )
-                        ->createChildSceneNode( SCENE_DYNAMIC );
-        sceneNode->setPosition( 0, 12.5f, 0 );
-        sceneNode->setOrientation(
-            Quaternion( Radian( Math::HALF_PI ), Vector3::UNIT_Y ) );
-        // sceneNode->setScale( Vector3( 0.75f, 0.5f, 1.0f ) );
-        sceneNode->attachObject( item );
+        const auto type = SCENE_DYNAMIC;
+		waterItem = sceneManager->createItem( waterMesh, type );
+        waterItem->setDatablock( "Water" );
+		waterItem->setCastShadows( false );
+		
+		waterNode = sceneManager->getRootSceneNode( type )->createChildSceneNode( type );
+        waterNode->setPosition( 0, yWaterHeight, 0 );
+		if (yWaterHeight > yWaterVertical)  //** test |
+			waterNode->setOrientation( Quaternion( Radian( -Math::HALF_PI ), Vector3::UNIT_X ) );  // -- flat
+		else
+        	waterNode->setOrientation( Quaternion( Radian( Math::HALF_PI ), Vector3::UNIT_Y ) );  // | vertical
+        waterNode->attachObject( waterItem );
 
-        PlanarReflectionActor* actor = mPlanarReflections->addActor( PlanarReflectionActor(
-            sceneNode->getPosition(), mirrorSize /** Vector2( 0.75f, 0.5f )*/,
-            sceneNode->getOrientation() ) );
+        // PlanarReflectionActor* actor =
+		mPlanarReflect->addActor( PlanarReflectionActor(
+            waterNode->getPosition(), waterSize,
+            waterNode->getOrientation() ) );
 
         PlanarReflections::TrackedRenderable trackedRenderable(
-            item->getSubItem( 0 ), item, Vector3::UNIT_Z, Vector3( 0, 0, 0 ) );
-        mPlanarReflections->addRenderable( trackedRenderable );
+            waterItem->getSubItem( 0 ), waterItem, Vector3::UNIT_Z, Vector3( 0, 0, 0 ) );
+        mPlanarReflect->addRenderable( trackedRenderable );
+	}
 
+
+    //  Destroy
+    //-----------------------------------------------------------------------------------
+	void TerrainGame::DestroyWater()
+	{
+		if (mPlanarReflect)
+			mPlanarReflect->destroyAllActors();
+
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+        if (waterNode)
+        {   mgr->destroySceneNode(waterNode);  waterNode = 0;  }
+        if (waterItem)
+        {   mgr->destroyItem(waterItem);  waterItem = 0;  }
+        
+		auto& ms = MeshManager::getSingleton();
+		auto& m1 = v1::MeshManager::getSingleton();
+        if (waterMesh)  ms.remove(waterMesh);  waterMesh.reset();
+        if (waterMeshV1)  m1.remove(waterMeshV1);  waterMeshV1.reset();
+
+
+		Root *root = mGraphicsSystem->getRoot();
+		Hlms *hlms = root->getHlmsManager()->getHlms( HLMS_PBS );
+		assert( dynamic_cast<HlmsPbs2 *>( hlms ) );
+		HlmsPbs *pbs = static_cast<HlmsPbs *>( hlms );
+		pbs->setPlanarReflections( 0 );  // off
+
+		CompositorWorkspace *ws = mGraphicsSystem->getCompositorWorkspace();
+		if (mWorkspaceListener)
+			ws->removeListener( mWorkspaceListener );
+		delete mWorkspaceListener;  mWorkspaceListener = 0;
+
+		delete mPlanarReflect;  mPlanarReflect = 0;
 	}
 
 }
