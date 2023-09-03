@@ -1,8 +1,19 @@
 syntax: glob
+
+#  binaries
 *.dll
 *.pdb
+*.so*
+*.bin
+TerrainDemo
 
-# VS crap
+#  our in bin\
+*.cfg
+*.log
+*.cache
+*Cache.json
+
+#  VS crap
 #*.vcxproj
 #*.filters
 *.vcxproj.user

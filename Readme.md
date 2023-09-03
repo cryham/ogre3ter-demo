@@ -110,4 +110,14 @@ dev/
 
 Note: CMake default is `Dependencies/Ogre` inside demo. On Windows, it can be as link, if this doesn't work.
 
+## Sources
+
 Some key locations in code are marked with `//**`
+
+Materials are in:  
+`/Media/materials/ground.material.json`  
+`/Media/2.0/scripts/materials/Tutorial_Terrain/Terra.material.json`  
+
+and in (simpler syntax):  
+`/Media/materials/vegetation.material`  
+`/Media/materials/cars.material`  

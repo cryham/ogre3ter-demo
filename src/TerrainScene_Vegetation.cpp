@@ -95,11 +95,6 @@ namespace Demo
 	{
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
-    #if 0
-        HlmsPbsDatablock *pbsdatablock = (HlmsPbsDatablock*)hlmsManager->getDatablock( "pine2norm" );
-        pbsdatablock->setTwoSidedLighting( true );  //?
-        //pbsdatablock->setMacroblock( macroblockWire );
-    #endif
 
 		const Real mult  = !mTerra ? 0.1f : 1.f;
         const Real scale = sizeXZ * 0.48f;  // world
@@ -114,18 +109,18 @@ namespace Demo
                     Math::RangeRandom(-scale, scale), 0.f,
                     Math::RangeRandom(-scale, scale));
 
-                //  check terrain h, angle, water dist
+                //  check, skip  ----
                 if (mTerra)
                 {
-                    mTerra->getHeightAt( pos );
+                    mTerra->getHeightAt( pos );  // terrain h
                     if (pos.y > lay.heightMax)
                         continue;
 
-                    Real wtrDist = pos.y - yWaterHeight;
+                    Real wtrDist = pos.y - yWaterHeight;  // water dist
                     if (mPlanarReflect && wtrDist < lay.waterMax)
                         continue;
 
-                    Real angle = getAngle( pos.x, pos.z, 0.5f );
+                    Real angle = getAngle( pos.x, pos.z, 0.5f );  // terrain angle
                     if (angle > lay.angleMax)
                         continue;
                 }
@@ -142,7 +137,6 @@ namespace Demo
                     LogO("error: mesh not found: " + lay.mesh);
                     return;
                 }
-                //item->setDatablock( "pine2norm" );
                 item->setRenderQueueGroup( 200 );  // after terrain
                 item->setRenderingDistance( lay.visFar );  // how far visible
 				vegetItems.push_back(item);
