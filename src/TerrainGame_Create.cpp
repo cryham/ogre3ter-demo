@@ -107,12 +107,11 @@ namespace Demo
         #if 0  // ground
             camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
             camera->lookAt( Ogre::Vector3( 0, 3, 0 ) );
-        #else  // terrain view  from screen
+        #elif 1  // terrain view  from screen
             camera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
             camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
-        #endif
-        #if 0
+        #elif 0
             //camPos = Vector3(-10.f, 80.f, 10.f );
             //camPos = Vector3(-2005.f, 40.f, -929.f);
             camPos = Vector3(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
@@ -140,8 +139,15 @@ namespace Demo
     {
         LogO("---- destroyScene");
 
+        DestroyWater();
+        
+        DestroyVeget();
+        DestroyCars();
+
         DestroyTerrain();
         DestroyPlane();
+        
+        DestroySkyDome();
 
         LogO("---- tutorial destroyScene");
 
