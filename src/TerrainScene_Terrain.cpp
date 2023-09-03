@@ -62,19 +62,13 @@ namespace Demo
         //  Heightmap  ------------------------------------------------
         switch (1)
         {
-        case 0:  //  64  flat
-            sizeXZ = 12096.f;
-            mTerra->load( "Heightmap64.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f), Vector3(sizeXZ, 6096.0f, sizeXZ), false, false);  break;
         case 1:  //  1k  600 fps  4 tex
             sizeXZ = 4096.f;
             mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);  break;
-        case 2:  //  1k
-            sizeXZ = 1024.f;
-            mTerra->load( "Heightmap.png", Vector3( 64.f, 512.f, 64.f), Vector3(sizeXZ, 1.f, sizeXZ), false, false);  break;
-        case 3:  //  2k
+        case 2:  //  2k
             sizeXZ = 12096.f;
             mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f), Vector3(sizeXZ, 6096.0f, sizeXZ), false, false);  break;
-        case 4:  //  4k
+        case 3:  //  4k
             sizeXZ = 2.f* 4096.f;
             mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 2.f* 4096.0f, sizeXZ), false, false);  break;
         }
