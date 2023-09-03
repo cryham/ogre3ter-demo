@@ -118,6 +118,8 @@ namespace Demo
         // CreateVeget();
 
 
+        setupPlanarReflections();  //par
+
         LogO("---- tutorial createScene");
 
         TutorialGameState::createScene01();

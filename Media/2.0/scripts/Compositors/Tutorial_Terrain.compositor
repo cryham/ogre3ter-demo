@@ -78,10 +78,89 @@ compositor_node CubemapRendererNodeMsaa
 		}
 	}
 }
+
+
+//  planar reflections
 //------------------------------------------------------------------------------------
+compositor_node PlanarReflectionsStandardRenderingNode
+{
+	in 0 rt_renderwindow
+
+	target rt_renderwindow
+	{
+		pass render_scene
+		{
+			load
+			{
+				all				clear
+				clear_colour	0.2 0.4 0.6 1
+			}
+			store
+			{
+				colour	store_or_resolve
+				depth	dont_care
+				stencil	dont_care
+			}
+			overlays		on
+			// shadows			PlanarReflectionsShadowNode
+
+			//Used by C++ to identify this pass wants planar reflections
+			identifier	25001
+
+			profiling_id "Main Render"
+		}
+	}
+}
+
+compositor_node PlanarReflectionsReflectiveRenderingNode
+{
+	in 0 rt_renderwindow
+
+	target rt_renderwindow
+	{
+		pass render_scene
+		{
+			load
+			{
+				all				clear
+				clear_colour	0.2 0.4 0.6 1
+			}
+			store
+			{
+				colour	store_or_resolve
+				depth	dont_care
+				stencil	dont_care
+			}
+
+			overlays		off
+			visibility_mask 0xfffffffe
+			// shadows			PlanarReflectionsShadowNode
+
+			profiling_id "Reflective pass"
+		}
+
+		pass generate_mipmaps
+		{
+			mipmap_method compute_hq
+
+			profiling_id "Mipmap Generation (HQ)"
+		}
+	}
+}
+
+workspace PlanarReflectionStandardsWorkspace
+{
+	connect_output PlanarReflectionsStandardRenderingNode 0
+}
+
+workspace PlanarReflectionsReflectiveWorkspace
+{
+	connect_output PlanarReflectionsReflectiveRenderingNode 0
+}
 
 
-//  render
+//  render window  Final
+//------------------------------------------------------------------------------------
 compositor_node Tutorial_TerrainRenderingNode
 {
 	in 0 rt_renderwindow
@@ -111,6 +190,8 @@ compositor_node Tutorial_TerrainRenderingNode
 			// Our materials in this pass will be using this cubemap,
 			// so we need to expose it to the pass.
 			expose demo_dynamic_cubemap
+
+			identifier	25001
 
 			overlays	on
 			shadows		Tutorial_TerrainShadowNode

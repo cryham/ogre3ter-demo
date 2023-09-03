@@ -12,10 +12,12 @@ namespace Ogre
 {
     class Terra;
     class HlmsPbsTerraShadows;
+    class PlanarReflections;
 }
 
 namespace Demo
 {
+    class PlanarReflectionsWorkspaceListener;
 
     struct VegetLayer
     {
@@ -53,26 +55,10 @@ namespace Demo
         Ogre::Vector3 camPos;
 
         //  input
-        int mKeys[4] = {0,0,0,0};  // sun keys
-        int param = 0;  // to adjust
+        int mKeys[4] = {0,0,0,0};  // sun
+        int param = 0;  // to adjust, fog etc
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
-
-        //  terrain
-        Ogre::Terra *mTerra = 0;
-        Ogre::Light *mSunLight = 0;
-        Ogre::SceneNode *mSunNode = 0;
-
-        bool mTriplanarMappingEnabled = true;
-        void ToggleTriplanar();
-
-        // Listener to make PBS objects also be affected by terrain's shadows
-        Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows = 0;
-
-        //  wireframe
-        Ogre::HlmsMacroblock macroblockWire;
-        bool wireTerrain = false;
-        void ToggleWireframe();
 
         //  Fps info etc
         void generateDebugText( float timeSinceLast, Ogre::String &outText ) override;
@@ -101,21 +87,44 @@ namespace Demo
         IblQuality mIblQuality = IblLow;  // par in ctor
         Ogre::CompositorWorkspace *setupCompositor();
 
+        //  water  ----
+        Ogre::PlanarReflections *mPlanarReflections = 0;
+        PlanarReflectionsWorkspaceListener *mWorkspaceListener = 0;
+       	void setupPlanarReflections();
 
-        //  Terrain  ----
-        Ogre::Real sizeXZ = 1000.f;
-        void CreateTerrain(), DestroyTerrain();
-        Ogre::SceneNode *nodeTerrain = 0;
 
+        //  plane ground  ----
         void CreatePlane(), DestroyPlane();
         Ogre::v1::MeshPtr planeMeshV1 = 0;
         Ogre::MeshPtr planeMesh = 0;
         Ogre::Item *planeItem = 0;
         Ogre::SceneNode *planeNode = 0;
 
-        //  util
+        //  Terrain  ----
+        Ogre::Real sizeXZ = 1000.f;
+        void CreateTerrain(), DestroyTerrain();
+        Ogre::SceneNode *nodeTerrain = 0;
+        Ogre::Terra *mTerra = 0;
+
+        bool mTriplanarMappingEnabled = true;
+        void ToggleTriplanar();
+
+        // Listener to make PBS objects also be affected by terrain's shadows
+        Ogre::HlmsPbsTerraShadows *mHlmsPbsTerraShadows = 0;
+
+        //  wireframe
+        Ogre::HlmsMacroblock macroblockWire;
+        bool wireTerrain = false;
+        void ToggleWireframe();
+
+        //  terrain util
         Ogre::Real getHeight( Ogre::Real x, Ogre::Real z ) const;
         Ogre::Real getAngle( Ogre::Real x, Ogre::Real z, Ogre::Real s ) const;
+
+
+        //  sun
+        Ogre::Light *mSunLight = 0;
+        Ogre::SceneNode *mSunNode = 0;
 
         //  Sky  ----
         void CreateSkyDome(Ogre::String sMater, float yaw);
@@ -123,7 +132,8 @@ namespace Demo
         Ogre::ManualObject* moSky = 0;
         Ogre::SceneNode* ndSky = 0;
         void DestroySkyDome();
-    
+
+
         //  vegetation  ----
         void SetupVeget(), CreateVeget(), DestroyVeget();
 
@@ -134,6 +144,7 @@ namespace Demo
         //  other
         void CreateManualObj(Ogre::Vector3 camPos);
         void CreateParticles();
+
 
         //  cars  ----
         void CreateCar();

@@ -3,12 +3,12 @@
 
 hlms AllSettings pbs
 {
-	//Note: Internally the diffuse colour is divided by PI.
+	//  Note: Internally the diffuse colour is divided by PI.
 	diffuse		1 1 1
 	specular	1 1 1
 	emissive    0 0 0
 
-	//Note: avoid values extremely close to zero  (0; 1] is physically correct.
+	//  Note: avoid values extremely close to zero  (0; 1] is physically correct.
 	roughness	0.4
 	
 	fresnel		1.33
@@ -83,7 +83,7 @@ hlms palm2 pbs
 	specular 0.2 0.2 0.2
 }
 
-//  plants  ---------------------------------------------
+//  Plants  ---------------------------------------------
 hlms plant_tropical pbs
 {
 	diffuse_map  plant_tropical.png
@@ -141,7 +141,7 @@ hlms fern2 pbs
 	specular 0.8 0.8 0.8
 }
 
-//  rocks  ---------------------------------------------
+//  Rocks  ---------------------------------------------
 hlms rock02brown2flat pbs
 {
 	diffuse_map  rock02.jpg
@@ -205,23 +205,6 @@ hlms rock_n2 pbs
 }
 
 
-//  -----------------
-//hlms Ground pbs
-//{
-	//diffuse_map grass_ground_d.jpg
-	//workflow specular_ogre specular_fresnel metallic
-
-	// normal_map   grass_ground_n.jpg
-	// roughness_map  grass_ground_h.jpg
-	// metalness_map  grass_ground_s.jpg
-	// fresnel_coeff 0.01
-
-	//diffuse		0.7 0.7 0.7
-	// roughness 0.2
-	// metalness 0.2
-//}
-
-
 //  Particles
 //  -----------------
 hlms ParFire unlit
@@ -248,4 +231,14 @@ hlms sky-clearday1 unlit
 hlms sky_photo6 unlit
 {
 	diffuse_map sky_photo6.jpg
+}
+
+
+//  water
+//  -----------------
+hlms GlassRoughness pbs
+{
+//	roughness 0.01
+	roughness 1.0
+	roughness_map  GlassRoughness.png
 }

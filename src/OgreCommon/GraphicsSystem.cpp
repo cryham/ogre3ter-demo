@@ -894,7 +894,7 @@ namespace Demo
     {
         mCamera = mSceneManager->createCamera( "Main Camera" );
 
-    #if 0  // plane
+    #if 1  // plane  not set here
         mCamera->setPosition( Ogre::Vector3( 0, 3, 12 ) );
         mCamera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
     #else  // terrain view from screen-

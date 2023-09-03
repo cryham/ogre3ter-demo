@@ -12,6 +12,8 @@
 #include "OgreFrameStats.h"
 
 #include "Terra/Terra.h"
+#include "OgrePlanarReflections.h"
+
 #include "OgreHlms.h"
 #include "OgreHlmsManager.h"
 #include "OgreGpuProgramManager.h"
@@ -162,6 +164,7 @@ namespace Demo
 
             outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
             outText += "\nCars  " + toStr(iCars,1)+ " nodes "+toStr(carNodes.size(), 1)+"\n";
+            outText += "\nRefl actors: " + toStr(mPlanarReflections->countActiveActors(),1);
 
             outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
             outText += "\n/ *  Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );

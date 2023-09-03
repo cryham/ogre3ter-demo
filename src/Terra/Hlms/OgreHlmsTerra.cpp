@@ -54,8 +54,6 @@ THE SOFTWARE.
     #include "Terra/Hlms/OgreHlmsJsonTerra.h"
 #endif
 
-#undef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS  //! fixme build
-
 
 #ifdef OGRE_BUILD_COMPONENT_PLANAR_REFLECTIONS
     #include "OgrePlanarReflections.h"
