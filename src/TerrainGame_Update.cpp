@@ -54,20 +54,28 @@ namespace Demo
             SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
             AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
             AtmosphereNpr::Preset p = atmosphere->getPreset();
+
             float mul1 = 1.f + 0.003f * mul * d;
+            //------------------------------------------------------------------  Params Edit
             switch (param)
             {
+            case -1: yWaterHeight *= mul1;  break;
+            
             case 0:  p.fogDensity *= mul1;  break;
             case 1:  p.densityCoeff *= mul1;  break;
             case 2:  p.densityDiffusion *= mul1;  break;
             case 3:  p.horizonLimit *= mul1;  break;
+            
             case 4:  p.sunPower *= mul1;  break;
             case 5:  p.skyPower *= mul1;  break;
+            
             case 6:  p.skyColour.x *= mul1;  break;
             case 7:  p.skyColour.y *= mul1;  break;
             case 8:  p.skyColour.z *= mul1;  break;
+            
             case 9:   p.fogBreakMinBrightness *= mul1;  break;
             case 10:  p.fogBreakFalloff *= mul1;  break;
+            
             case 11:  p.linkedLightPower *= mul1;  break;
             case 12:  p.linkedSceneAmbientUpperPower *= mul1;  break;
             case 13:  p.linkedSceneAmbientLowerPower *= mul1;  break;
@@ -130,11 +138,10 @@ namespace Demo
     }
 
 
-    //  text
+    //  Fps, info text
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::generateDebugText( float timeSinceLast, String &outText )
     {
-        //auto toStr = [](auto v, auto p=1) {  return StringConverter::toString(v,p);  };
         #define toStr(v, p)  StringConverter::toString(v,p)
         outText = "";
 
@@ -152,7 +159,8 @@ namespace Demo
         }
         else if( mDisplayHelpMode == 1 )
         {
-            //  fps stats  ------------------------------------------------
+            //  Fps stats
+            //------------------------------------------------------------------
             RenderSystem *rs = mGraphicsSystem->getRoot()->getRenderSystem();
             const RenderingMetrics& rm = rs->getMetrics();  //** fps
             const FrameStats *st = mGraphicsSystem->getRoot()->getFrameStats();
@@ -163,8 +171,8 @@ namespace Demo
                 // +" b " + toStr( rm.mBatchCount, 0);
 
             outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
-            outText += "\nCars  " + toStr(iCars,1)+ " nodes "+toStr(carNodes.size(), 1)+"\n";
-            outText += "\nRefl actors: " + toStr(mPlanarReflections->countActiveActors(),1);
+            outText += "\nCars  " + toStr(iCars,1)+ "  nodes "+toStr(carNodes.size(), 1);
+            outText += "\nWater  " + toStr(mPlanarReflect ? mPlanarReflect->countActiveActors() : 0,1)+"\n";
 
             outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
             outText += "\n/ *  Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
@@ -175,19 +183,27 @@ namespace Demo
             AtmosphereNpr::Preset p = atmosphere->getPreset();
             
             outText += "\n< > ";  const int d = 3;
+            //------------------------------------------------------------------  Params Text
             switch (param)
             {
-            case 0:   outText += "Fog density  " + toStr( p.fogDensity, d );  break;
+            case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 ) +
+                (yWaterHeight < yWaterVertical ? " | Vertical" : " -");  break;
+            
+            case 0:   outText += "Fog density  " + toStr( p.fogDensity, d +2 );  break;
             case 1:   outText += "density coeff  " + toStr( p.densityCoeff, d );  break;
             case 2:   outText += "density diffusion  " + toStr( p.densityDiffusion, d );  break;
             case 3:   outText += "horizon limit  " + toStr( p.horizonLimit, d );  break;
+            
             case 4:   outText += "Sun Power  " + toStr( p.sunPower, d );  break;
             case 5:   outText += "sky Power  " + toStr( p.skyPower, d );  break;
+            
             case 6:   outText += "sky Colour   Red  " + toStr( p.skyColour.x, d );  break;
             case 7:   outText += "sky Colour Green  " + toStr( p.skyColour.y, d );  break;
             case 8:   outText += "sky Colour  Blue  " + toStr( p.skyColour.z, d );  break;
+            
             case 9:   outText += "fog break MinBright  " + toStr( p.fogBreakMinBrightness, d );  break;
             case 10:  outText += "fog break Falloff  " + toStr( p.fogBreakFalloff, d );  break;
+            
             case 11:  outText += "linked LightPower  " + toStr( p.linkedLightPower, d );  break;
             case 12:  outText += "ambient UpperPower  " + toStr( p.linkedSceneAmbientUpperPower, d );  break;
             case 13:  outText += "ambient LowerPower  " + toStr( p.linkedSceneAmbientLowerPower, d );  break;
@@ -232,6 +248,11 @@ namespace Demo
         //  Vegetation add, destroy all
         case SDL_SCANCODE_V:  CreateVeget();  break;
         case SDL_SCANCODE_C:  DestroyVeget();  break;
+
+        //  water
+        case SDL_SCANCODE_N:  CreateWater();  break;
+        case SDL_SCANCODE_M:  DestroyWater();  break;
+
         //  cars
         case SDL_SCANCODE_G:  CreateCar();  break;
         case SDL_SCANCODE_H:  DestroyCars();  break;
@@ -250,7 +271,7 @@ namespace Demo
             }
             break;
         
-        case SDL_SCANCODE_M:
+        case SDL_SCANCODE_L:  //-
         {
             // Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
             CreateManualObj(camPos);
@@ -291,6 +312,6 @@ namespace Demo
 
         TutorialGameState::keyReleased( arg );
     }
+#pragma GCC diagnostic pop
 
 }
-#pragma GCC diagnostic pop
