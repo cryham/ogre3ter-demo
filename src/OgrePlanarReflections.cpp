@@ -39,6 +39,8 @@ THE SOFTWARE.
 #include "OgreSceneManager.h"
 #include "OgreTextureGpuManager.h"
 
+#include "Terra/Terra.h"
+
 namespace Ogre
 {
     // clang-format off
@@ -444,7 +446,8 @@ namespace Ogre
     {
         return _l->getCurrentBoundSlot() < _r->getCurrentBoundSlot();
     };
-    void PlanarReflections::update( Camera *camera, Real aspectRatio )
+    void PlanarReflections::update(
+        Terra *terra, Camera *camera, Real aspectRatio )
     {
         /*if( mLockCamera && camera != mLockCamera )
             return; //This is not the camera we are allowed to work with
@@ -839,9 +842,15 @@ namespace Ogre
                 const ActiveActorData &actorData = *itor;
                 if( actorData.workspace->getEnabled() )
                 {
+                    if (terra)
+                    {
+                        terra->setCamera( actorData.reflectionCamera );
+                        terra->update();
+                    }
                     actorData.workspace->_update();
                     actorData.workspace->setEnabled( false );
                 }
+                // todo after: terra->update( yourRealCamera );
 
                 ++itor;
             }

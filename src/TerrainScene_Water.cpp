@@ -69,6 +69,14 @@ namespace Demo
             CompositorPassScene *passScene = static_cast<CompositorPassScene *>( pass );
             Camera *camera = passScene->getCamera();
 
+			//**  update Terra  here
+	        if (mGame && mGame->mTerra)
+			{
+	            const float lightEpsilon = 0.0f;  //**?
+	            // const float lightEpsilon = 0.0001f;  //** 0.0f slow
+				mGame->mTerra->setCamera( camera );
+    	        mGame->mTerra->update( mGame->mSunLight->getDerivedDirectionUpdated(), lightEpsilon );
+			}
 
             //  Ignore scene passes we haven't specifically tagged to receive reflections
             if( passDef->mIdentifier != 25001 )
@@ -76,7 +84,8 @@ namespace Demo
 
             //  Note: The Aspect Ratio must match that of the camera we're reflecting.
 			if (mPlanarReflections)
-            	mPlanarReflections->update( camera, camera->getAutoAspectRatio()
+            	mPlanarReflections->update( mGame->mTerra,
+                    camera, camera->getAutoAspectRatio()
                                             ? pass->getViewportAspectRatio( 0u )
                                             : camera->getAspectRatio() );
         }

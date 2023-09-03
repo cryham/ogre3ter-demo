@@ -199,6 +199,7 @@ namespace Ogre
             you intend to update the light slightly every frame.
         */
         void update( const Vector3 &lightDir, float lightEpsilon=1e-6f );
+        void update();
 
         /**
         @brief load

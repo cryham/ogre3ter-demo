@@ -125,7 +125,8 @@ namespace Demo
             -dir );
 
         ///  Terrain  ----
-        if (mTerra && mGraphicsSystem->getRenderWindow()->isVisible() )
+        if (!mPlanarReflect &&  //** is in PlanarReflectWsListener
+            mTerra && mGraphicsSystem->getRenderWindow()->isVisible() )
         {
             // Force update the shadow map every frame to avoid the feeling we're "cheating" the
             // user in this sample with higher framerates than what he may encounter in many of
