@@ -447,7 +447,7 @@ namespace Ogre
         return _l->getCurrentBoundSlot() < _r->getCurrentBoundSlot();
     };
     void PlanarReflections::update(
-        Terra *terra, Camera *camera, Real aspectRatio )
+        Terra *terra, Camera *cameraOld, Camera *camera, Real aspectRatio )
     {
         /*if( mLockCamera && camera != mLockCamera )
             return; //This is not the camera we are allowed to work with
@@ -850,9 +850,12 @@ namespace Ogre
                     actorData.workspace->_update();
                     actorData.workspace->setEnabled( false );
                 }
-                // todo after: terra->update( yourRealCamera );
-
                 ++itor;
+            }
+            if (terra)
+            {
+                terra->setCamera( cameraOld );
+                terra->update();
             }
         }
     }

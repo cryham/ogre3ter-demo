@@ -250,7 +250,7 @@ namespace Ogre
         void _notifyRenderableFlushedHlmsDatablock( Renderable *renderable );
 
         void beginFrame();
-        void update( Terra *terra, Camera *camera, Real aspectRatio );
+        void update( Terra *terra, Camera *cameraOld, Camera *camera, Real aspectRatio );
 
         uint8 getMaxActiveActors() const { return mMaxActiveActors; }
 
