@@ -27,7 +27,8 @@ hlms AllSettings pbs
 	//detail_weight_map	nm_up.png
 }
 
-//  Trees  ---------------------------------------------
+//  Trees
+//---------------------------------------------
 hlms pine2norm pbs
 {
 	diffuse_map  pine_norm_gr1.png
@@ -83,7 +84,8 @@ hlms palm2 pbs
 	specular 0.2 0.2 0.2
 }
 
-//  Plants  ---------------------------------------------
+//  Plants
+//---------------------------------------------
 hlms plant_tropical pbs
 {
 	diffuse_map  plant_tropical.png
@@ -141,7 +143,8 @@ hlms fern2 pbs
 	specular 0.8 0.8 0.8
 }
 
-//  Rocks  ---------------------------------------------
+//  Rocks
+//---------------------------------------------
 hlms rock02brown2flat pbs
 {
 	diffuse_map  rock02.jpg
@@ -205,8 +208,8 @@ hlms rock_n2 pbs
 }
 
 
-//  Particles
-//  -----------------
+//  Particles  old
+//---------------------------------------------
 hlms ParFire unlit
 {
 	diffuse_map boost_red.png
@@ -222,7 +225,7 @@ hlms ParSmoke unlit
 }
 
 //  Skies
-//  -----------------
+//---------------------------------------------
 hlms sky-clearday1 unlit
 {
 	diffuse_map sky-clearday1.jpg
@@ -231,14 +234,4 @@ hlms sky-clearday1 unlit
 hlms sky_photo6 unlit
 {
 	diffuse_map sky_photo6.jpg
-}
-
-
-//  water
-//  -----------------
-hlms GlassRoughness pbs
-{
-//	roughness 0.01
-	roughness 1.0
-	roughness_map  GlassRoughness.png
 }
