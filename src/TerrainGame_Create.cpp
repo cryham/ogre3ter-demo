@@ -23,10 +23,6 @@
 #    include "OgreAtmosphereNpr.h"
 #endif
 
-#include "Ocean/Ocean.h"
-#include "Ocean/Hlms/OgreHlmsOceanDatablock.h"
-#include "Ocean/Hlms/OgreHlmsOcean.h"
-
 using namespace Demo;
 using namespace Ogre;
 
@@ -121,48 +117,6 @@ namespace Demo
         // CreateTerrain();  // 5sec
         // CreateVeget();
 
-
-        //  Ocean  ------------------------------------------------
-    #if 0  // disable, crashes
-        LogO("---- create Ocean");
-        TextureGpuManager *textureManager = root->getRenderSystem()->getTextureGpuManager();
-
-		mOcean = new Ocean(Id::generateNewId<MovableObject>(),
-			&sceneManager->_getEntityMemoryManager(SCENE_STATIC),
-            sceneManager, textureManager,
-			0, root->getCompositorManager2(),
-			mGraphicsSystem->getCamera());
-		mOcean->setCastShadows(false);
-
-		Vector3 center;  center = 0;
-		Vector2 size;  size = 2000;
-
-		mOcean->create(center, size);
-
-		SceneNode *oceanNode = sceneManager->getRootSceneNode(SCENE_STATIC);
-
-		oceanNode->attachObject(mOcean);
-
-        TextureGpu* probeTexture = textureManager->findTextureNoThrow("oceanData.dds");
-		if (!probeTexture) {
-            probeTexture = textureManager->createOrRetrieveTexture("oceanData.dds",
-                GpuPageOutStrategy::Discard,
-                CommonTextureTypes::EnvMap,
-                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
-			// probeTexture = TextureGpuManager::getSingleton().load(
-            //    "oceanData.dds", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_3D);
-		}
-
-		HlmsOcean* hlmsOcean = static_cast<HlmsOcean*>(
-			Root::getSingletonPtr()->getHlmsManager()->getHlms(HLMS_USER2) );
-		hlmsOcean->setEnvProbe(probeTexture);
-
-		String datablockName = "testOcean";
-		HlmsDatablock *datablockOcean = static_cast<HlmsOceanDatablock*>(
-            hlmsOcean->createDatablock(datablockName, datablockName, HlmsMacroblock(), HlmsBlendblock(), HlmsParamVec()));
-
-		mOcean->setDatablock(datablockOcean);/**/
-    #endif
 
         LogO("---- tutorial createScene");
 

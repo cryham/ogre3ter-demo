@@ -54,8 +54,6 @@ THE SOFTWARE.
     #endif
 #endif
 
-#include "Ocean/Hlms/OgreHlmsOcean.h"
-
 
 namespace Demo
 {
@@ -200,23 +198,6 @@ namespace Demo
                                       rootHlmsFolder + "Hlms/Terra/" + shaderSyntax + "/PbsTerraShadows",
                                       getMediaReadArchiveType(), true ) );
             hlmsPbs->reloadFrom( archivePbs, &libraryPbs );
-
-
-            //  Ocean Hlms
-            Ogre::String dataFolder = rootHlmsFolder;
-            Ogre::ArchiveVec library;
-
-            Ogre::Archive *archiveOcean = Ogre::ArchiveManager::getSingletonPtr()->load(
-                dataFolder + "Hlms/Ocean/GLSL", "FileSystem", true);
-
-            Ogre::Archive *archiveLibraryCustom = Ogre::ArchiveManager::getSingletonPtr()->load(
-                dataFolder + "Hlms/Ocean/GLSL/Custom", "FileSystem", true);
-            library.push_back(archiveLibraryCustom);
-
-            Ogre::HlmsOcean *mHlmsOcean = OGRE_NEW Ogre::HlmsOcean(archiveOcean, &library, mRoot);
-            hlmsManager->registerHlms(mHlmsOcean);
-            mHlmsOcean->setDebugOutputPath(true, false, "shaders/");
-            // todo: delete?
         }
 
     public:

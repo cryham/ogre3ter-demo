@@ -19,7 +19,6 @@
 #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
 #    include "OgreAtmosphereNpr.h"
 #endif
-#include "Ocean/Ocean.h"
 #include "Compositor/OgreCompositorWorkspace.h"
 
 using namespace Demo;
@@ -124,10 +123,6 @@ namespace Demo
             const float lightEpsilon = 0.0001f;  //** 0.0f slow
             mTerra->update( mSunLight->getDerivedDirectionUpdated(), lightEpsilon );
         }
-
-        //  Ocean
-        if (mOcean)
-		    mOcean->update();
 
         TutorialGameState::update( timeSinceLast );
     }

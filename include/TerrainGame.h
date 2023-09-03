@@ -12,7 +12,6 @@ namespace Ogre
 {
     class Terra;
     class HlmsPbsTerraShadows;
-	class Ocean;
 }
 
 namespace Demo
@@ -64,7 +63,6 @@ namespace Demo
         Ogre::Light *mSunLight = 0;
         Ogre::SceneNode *mSunNode = 0;
 
-		Ogre::Ocean *mOcean = 0;
         bool mTriplanarMappingEnabled = true;
         void ToggleTriplanar();
 
