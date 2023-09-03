@@ -443,7 +443,7 @@ namespace Ogre
             return false;
         }
 
-//        return true;
+		// return true;  //** ter temp! hack  all visible
 
         const Vector2 cellPos = gridToWorld( gPos );
         const Vector2 cellSize( Real( gSize.x + 1 ) * m_xzRelativeSize.x,
@@ -528,6 +528,11 @@ namespace Ogre
             m_shadowMapper->_setSharedResources( sharedResources );
     }
     //-----------------------------------------------------------------------------------
+    void Terra::update()
+    {
+        update(m_prevLightDir, 0.0f);
+    }
+    
     void Terra::update( const Vector3 &lightDir, float lightEpsilon )
     {
         const float lightCosAngleChange =

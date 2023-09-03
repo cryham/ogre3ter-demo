@@ -896,7 +896,7 @@ namespace Demo
 
         mCamera->setPosition( Ogre::Vector3( 0, 3, 12 ) );
         mCamera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
-        mCamera->setNearClipDistance( 0.2f );  // par
+        mCamera->setNearClipDistance( 0.1f );  // par
         mCamera->setFarClipDistance( 1000.0f );
         mCamera->setAutoAspectRatio( true );
     }
