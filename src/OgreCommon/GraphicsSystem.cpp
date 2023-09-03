@@ -894,15 +894,9 @@ namespace Demo
     {
         mCamera = mSceneManager->createCamera( "Main Camera" );
 
-    #if 1  // plane  not set here
         mCamera->setPosition( Ogre::Vector3( 0, 3, 12 ) );
         mCamera->lookAt( Ogre::Vector3( 0, 0, 0 ) );
-    #else  // terrain view from screen-
-        mCamera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
-        mCamera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
-        mCamera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
-    #endif
-        mCamera->setNearClipDistance( 0.2f );
+        mCamera->setNearClipDistance( 0.2f );  // par
         mCamera->setFarClipDistance( 1000.0f );
         mCamera->setAutoAspectRatio( true );
     }

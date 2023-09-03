@@ -76,7 +76,7 @@ namespace Demo
             ColourValue( 0.02f, 0.53f, 0.96f ) * 0.01f,
             Vector3::UNIT_Y );
 
-        //  atmosphere  ------------------------------------------------
+        //  Atmosphere  ------------------------------------------------
     #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
         LogO("---- new Atmosphere");
         mGraphicsSystem->createAtmosphere( mSunLight );
@@ -99,26 +99,34 @@ namespace Demo
         atmosphere->setPreset( p );
     #endif
 
-        //  camera  ------------------------------------------------
+        //**  Camera  ------------------------------------------------
         mCameraController = new CameraController( mGraphicsSystem, false );
-        mGraphicsSystem->getCamera()->setFarClipDistance( 100000.f );  // par far
+        auto* camera = mGraphicsSystem->getCamera();
+        camera->setFarClipDistance( 100000.f );  // par far
 
-        //camPos = Vector3(-10.f, 80.f, 10.f );
-        //camPos = Vector3(-2005.f, 40.f, -929.f);
-        camPos = Vector3(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
-        //camPos.y += mTerra->getHeightAt( camPos );
-        mGraphicsSystem->getCamera()->setPosition( camPos );
-        mGraphicsSystem->getCamera()->lookAt( camPos + Vector3(0.f, -0.5f, -1.f) );
-        Vector3 objPos;
+        #if 0  // ground
+            camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
+            camera->lookAt( Ogre::Vector3( 0, 3, 0 ) );
+        #else  // terrain view  from screen
+            camera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
+            camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
+            camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
+        #endif
+        #if 0
+            //camPos = Vector3(-10.f, 80.f, 10.f );
+            //camPos = Vector3(-2005.f, 40.f, -929.f);
+            camPos = Vector3(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
+            //camPos.y += mTerra->getHeightAt( camPos );
+            camera->setPosition( camPos );
+            camera->lookAt( camPos + Vector3(0.f, -0.5f, -1.f) );
+        #endif
 
 
         //  Terrain  ------------------------------------------------
         CreatePlane();  // fast
         // CreateTerrain();  // 5sec
         // CreateVeget();
-
-
-        setupPlanarReflections();  //par
+        // CreateWater();
 
         LogO("---- tutorial createScene");
 
