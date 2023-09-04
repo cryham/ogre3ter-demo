@@ -10,6 +10,16 @@
             "v" : "wrap",
             "w" : "wrap",
             "max_anisotropic" : 16
+        },
+        "mirror" :
+        {
+            "min" : "anisotropic",
+            "mag" : "anisotropic",
+            "mip" : "linear",
+            "u" : "mirror",
+            "v" : "mirror",
+            "w" : "mirror",
+            "max_anisotropic" : 16
         }
     },
 
@@ -25,17 +35,17 @@
             },
 			"specular" :
 			{
-				"value" : [0.5, 0.8, 1.0]
+				"value" : [0.4, 0.7, 0.9]
 			},
             "roughness" :
             {
                 "texture" : "GlassRoughness.png",
-                "sampler" : "wrap",
-                "value" : 0.7
+                "sampler" : "mirror",
+                "value" : 0.6
             },
 			"fresnel" :
 			{
-				"value" : [0.8, 0.9, 1.0],
+				"value" : [0.6, 0.7, 0.8],
 				"mode" : "coloured"
 			}
         },

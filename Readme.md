@@ -37,7 +37,7 @@ T - toggle **Terrain** / flat plane. _Note:_ terrain loads in 5 sec.
 P - terrain triplanar toggle  
 R - terrain wireframe toggle  
 
-N - Add water, at set height (param -1)
+N - Add water, at set height (param -1)  
 M - remove water  
 
 K - Add / remove **Sky** dome, next texture  

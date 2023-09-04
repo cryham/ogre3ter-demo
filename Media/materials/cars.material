@@ -8,15 +8,14 @@ hlms body_realtime pbs
 	// roughness_map  ES_refl.png
 	metalness_map  ES_refl.png
 
-	// workflow metallic
 	clearcoat 0.1
 	clearcoat_roughness 0.02
 	fresnel 0.5
 	fresnel_coeff 0.3 0.3 0.3
 	roughness 0.43
 
-	diffuse		0.6 0.3 0.3
-	specular	0.6 0.6 0.6
+	diffuse	 0.6 0.3 0.3
+	specular 0.6 0.6 0.6
 	roughness 0.1
 	// metalness 1.0
 }
@@ -28,11 +27,10 @@ hlms ES_interior pbs
 	//roughness_map  ES_interior.png
 	//metalness_map  ES_interior.png
 
-	// workflow specular_fresnel
 	fresnel_coeff 0.01
 
-	//diffuse		0.4 0.4 0.4
-	specular	0.1 0.1 0.1
+	// diffuse   0.4 0.4 0.4
+	specular  0.1 0.1 0.1
 	roughness 0.7
 	metalness 0.01
 }
@@ -41,10 +39,9 @@ hlms ES_glass pbs
 {
 	diffuse_map  ES_glass.png
 
-	// workflow specular_fresnel
 	// fresnel_coeff 0.1
 
-	specular	0.1 0.1 0.1
+	specular  0.1 0.1 0.1
 	roughness 0.2
 	metalness 0.8
 
@@ -61,10 +58,9 @@ hlms ES_wheel pbs
 	metalness_map ES_wheel_spec.png
 	specular_map  ES_wheel_spec.png
 	
-	// workflow metallic
 	fresnel_coeff 0.01
 
-	specular	0.2 0.2 0.2
+	specular  0.2 0.2 0.2
 	roughness 0.3
 	metalness 0.5
 }
@@ -79,18 +75,17 @@ hlms SX_body pbs
 	//roughness_map  SX_body.png
 	//metalness_map  SX_body.png
 
-	// workflow metallic
 	clearcoat 1.0
 	clearcoat_roughness 0.07
 	fresnel 1.0
 	fresnel_coeff 0.5 0.5 0.6
 	roughness 0.33
 
-	diffuse		0.08 0.05 0.2  // violet
-	specular	0.8 0.6 1.0
+	diffuse   0.08 0.05 0.2  // violet
+	specular  0.8 0.6 1.0
 
-	// diffuse		0.2 0.2 0.2  // silver
-	// specular	0.7 0.7 0.7
+	// diffuse  0.2 0.2 0.2  // silver
+	// specular 0.7 0.7 0.7
 }
 
 hlms SX_exterior pbs
@@ -100,13 +95,11 @@ hlms SX_exterior pbs
 	//roughness_map  SX_exterior.png
 	//metalness_map  SX_exterior_refl.png
 
-	// workflow specular_fresnel
 	fresnel_coeff 0.01
 
-	diffuse		0.3 0.3 0.3
-	specular	0.6 0.6 0.6
+	diffuse   0.3 0.3 0.3
+	specular  0.6 0.6 0.6
 	roughness 0.5
-	metalness 0.6
 }
 
 hlms SX_interior pbs
@@ -117,10 +110,9 @@ hlms SX_interior pbs
 	//metalness_map  SZ_interior_refl.png
 
 	fresnel_coeff 0.1
-	//diffuse		0.4 0.4 0.4
-	specular	0.1 0.1 0.1
+	//diffuse  0.4 0.4 0.4
+	specular  0.1 0.1 0.1
 	roughness 0.6
-	metalness 0.1
 }
 
 hlms SX_glass pbs
@@ -130,11 +122,12 @@ hlms SX_glass pbs
 	//fresnel_coeff 0.1
 
 	roughness 0.1
-	metalness 1.0
+	// metalness 1.0
 
     cull_mode none
     depth_write off
-    transparency 0.5
+
+	transparency 0.5
 	transparency_mode transparent
 	two_sided true
 }
@@ -147,13 +140,12 @@ hlms SX_wheel pbs
 	metalness_map  SX_wheel_refl.png
 	specular_map   SX_wheel_spec.png
 
-	// workflow specular_fresnel
-	fresnel_coeff 0.1
+	fresnel_coeff 0.2
 
 	diffuse		0.5 0.5 0.5
 	specular	0.3 0.3 0.3
 	roughness 0.4
-	metalness 0.6
+	// metalness 0.6
 }
 
 
@@ -163,7 +155,6 @@ hlms HI_body pbs
 	diffuse_map  HI_body_blue.png
 	// metalness_map  HI_refl.png
 	
-	// workflow metallic
 	clearcoat 0.8
 	clearcoat_roughness 0.1
 	fresnel 0.9
@@ -172,35 +163,32 @@ hlms HI_body pbs
 
 	diffuse		0.7 0.7 0.7
 	specular	0.3 0.3 0.3
-	// metalness 1.0
 }
 
 hlms HI_interior pbs
 {
 	diffuse_map  HI_interior.png
 
-	workflow specular_fresnel
 	fresnel_coeff 0.1
 
 	//diffuse		0.4 0.4 0.4
 	specular	0.1 0.1 0.1
 	roughness 0.7
-	metalness 0.1
 }
 
 hlms HI_glass pbs
 {
 	diffuse_map  HI_glass.png
 
-	// workflow specular_fresnel
-	// fresnel_coeff 0.1
+	fresnel_coeff 0.1
 
 	roughness 0.1
 	metalness 1.0
 
     cull_mode none
     depth_write off
-    transparency 0.5
+    
+	transparency 0.5
 	transparency_mode transparent
 	two_sided true
 }
@@ -208,13 +196,10 @@ hlms HI_glass pbs
 hlms HI_wheel pbs
 {
 	diffuse_map   HI_wheel.png
-	metalness_map HI_wheel_refl.png
 	specular_map  HI_wheel_refl.png
 
-	workflow specular_fresnel
-	fresnel_coeff 0.1
+	fresnel_coeff 0.2
 
-	specular	0.3 0.3 0.3
+	specular  0.3 0.3 0.3
 	roughness 0.3
-	metalness 0.8
 }
