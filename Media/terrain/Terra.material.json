@@ -33,7 +33,7 @@
 			"detail0" :
             {
                 "offset" : [0, 0],
-                "scale" : [0.021, 0.021],
+                "scale" : [0.016, 0.016],
 				"roughness" : 0.4,
 				"metalness" : 0.1,
                 "diffuse_map" : "grass_ground_d.jpg",
@@ -42,7 +42,7 @@
 			"detail1" :
             {
                 "offset" : [0, 0],
-                "scale" : [0.016, 0.016],
+                "scale" : [0.012, 0.012],
 				"roughness" : 0.5,
 				"metalness" : 0.05,
                 "diffuse_map" : "mntn_brown_d.jpg",
@@ -51,7 +51,7 @@
  			"detail2" :
             {
                 "offset" : [0, 0],
-                "scale" : [0.014, 0.014],
+                "scale" : [0.010, 0.010],
 				"roughness" : 0.7,
 				"metalness" : 0.2,
                 "diffuse_map" : "mntn_gray_d.jpg",
@@ -60,7 +60,7 @@
             "detail3" :
             {
                 "offset" : [0, 0],
-                "scale" : [0.012, 0.012],
+                "scale" : [0.009, 0.009],
 				"roughness" : 0.6,
 				"metalness" : 0.25,
                 "diffuse_map" : "mntn_white_d.jpg",

@@ -101,10 +101,12 @@
 	float skirtHeight = uintBitsToFloat( cellData.numVertsPerLine.w );
 	if( isSkirt )
 	{
-		if( worldPos.y <= skirtHeight )
-			worldPos.y = worldPos.y - skirtHeight;
-		else
-			worldPos.y = skirtHeight;
+		//**  relative skirt height
+		worldPos.y -= 0.01;  //par normalized
+		// if( worldPos.y <= skirtHeight )
+		// 	worldPos.y = worldPos.y - skirtHeight;
+		// else
+		// 	worldPos.y = skirtHeight;
 	}
 @end
 	worldPos.xz = float2( uVertexPos.xy );
