@@ -124,3 +124,15 @@ Materials are in:
 and in (simpler syntax):  
 `/Media/materials/vegetation.material`  
 `/Media/materials/cars.material`  
+
+Used compositor workspaces are defined in:  
+`/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor`
+
+## Docs
+
+Quick links for Ogre-Next documentation:  
+- [Manual](https://ogrecave.github.io/ogre-next/api/latest/manual.html) - need to read it when beginning.
+- [Compositor](https://ogrecave.github.io/ogre-next/api/latest/compositor.html) - for effects, RTTs, reflections, etc.
+- [HLMS doc](https://ogrecave.github.io/ogre-next/api/latest/hlms.html) - long read, explains all.
+- [HLMS shaders](https://ogrecave.github.io/ogre-next/api/latest/hlms.html#HlmsCreationOfShaders).
+- [Terrain](https://ogrecave.github.io/ogre-next/api/latest/_terra_system.html)
