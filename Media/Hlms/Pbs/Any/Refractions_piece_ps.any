@@ -28,7 +28,8 @@
 	float2 refractUv = screenPosUv.xy + float2( refractNormal2d.xy ) *
 					   float2( material.refractionStrength,
 							   material.refractionStrength * passBuf.aspectRatio ) /
-					   ( (-inPs.pos.z + 1.0) * (-inPs.pos.z + 1.0) );
+					   ( (-inPs.pos.z * 0.7 + 1.0)  );  // more refract far
+					//    ( (-inPs.pos.z + 1.0) * (-inPs.pos.z + 1.0) );
 	midf3 refractionCol = OGRE_SampleLevelF16( refractionMap, refractionMapSampler, refractUv, 0 ).xyz;
 	midf refractionDepth = OGRE_SampleLevelF16( depthTextureNoMsaa, refractionMapSampler, refractUv, 0 ).x;
 
@@ -51,6 +52,11 @@
 		}
 
 	refractionCol = lerp( refractionCol, fallbackRefractionCol, fallbackRefrW );
+	refractionCol.x *= 0.5f;  // colorize blue
+	refractionCol.y *= 0.9f;
+	// refractionCol.x *= refractionDepth * 1.1f;
+	// refractionCol.y *= refractionDepth * 2.01f;
+	// refractionCol.z *= refractionDepth * 10.05f;
 
 	@property( use_texture_alpha )
 		midf refractionAlpha = midf_c( material.F0.w ) * pixelData.diffuse.w;
@@ -59,5 +65,6 @@
 	@end
 
 	finalColour += refractionCol.xyz * (_h( 1.0 ) - refractionAlpha);
+	// finalColour.z = refractionDepth;  // = 0  ?
 @end
 @end

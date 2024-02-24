@@ -1,4 +1,3 @@
-#include "OgreHlmsManager.h"
 #include "TerrainGame.h"
 #include "OgrePlanarReflections.h"
 #include "GraphicsSystem.h"
@@ -12,6 +11,8 @@
 #include "OgreMeshManager.h"
 #include "OgreMesh2.h"
 #include "OgreMeshManager2.h"
+#include "OgreHlmsManager.h"
+#include "OgreHlmsPbsDatablock.h"
 
 #include "OgreHlmsPbs.h"
 #include "Compositor/OgreCompositorManager2.h"
@@ -70,13 +71,15 @@ namespace Demo
             Camera *camera = passScene->getCamera();
 
 			//**  update Terra  here?
-	        /*if (mGame && mGame->mTerra)
+            #if 0
+	        if (mGame && mGame->mTerra)
 			{
 	            const float lightEpsilon = 0.0f;  //**?
 	            // const float lightEpsilon = 0.0001f;  //** 0.0f slow
 				mGame->mTerra->setCamera( camera );
     	        mGame->mTerra->update( mGame->mSunLight->getDerivedDirectionUpdated(), lightEpsilon );
-			}*/
+			}
+            #endif
 
             //  Ignore scene passes we haven't specifically tagged to receive reflections
             if( passDef->mIdentifier != 25001 )
@@ -93,10 +96,61 @@ namespace Demo
     };
 
 
+    //-----------------------------------------------------------------------------------
+    void TerrainGame::createRefractiveWall()
+    {
+        Ogre::SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        Ogre::HlmsManager *hlmsManager = mGraphicsSystem->getRoot()->getHlmsManager();
+        assert( dynamic_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( Ogre::HLMS_PBS ) ) );
+        Ogre::HlmsPbs *hlmsPbs = static_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( Ogre::HLMS_PBS ) );
+
+        // Create a cube and make it very thin
+        Ogre::Item *item = sceneManager->createItem(
+            "Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
+            Ogre::SCENE_DYNAMIC );
+        item->setVisibilityFlags( 0x000000002u );
+
+        Ogre::SceneNode *sceneNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
+                                         ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
+        sceneNode->setPosition( -240, 42.0f, -720 );
+        sceneNode->setScale( 1222.f, 2.f, 1222.f );
+        sceneNode->attachObject( item );
+    // return;
+
+        // Create refractive material for water
+    #if 0
+        Ogre::String datablockName = "RefractiveWall";
+        Ogre::HlmsPbsDatablock *datablock = static_cast<Ogre::HlmsPbsDatablock *>(
+            hlmsPbs->createDatablock( datablockName, datablockName, Ogre::HlmsMacroblock(),
+                                      Ogre::HlmsBlendblock(), Ogre::HlmsParamVec() ) );
+
+        //  normal map for refractions
+        datablock->setTexture( Ogre::PBSM_NORMAL, "mntn_dark_n.jpg" );
+    #endif
+        item->setCastShadows( false );
+
+        // Set the material to refractive, 15%
+        auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock("WaterBump");
+        // datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
+        datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
+        datablock->setRefractionStrength( 0.4f );
+
+        // This call is very important. Refractive materials must be rendered during the
+        // refractive pass (see Samples/Media/2.0/scripts/Compositors/Refractions.compositor)
+        item->setRenderQueueGroup( 200u );
+
+        item->setDatablock( datablock );
+
+        // createRefractivePlaceholder( item, sceneNode, datablock );
+    }
+
     //  Create
     //-----------------------------------------------------------------------------------
 	void TerrainGame::CreateWater()
 	{
+    //     createRefractiveWall();  // test refract
+    // return;  // crash below!
+
 		if (mPlanarReflect)
 			return;
         LogO("---- create water");
@@ -152,11 +206,24 @@ namespace Demo
         HlmsPbs *pbs = static_cast<HlmsPbs *>( hlms );
         pbs->setPlanarReflections( mPlanarReflect );
 
+
         const auto type = SCENE_DYNAMIC;
 		waterItem = sceneManager->createItem( waterMesh, type );
         waterItem->setDatablock( "Water" );
 		waterItem->setCastShadows( false );
-		
+
+        //  bad: crashes shader  'refractionMap' undeclared
+    #if 0
+        auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock("WaterBump");
+        datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
+        datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
+        datablock->setRefractionStrength( 0.2f );
+    #endif
+        // This call is very important. Refractive materials must be rendered during the
+        // refractive pass (see Samples/Media/2.0/scripts/Compositors/Refractions.compositor)
+        // bad: inverses reflect cam
+        waterItem->setRenderQueueGroup( 200u );
+
 		waterNode = sceneManager->getRootSceneNode( type )->createChildSceneNode( type );
         waterNode->setPosition( 0, yWaterHeight, 0 );
 		if (yWaterHeight > yWaterVertical)  //** test |

@@ -110,6 +110,59 @@
                 "value" : 0.2
             },
             "fresnel_coeff" : 0.01
-        }
+        },
+
+
+		"WaterBump" :
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"transparency" :
+			{
+				"value" : 0.25,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.2, 0.6, 1.0]
+			},
+			"specular" :
+			{
+				"value" : [0.9, 1.0, 1.0]
+			},
+			"fresnel" :
+			{
+				"value" : [0.4, 0.6, 0.9],
+				"mode" : "coloured"
+			},
+			"normal" :
+			{
+				"value" : 1.0,
+				"texture" : "mntn_dark_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 0.35
+			},
+            "detail_normal0" :
+            {
+                "mode" : "Multiply",
+                "scale" : [16, 16],
+                "value" : 1.0,
+                "texture" : "jungle_stone_n.jpg",
+                "sampler" : "wrap"
+            },
+            "detail_normal1" :
+            {
+                "mode" : "Multiply",
+                "scale" : [32, 32],
+                "value" : 1.0,
+                "texture" : "jungle_stone_n.jpg",
+                "sampler" : "wrap"
+            }
+		}
+
     }
 }

@@ -124,9 +124,114 @@ workspace PlanarReflectionsReflectiveWorkspace
 }
 
 
-//  render window  Final
+//------------------------------------------------------------------------------------
+//  render window  Final  NEW
 //------------------------------------------------------------------------------------
 compositor_node Tutorial_TerrainRenderingNode
+{
+	in 0 rt_renderwindow
+	in 1 demo_dynamic_cubemap
+
+	// rtt01 & rtt_final MUST share the same depth buffer.
+	// Depth pools already take care of that. But just to be sure, we make it explicit
+	texture depthBuffer	target_width target_height PFG_D32_FLOAT
+	texture rtt01		target_width target_height target_format
+	texture rtt_final	target_width target_height target_format
+
+	rtv rtt01
+	{
+		depth_stencil	depthBuffer
+	}
+	rtv rtt_final
+	{
+		depth_stencil	depthBuffer
+	}
+
+	target rtt01
+	{
+		//  Pass with opaque objects  (and possibly regular transparents)
+		pass render_scene
+		{
+			load
+			{
+				all				clear
+				clear_colour	0.2 0.4 0.6 1
+			}
+			store
+			{
+				colour	store_or_resolve
+				depth	store
+				stencil	dont_care
+			}
+			overlays	off
+			shadows		Tutorial_TerrainShadowNode
+
+			// ?
+			// Our materials in this pass will be using this cubemap,
+			// so we need to expose it to the pass.
+			expose demo_dynamic_cubemap
+
+			// Used by C++ to identify this pass wants planar reflections
+			// in PlanarReflectionsWorkspaceListener
+			// identifier	25001
+
+			profiling_id "Main Render"
+
+			rq_last		199
+		}
+	}
+
+	target rtt_final
+	{
+		pass render_quad
+		{
+			load { all dont_care }
+			material Ogre/Copy/4xFP32
+			input 0 rtt01
+		}
+
+		//  Pass with refractive objects
+		pass render_scene
+		{
+			load
+			{
+				all		load
+			}
+			store
+			{
+				colour	store_or_resolve
+				depth	dont_care
+				stencil	dont_care
+			}
+
+			// ?
+			// expose demo_dynamic_cubemap
+			identifier	25001
+
+			rq_first		200
+
+			overlays		on
+			shadows			Tutorial_TerrainShadowNode reuse
+			use_refractions	depthBuffer rtt01
+		}
+	}
+
+	target rt_renderwindow
+	{
+		//  Output to window
+		pass render_quad
+		{
+			load { all dont_care }
+			material Ogre/Copy/4xFP32
+			input 0 rtt_final
+		}
+	}
+}
+
+
+//  render window  Final  OLD
+//------------------------------------------------------------------------------------
+compositor_node Tutorial_TerrainRenderingNode_NoRefract
 {
 	in 0 rt_renderwindow
 	in 1 demo_dynamic_cubemap
@@ -203,11 +308,21 @@ compositor_node_shadow Tutorial_TerrainShadowNode
 }
 
 
-//  workspace
+//  workspace  NEW
 workspace Tutorial_TerrainWorkspace
 {
-	// Render Window on channel #0
+?	// Render Window on channel #0
 	connect_external 0 Tutorial_TerrainRenderingNode 0
 	// Cubemap on channel #1
 	connect_external 1 Tutorial_TerrainRenderingNode 1
+}
+
+
+//  workspace  OLD
+workspace Tutorial_TerrainWorkspace_NoRefract
+{
+	// Render Window on channel #0
+	connect_external 0 Tutorial_TerrainRenderingNode_NoRefract 0
+	// Cubemap on channel #1
+	connect_external 1 Tutorial_TerrainRenderingNode_NoRefract 1
 }

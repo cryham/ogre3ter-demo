@@ -147,7 +147,10 @@ namespace Demo
         externalChannels[1] = mDynamicCubemap;
 
         return compositorManager->addWorkspace( sceneManager, externalChannels, camera,
-            "Tutorial_TerrainWorkspace", true );  // in .compositor
+            //  plane reflect works, refract not
+            // "Tutorial_TerrainWorkspace_NoRefract", true );  // in Tutorial_Terrain.compositor
+            //  plane reflect crashes, refract works
+            "Tutorial_TerrainWorkspace", true );  // in Tutorial_Terrain.compositor
     }
     
 }

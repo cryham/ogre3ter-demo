@@ -104,19 +104,26 @@ namespace Demo
         auto* camera = mGraphicsSystem->getCamera();
         camera->setFarClipDistance( 100000.f );  // par far
 
-        #if 0  // ground
+        #if 1  // close to water
+            // camera->setPosition( Ogre::Vector3( -553, 203, -755 ) );
+            // camera->lookAt( Ogre::Vector3( -208, 95, -665 ) );
+            camera->setPosition( Ogre::Vector3( -241, 62, -755 ) );
+            camera->lookAt( Ogre::Vector3( -230, 59, -755 ) );
+            yWaterHeight = 43.65f;
+        #elif 0  // ground
             camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
             camera->lookAt( Ogre::Vector3( 0, 3, 0 ) );
         #elif 0  // terrain view  from screen
             camera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
             camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
-        #elif 1  //** water test
+            yWaterHeight = 43.65f;
+        #elif 0  //** water test bug
             camera->setPosition( Ogre::Vector3( 1200, 1100, 80 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
             mPitch = 56.f * Math::PI / 180.f;  // sun
             mYaw  = 206.f * Math::PI / 180.f;
-            yWaterHeight = 16.f;
+            yWaterHeight = 33.65f;
         #elif 0
             //camPos = Vector3(-10.f, 80.f, 10.f );
             //camPos = Vector3(-2005.f, 40.f, -929.f);
@@ -128,10 +135,10 @@ namespace Demo
 
 
         //  Terrain  ------------------------------------------------
-        CreatePlane();  // fast
-        // CreateTerrain();  // 5sec
+        // CreatePlane();  // fastest
+        CreateTerrain();
         // CreateVeget();
-        // CreateWater();
+        CreateWater();
 
         LogO("---- tutorial createScene");
 
