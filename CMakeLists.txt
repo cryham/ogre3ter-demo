@@ -28,13 +28,18 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 	set(OGRE_BINARIES ${OGRE_NEXT_DIR}/build/Release)
 endif()
+message(STATUS ${OGRE_BINARIES})
 
 
 #This scripts will add all the cpp and h files from src and include folders
 setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE, FALSE )
 
 ## Fix 2 sdl
-include_directories("/usr/include/SDL2")
+if (UNIX)
+	include_directories("/usr/include/SDL2")
+else()
+	include_directories(${DIR_ONE_ABOVE}/Ogre/ogre-next-deps/src/SDL2/include)
+endif()
 include_directories(${DIR_ONE_ABOVE}/Ogre/ogre-next-deps/build/ogredeps/include)  #for rapidjson
 
 
@@ -62,8 +67,12 @@ add_recursive( ./include HEADERS )
 
 add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${RESOURCES} )
 
-target_compile_options( ${PROJECT_NAME} PRIVATE -Wswitch)
+if (!MSVC)
+	target_compile_options( ${PROJECT_NAME} PRIVATE -Wswitch)
+endif()
 
 target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
 ## Fix 3 sdl
-target_link_libraries( ${PROJECT_NAME} "-lSDL2" )
+if (UNIX)
+	target_link_libraries( ${PROJECT_NAME} "-lSDL2" )
+endif()

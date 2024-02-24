@@ -63,10 +63,11 @@ Veget - total vegetation models on scene
 ----
 ## Building from sources
 
+### Linux
+
 See [CMakeLists.txt](/CMakeLists.txt) for details, and adjust fixes if needed.
 
-Only tested on Linux, Debian 11.  
-Guide below has setup steps for empty Debian 11:
+Guide below has setup steps for empty **Debian** 11 or 12 (works also on Debian based, like Ubuntu):
 
 1. Basic setup for building C++ etc:  
 `sudo apt-get install g++ binutils gdb git make cmake ninja-build`
@@ -101,8 +102,7 @@ make -j5
 (or: ninja - if not using makefile)
 ```
 
-----
-## My folder tree
+#### My folder tree
 ```
 dev/
     demo - this repo inside
@@ -111,7 +111,46 @@ dev/
         ogre-next-deps
 ```
 
-Note: CMake default is `Dependencies/Ogre` inside demo. On Windows, it can be as link, if this doesn't work.
+### Windows
+
+Tested on Windows 10.
+
+Ogre-Next approach is different. It needs a `Dependencies` subdir inside this project.  
+So create a Dependencies dir after pulling this repo.
+Then you can just link to Ogre dir. So: create a symbolic link to Ogre dir, and put inside Dependencies.
+
+Run CMake-Gui, pick this project path for sources, and the same with subir `build\` for build output.  
+Press `Configure``.  
+There can be an error that I just fixed by copying that:  
+`OgreBuildSettings.h` (found some file inside Ogre, for Release build if many) into:
+`Ogre\build\ogre-next\build\Release\include\`
+
+After that `Configure` has succeeded for me.  
+Pressing `Generate`` creates `sln` file inside `demo\build\`.  
+Open it with Visual Studio (same version as chosen in CMake).  
+Try building.  
+For me it failed few times, and I fixed it by adding in VS paths that were wrong or missing.  
+(this isn't the best way, as you can't press Generate in CMake anymore, it would loose any editing in VS).
+
+Open properties for TerrainDemo project.  
+fopr /Wswitch
+
+----
+#### My folder tree
+```
+dev/
+    demo - this repo inside
+    Dependencies
+        Ogre  - this can be a symbolic link
+            ogre-next - Ogre-Next build inside
+                build
+                    Release
+                        include
+                            OgreBuildSettings.h
+            ogre-next-deps
+```
+
+----
 
 ## Sources
 

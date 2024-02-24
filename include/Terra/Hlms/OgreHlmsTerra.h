@@ -76,9 +76,10 @@ namespace Ogre
 
         void calculateHashFor( Renderable *renderable, uint32 &outHash, uint32 &outCasterHash ) override;
         void calculateHashForPreCreate( Renderable *renderable, PiecesMap *inOutPieces ) override;
-        void calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces ) override;
+        void calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces) override;
+                                        // const PiecesMap *nonCasterPieces ) override;
 
-        void notifyPropertiesMergedPreGenerationStep() override;
+        void notifyPropertiesMergedPreGenerationStep(/* size_t tid */) override;
 
         FORCEINLINE uint32 fillBuffersFor( const HlmsCache *cache,
                                            const QueuedRenderable &queuedRenderable, bool casterPass,
