@@ -161,7 +161,7 @@ namespace Demo
         //** water params  ----
 		const Vector2 waterSize( 5000.f, 5000.f );
 		const int size = 2 * 512;
-		const int segments = 64;  // 1 !  more bad
+		const int segments = 64;  //** 1 !  more bad
 		const Real tile = 1.0f;
 
         mPlanarReflect->setMaxActiveActors( 1u, "PlanarReflectionsReflectiveWorkspace",
@@ -178,7 +178,8 @@ namespace Demo
 			tile, tile,
 			Vector3::UNIT_Y, v1::HardwareBuffer::HBU_STATIC,
             v1::HardwareBuffer::HBU_STATIC );
-        
+		waterMeshV1->buildTangentVectors();  // for normal maps
+
 		waterMesh = MeshManager::getSingleton().createByImportingV1(
             "Plane Water", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
             waterMeshV1.get(), false, false, false );
@@ -195,21 +196,28 @@ namespace Demo
 
         const auto type = SCENE_DYNAMIC;
 		waterItem = sceneManager->createItem( waterMesh, type );
-        waterItem->setDatablock( "Water" );
 		waterItem->setCastShadows( false );
 
-    #if 1  // refract
-        auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock("WaterBump");
+        // waterItem->setDatablock( "Water" );  // flat test -
+        waterItem->setDatablock( "WaterDetail" );  // bumpy +
+
+
+    #if 1  // refract buggy  ----
+        auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
+            "Water");  //** test flat
+            // "WaterBump");
+            // "WaterBumpDetail");
+            // "WaterBumpMax");
         datablock->setTransparency( 0.5f, Ogre::HlmsPbsDatablock::Refractive );
-        datablock->setFresnel( Ogre::Vector3( 0.15f ), false );
-        datablock->setRefractionStrength( 0.9f );
+        datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
+        datablock->setRefractionStrength( 0.9f );  // par-
         waterItem->setDatablock( datablock );
     #endif
-        // This call is very important. Refractive materials must be rendered during the
-        // refractive pass (see Samples/Media/2.0/scripts/Compositors/Refractions.compositor)
+        // important: Only Refractive materials must be rendered during the refractive pass
         // bad: inverses reflect cam
         waterItem->setRenderQueueGroup( 200u );
         waterItem->setVisibilityFlags( 0x000000002u );
+
 
 		waterNode = sceneManager->getRootSceneNode( type )->createChildSceneNode( type );
         waterNode->setPosition( 0, yWaterHeight, 0 );
@@ -218,6 +226,7 @@ namespace Demo
 		else
         	waterNode->setOrientation( Quaternion( Radian( Math::HALF_PI ), Vector3::UNIT_Y ) );  // | vertical
         waterNode->attachObject( waterItem );
+
 
         // PlanarReflectionActor* actor =
 		mPlanarReflect->addActor( PlanarReflectionActor(

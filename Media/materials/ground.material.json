@@ -25,30 +25,6 @@
 
     "pbs" :
     {
-        "Water" :
-        {
-			"shadow_const_bias" : 0.01,
-			"workflow" : "specular_ogre",
-            "diffuse" :
-            {
-                "value" : [0.05, 0.1, 0.16]
-            },
-			"specular" :
-			{
-				"value" : [0.4, 0.7, 0.9]
-			},
-            "roughness" :
-            {
-                "texture" : "GlassRoughness.png",
-                "sampler" : "mirror",
-                "value" : 0.6
-            },
-			"fresnel" :
-			{
-				"value" : [0.6, 0.7, 0.8],
-				"mode" : "coloured"
-			}
-        },
 
         "Ground" :
         {
@@ -82,7 +58,6 @@
 			}
         },
 
-
         "Ground_R_M" :
         {
             "workflow" : "metallic",
@@ -113,6 +88,74 @@
         },
 
 
+
+        "Water" :
+        {
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+            "diffuse" :
+            {
+                "value" : [0.05, 0.1, 0.16]
+            },
+			"specular" :
+			{
+				"value" : [0.4, 0.7, 0.9]
+			},
+            "roughness" :
+            {
+                "texture" : "GlassRoughness.png",
+                "sampler" : "mirror",
+                "value" : 0.6
+            },
+			"fresnel" :
+			{
+				"value" : [0.6, 0.7, 0.8],
+				"mode" : "coloured"
+			}
+        },
+
+        "WaterDetail" :
+        {
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+            "diffuse" :
+            {
+                "value" : [0.05, 0.1, 0.16]
+            },
+			"specular" :
+			{
+				"value" : [0.4, 0.7, 0.9]
+			},
+            "roughness" :
+            {
+                "texture" : "GlassRoughness.png",
+                "sampler" : "mirror",
+                "value" : 0.6
+            },
+			"fresnel" :
+			{
+				"value" : [0.6, 0.7, 0.8],
+				"mode" : "coloured"
+			},
+            "detail_normal0" :
+            {
+                "mode" : "Multiply",
+                "scale" : [12, 12],
+                "value" : -0.7,
+                "texture" : "mntn_dark_n.jpg",
+                "sampler" : "wrap"
+            },
+            "detail_normal1" :
+            {
+                "mode" : "Multiply",
+                "scale" : [62, 62],
+                "value" : -0.5,
+                "texture" : "jungle_stone_n.jpg",
+                "sampler" : "wrap"
+            }
+        },
+
+
 		"WaterBump" :
 		{
 			"shadow_const_bias" : 0.01,
@@ -125,7 +168,42 @@
 			},
 			"diffuse" :
 			{
-				"value" : [0.2, 0.6, 1.0]
+				"value" : [0.1, 0.3, 0.5]
+			},
+			"specular" :
+			{
+				"value" : [0.9, 1.0, 1.0]
+			},
+			"fresnel" :
+			{
+				"value" : [0.4, 0.6, 0.9],
+				"mode" : "coloured"
+			},
+			"normal" :
+			{
+				"value" : 1.0,
+				"texture" : "mntn_dark_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 0.35
+			}
+		},
+
+        "WaterBumpDetail" :
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"transparency" :
+			{
+				"value" : 0.25,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.1, 0.3, 0.5]
 			},
 			"specular" :
 			{
@@ -149,16 +227,67 @@
             "detail_normal0" :
             {
                 "mode" : "Multiply",
-                "scale" : [16, 16],
-                "value" : 1.0,
-                "texture" : "jungle_stone_n.jpg",
+                "scale" : [12, 12],
+                "value" : -0.7,
+                "texture" : "mntn_dark_n.jpg",
                 "sampler" : "wrap"
             },
             "detail_normal1" :
             {
                 "mode" : "Multiply",
-                "scale" : [32, 32],
-                "value" : 1.0,
+                "scale" : [62, 62],
+                "value" : -0.5,
+                "texture" : "jungle_stone_n.jpg",
+                "sampler" : "wrap"
+            }
+		},
+
+        "WaterBumpMax" :
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"transparency" :
+			{
+				"value" : 0.25,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.1, 0.3, 0.5]
+			},
+			"specular" :
+			{
+				"value" : [0.9, 1.0, 1.0]
+			},
+			"fresnel" :
+			{
+				"value" : [0.4, 0.6, 0.9],
+				"mode" : "coloured"
+			},
+			"normal" :
+			{
+				"value" : 1.0,
+				"texture" : "mntn_dark_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 0.35
+			},
+            "detail_normal0" :
+            {
+                "mode" : "Multiply",
+                "scale" : [12, 12],
+                "value" : -0.9,
+                "texture" : "mntn_dark_n.jpg",
+                "sampler" : "wrap"
+            },
+            "detail_normal1" :
+            {
+                "mode" : "Multiply",
+                "scale" : [162, 162],
+                "value" : -0.8,
                 "texture" : "jungle_stone_n.jpg",
                 "sampler" : "wrap"
             }
