@@ -129,11 +129,11 @@ namespace Demo
     #endif
         item->setCastShadows( false );
 
-        // Set the material to refractive, 15%
+        // Set the material to refractive  ----
         auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock("WaterBump");
-        // datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
+        datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
-        datablock->setRefractionStrength( 0.4f );
+        datablock->setRefractionStrength( 0.8f );  // par+
 
         // This call is very important. Refractive materials must be rendered during the
         // refractive pass (see Samples/Media/2.0/scripts/Compositors/Refractions.compositor)
@@ -148,9 +148,6 @@ namespace Demo
     //-----------------------------------------------------------------------------------
 	void TerrainGame::CreateWater()
 	{
-    //     createRefractiveWall();  // test refract
-    // return;  // crash below!
-
 		if (mPlanarReflect)
 			return;
         LogO("---- create water");
@@ -212,17 +209,18 @@ namespace Demo
         waterItem->setDatablock( "Water" );
 		waterItem->setCastShadows( false );
 
-        //  bad: crashes shader  'refractionMap' undeclared
-    #if 0
+    #if 1  // refract
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock("WaterBump");
-        datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
-        datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
-        datablock->setRefractionStrength( 0.2f );
+        datablock->setTransparency( 0.5f, Ogre::HlmsPbsDatablock::Refractive );
+        datablock->setFresnel( Ogre::Vector3( 0.15f ), false );
+        datablock->setRefractionStrength( 0.9f );
+        waterItem->setDatablock( datablock );
     #endif
         // This call is very important. Refractive materials must be rendered during the
         // refractive pass (see Samples/Media/2.0/scripts/Compositors/Refractions.compositor)
         // bad: inverses reflect cam
         waterItem->setRenderQueueGroup( 200u );
+        waterItem->setVisibilityFlags( 0x000000002u );
 
 		waterNode = sceneManager->getRootSceneNode( type )->createChildSceneNode( type );
         waterNode->setPosition( 0, yWaterHeight, 0 );

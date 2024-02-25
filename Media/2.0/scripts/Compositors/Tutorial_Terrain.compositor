@@ -18,7 +18,9 @@ abstract target cubemap_target
 
 		expose cubemap
 
+		rq_last		199
 		visibility_mask		0x00000005
+
 		overlays			off
 		camera_cubemap_reorient true
 	}
@@ -102,6 +104,7 @@ compositor_node PlanarReflectionsReflectiveRenderingNode
 				stencil	dont_care
 			}
 
+			rq_last		199
 			overlays		off
 			visibility_mask 0xfffffffe
 			// shadows		Tutorial_TerrainShadowNode
@@ -302,16 +305,17 @@ compositor_node_shadow Tutorial_TerrainShadowNode
 		{
 			pass render_scene
 			{
+				rq_last		199
 			}
 		}
 	}
 }
 
 
-//  workspace  NEW
+//  workspace  NEW  Refract
 workspace Tutorial_TerrainWorkspace
 {
-?	// Render Window on channel #0
+	// Render Window on channel #0
 	connect_external 0 Tutorial_TerrainRenderingNode 0
 	// Cubemap on channel #1
 	connect_external 1 Tutorial_TerrainRenderingNode 1
