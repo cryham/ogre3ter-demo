@@ -632,6 +632,8 @@ namespace Demo
 
         if( mUseHlmsDiskCache )
         {
+            // const size_t numThreads =
+            //     std::max<size_t>( 1u, Ogre::PlatformInformation::getNumLogicalCores() );
             for( size_t i=Ogre::HLMS_LOW_LEVEL + 1u; i<Ogre::HLMS_MAX; ++i )
             {
                 Ogre::Hlms *hlms = hlmsManager->getHlms( static_cast<Ogre::HlmsTypes>( i ) );
@@ -646,7 +648,7 @@ namespace Demo
                         {
                             Ogre::DataStreamPtr diskCacheFile = rwAccessFolderArchive->open( filename );
                             diskCache.loadFrom( diskCacheFile );
-                            diskCache.applyTo( hlms );
+                            diskCache.applyTo( hlms/*, numThreads */);
                         }
                     }
                     catch( Ogre::Exception& )
@@ -868,8 +870,8 @@ namespace Demo
     void GraphicsSystem::chooseSceneManager()
     {
 #if OGRE_DEBUG_MODE >= OGRE_DEBUG_HIGH
-		// const size_t numThreads = 1;  //  Debugging multithreaded code is a PITA, disable it, or ..
-		const size_t numThreads = std::max<size_t>( 1, PlatformInformation::getNumLogicalCores() );  //** Debug with high Fps
+		const size_t numThreads = 1;  //  Debugging multithreaded code is a PITA, disable it, or ..
+		// const size_t numThreads = std::max<size_t>( 1, Ogre::PlatformInformation::getNumLogicalCores() );  //** Debug with high Fps
 #else
         //getNumLogicalCores() may return 0 if couldn't detect
         const size_t numThreads = std::max<size_t>( 1, Ogre::PlatformInformation::getNumLogicalCores() );
