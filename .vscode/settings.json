@@ -2,15 +2,13 @@
 	"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     
   "files.associations": {
-    "*.any": "c",
+    "*.any": "c#",
     "*.glsl": "c",
-    "*.material": "json",
     "*.compositor": "json",
-    "*.particle": "c",
+    // "*.material": "json",
+    // "*.particle": "c",
     "*.mat": "c",
-    "*.car": "ini",
     "*.ini": "ruby",
-    "*.layout": "xml",
   },
   "files.exclude": {
         ".vscode": false,

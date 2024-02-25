@@ -33,7 +33,13 @@
 									   passBuf.terraOrigin.xz, 0 ).xyz;
 	float terraHeightWeight = terraWorldPos.y * passBuf.invTerraBounds.y + passBuf.terraOrigin.y;
     terraHeightWeight = (terraHeightWeight - terraShadowData.y) * terraShadowData.z * 1023.0;
-	outVs.terrainShadow = mix( midf_c( terraShadowData.x ), _h( 1.0 ), midf_c( saturate( terraHeightWeight ) ) );
+	
+	// property( water )  // todo, only for water
+	@property( 0 )    //** 1 fixes  water reflect  vertex spots
+		outVs.terrainShadow = 1.0;
+	@else
+		outVs.terrainShadow = mix( midf_c( terraShadowData.x ), _h( 1.0 ), midf_c( saturate( terraHeightWeight ) ) );
+	@end
 @end
 
 @property( hlms_lights_directional && hlms_num_shadow_map_lights )
