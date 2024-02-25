@@ -18,7 +18,7 @@ abstract target cubemap_target
 
 		expose cubemap
 
-		rq_last		199
+		// rq_last		199
 		visibility_mask		0x00000005
 
 		overlays			off
