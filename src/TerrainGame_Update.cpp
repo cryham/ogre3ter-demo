@@ -112,8 +112,8 @@ namespace Demo
     #endif
 
         //  Set back Light after atmosphere
-        mSunLight->setDiffuseColour( ColourValue(0.7,0.7,0.7)* 2.1f);  //** light setup
-        mSunLight->setSpecularColour(ColourValue(0.7,0.7,0.7)* 0.75f);
+        mSunLight->setDiffuseColour( ColourValue(0.7,0.7,0.7)* 2.0f);  //** light setup
+        mSunLight->setSpecularColour(ColourValue(0.7,0.7,0.7)* 0.2f);  //** par specular
 
         sceneManager->setAmbientLight(
             ColourValue( 1.f, 1.f, 1.f ) * 0.46f,  //** par same, good colors, no AmbientHemisphere

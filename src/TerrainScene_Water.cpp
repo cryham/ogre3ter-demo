@@ -122,7 +122,11 @@ namespace Demo
         sceneNode->attachObject( item );
 
         //  Set material to refractive  ----
-        auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock("WaterBump");
+        auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock(
+            // "Water");  //** test flat
+            // "WaterBump");
+            "WaterBumpDetail");
+            // "WaterBumpMax");
         datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
         datablock->setRefractionStrength( 0.8f );  // par+
@@ -204,9 +208,9 @@ namespace Demo
 
     #if 1  // refract buggy  ----
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
-            "Water");  //** test flat
+            // "Water");  //** test flat
             // "WaterBump");
-            // "WaterBumpDetail");
+            "WaterBumpDetail");
             // "WaterBumpMax");
         datablock->setTransparency( 0.5f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );

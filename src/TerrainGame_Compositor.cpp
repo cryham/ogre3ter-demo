@@ -146,11 +146,10 @@ namespace Demo
         externalChannels[0] = renderWindow->getTexture();
         externalChannels[1] = mDynamicCubemap;
 
+        //**  pick compositor,  from  Tutorial_Terrain.compositor
         return compositorManager->addWorkspace( sceneManager, externalChannels, camera,
-            //  plane reflect works, refract not
-            // "Tutorial_TerrainWorkspace_NoRefract", true );  // in Tutorial_Terrain.compositor
-            //  plane reflect crashes, refract works
-            "Tutorial_TerrainWorkspace", true );  // in Tutorial_Terrain.compositor
+            // "Tutorial_TerrainWorkspace_NoRefract", true );  //  Plane reflect works, refract not
+            "Tutorial_TerrainWorkspace", true );  //  Refract works,  plane reflect bug flipped Y -
     }
     
 }

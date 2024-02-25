@@ -139,8 +139,8 @@ namespace Demo
         CreateTerrain();
         // CreateVeget();
 
-        // CreateWater();  // reflect, buggy
-        CreateWaterRefract();  // test refract
+        // CreateWater();  // reflect ok,  buggy refract
+        CreateWaterRefract();  // refract ok
 
         LogO("---- tutorial createScene");
 
