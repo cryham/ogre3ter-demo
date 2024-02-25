@@ -222,6 +222,9 @@ namespace Demo
     {
         switch (arg.keysym.scancode)
         {
+        case SDL_SCANCODE_ESCAPE:
+            mGraphicsSystem->setQuit();  break;
+
         case SDL_SCANCODE_LSHIFT:  shift = true;  break;
         case SDL_SCANCODE_LCTRL:   ctrl = true;   break;
 

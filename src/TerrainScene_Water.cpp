@@ -96,55 +96,44 @@ namespace Demo
     };
 
 
+    //  Create Water  Refract
     //-----------------------------------------------------------------------------------
-    void TerrainGame::createRefractiveWall()
+    void TerrainGame::CreateWaterRefract()
     {
         Ogre::SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
         Ogre::HlmsManager *hlmsManager = mGraphicsSystem->getRoot()->getHlmsManager();
         assert( dynamic_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( Ogre::HLMS_PBS ) ) );
         Ogre::HlmsPbs *hlmsPbs = static_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( Ogre::HLMS_PBS ) );
 
-        // Create a cube and make it very thin
+        //  thin cube
         Ogre::Item *item = sceneManager->createItem(
             "Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
             Ogre::SCENE_DYNAMIC );
+
         item->setVisibilityFlags( 0x000000002u );
+        item->setCastShadows( false );
+        //  important: Only Refractive materials must be rendered during the refractive pass
+        item->setRenderQueueGroup( 200u );
 
         Ogre::SceneNode *sceneNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
                                          ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
         sceneNode->setPosition( -240, 42.0f, -720 );
         sceneNode->setScale( 1222.f, 2.f, 1222.f );
         sceneNode->attachObject( item );
-    // return;
 
-        // Create refractive material for water
-    #if 0
-        Ogre::String datablockName = "RefractiveWall";
-        Ogre::HlmsPbsDatablock *datablock = static_cast<Ogre::HlmsPbsDatablock *>(
-            hlmsPbs->createDatablock( datablockName, datablockName, Ogre::HlmsMacroblock(),
-                                      Ogre::HlmsBlendblock(), Ogre::HlmsParamVec() ) );
-
-        //  normal map for refractions
-        datablock->setTexture( Ogre::PBSM_NORMAL, "mntn_dark_n.jpg" );
-    #endif
-        item->setCastShadows( false );
-
-        // Set the material to refractive  ----
+        //  Set material to refractive  ----
         auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock("WaterBump");
         datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
         datablock->setRefractionStrength( 0.8f );  // par+
-
-        // This call is very important. Refractive materials must be rendered during the
-        // refractive pass (see Samples/Media/2.0/scripts/Compositors/Refractions.compositor)
-        item->setRenderQueueGroup( 200u );
 
         item->setDatablock( datablock );
 
         // createRefractivePlaceholder( item, sceneNode, datablock );
     }
 
-    //  Create
+
+    //  Create Water  planar Reflect
     //-----------------------------------------------------------------------------------
 	void TerrainGame::CreateWater()
 	{

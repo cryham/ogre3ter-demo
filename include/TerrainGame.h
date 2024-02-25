@@ -91,8 +91,8 @@ namespace Demo
 
         //  water  ----
 		Ogre::Real yWaterHeight = 100.f, yWaterVertical = 20.f;
-       	void CreateWater(), DestroyWater();
-        void createRefractiveWall();
+       	void CreateWater(), DestroyWater();  // reflect, fixme..
+        void CreateWaterRefract();
 
         Ogre::PlanarReflections *mPlanarReflect = 0;
         PlanarReflectWsListener *mWorkspaceListener = 0;

@@ -134,11 +134,13 @@ namespace Demo
         #endif
 
 
-        //  Terrain  ------------------------------------------------
+        //  Init  ------------------------------------------------
         // CreatePlane();  // fastest
         CreateTerrain();
         // CreateVeget();
-        CreateWater();
+
+        // CreateWater();  // reflect, buggy
+        CreateWaterRefract();  // test refract
 
         LogO("---- tutorial createScene");
 
