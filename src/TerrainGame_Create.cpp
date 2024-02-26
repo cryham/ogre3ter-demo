@@ -107,9 +107,11 @@ namespace Demo
         #if 1  // close to water
             // camera->setPosition( Ogre::Vector3( -553, 203, -755 ) );
             // camera->lookAt( Ogre::Vector3( -208, 95, -665 ) );
-            camera->setPosition( Ogre::Vector3( -241, 62, -755 ) );
-            camera->lookAt( Ogre::Vector3( -230, 59, -755 ) );
-            yWaterHeight = 43.65f;
+            // camera->setPosition( Ogre::Vector3( -241, 62, -755 ) );
+            // camera->lookAt( Ogre::Vector3( -230, 59, -755 ) );
+            camera->setPosition( Ogre::Vector3( -489, 73, -715 ) );
+            camera->lookAt( Ogre::Vector3( -230, 42, -755 ) );
+            yWaterHeight = 48.65f;
         #elif 0  // ground
             camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
             camera->lookAt( Ogre::Vector3( 0, 3, 0 ) );

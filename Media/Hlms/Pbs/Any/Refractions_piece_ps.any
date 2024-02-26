@@ -40,6 +40,8 @@
 					//   ( min(-71.0, max(-1.0, -inPs.pos.z)) * 1.0 + 1.0);  // ~ soft near, ok far
 					//   ( min(-21.0, max(-11.0, -inPs.pos.z)) * 0.7 + 1.0);  // *- tiny strong
 					//   ( min(-41.0, max(-2.0, -inPs.pos.z)) * 0.7 + 1.0);  // ^ nice near, strong far
+	float2 refractUvOrg = refractUv;
+
 	midf3 refractionCol = OGRE_SampleLevelF16( refractionMap, refractionMapSampler, refractUv, 0 ).xyz;
 	midf refractionDepth = OGRE_SampleLevelF16( depthTextureNoMsaa, refractionMapSampler, refractUv, 0 ).x;
 
@@ -62,11 +64,33 @@
 		}
 
 	refractionCol = lerp( refractionCol, fallbackRefractionCol, fallbackRefrW );
-	refractionCol.x *= 0.4f;  // colorize cyan-blue
-	refractionCol.y *= 0.9f;
-	// refractionCol.x *= refractionDepth * 1.1f;
-	// refractionCol.y *= refractionDepth * 2.01f;
-	// refractionCol.z *= refractionDepth * 10.05f;
+	
+
+	// refractionCol.x *= 0.4f;  // colorize cyan-blue
+	// refractionCol.y *= 0.9f;
+
+	//  depth  ------
+	midf depthValue = OGRE_SampleLevelF16( depthTextureNoMsaa, refractionMapSampler, screenPosUv.xy, 0 ).x;
+	midf4 ndc = midf4( screenPosUv.xy * 2.0 - 1.0, depthValue, 1.0 );  // normal
+	// midf4 ndc = midf4( refractUvOrg.xy * 2.0 - 1.0, depthValue, 1.0 );  // refracted
+	midf4 tmp = mul( ndc, inverse( passBuf.viewProj ) );  // worldViewProj-
+	midf3 pos = tmp.xyz / tmp.w;
+	
+	midf depth = inPs.worldH - pos.y;
+	// if (depth < 0.0)  depth = 0.0;  // not above
+	// depth = min(40, depth);  // max depth
+	depth = min(40, max(0, depth));  // max depth
+	
+	midf3 deepFade = 1.1 * midf3(0.1, 0.02, 0.01);  // fade
+	// midf3 deepClr = midf3(0.2, 0.33, 0.4);  // deepest color
+	// refractionCol.x = max(deepClr.x, refractionCol.x - depth * deepFade.x);
+	// refractionCol.y = max(deepClr.y, refractionCol.y - depth * deepFade.y);
+	// refractionCol.z = max(deepClr.z, refractionCol.z - depth * deepFade.z);
+	refractionCol.x *= 1.0 - depth * deepFade.x;
+	refractionCol.y *= 1.0 - depth * deepFade.y;
+	refractionCol.z *= 1.0 - depth * deepFade.z;
+	// pixelData.diffuse.w = max(0.0, 1.0 - depth * 0.1);  // fade alpha..
+
 
 	@property( use_texture_alpha )
 		midf refractionAlpha = midf_c( material.F0.w ) * pixelData.diffuse.w;
@@ -76,27 +100,5 @@
 
 	finalColour += refractionCol.xyz * (_h( 1.0 ) - refractionAlpha);
 
-	
-	//  depth ?  ------
-	// midf depthValue = OGRE_SampleLevelF16( depthTextureNoMsaa, refractionMapSampler, refractUv, 0 ).x;
-	// midf depthValue = texelFetch( depthTextureNoMsaa, gl_FragCoord.x, gl_FragCoord.y );
-	// midf3 ndc = float3( gl_FragCoord.xy * 2.0 - 1.0, depthValue );
-	// midf4 tmp = mul( inverse( worldViewProj ), midf4( ndc, 1.0f  ) );
-	// midf3 restored_inVs_vertex = tmp.xyz / tmp.w;
-	// finalColour.xyz = ndc * 0.001;
-
-	// finalColour.z = inPS.pos screenPosUv gl_Position.x;  // no-
-	
-	// midf3 ndcPos = midf3( gl_FragCoord.xy * passBuf.invWindowRes * 2.0f - 1.0f, refractionDepth );
-	// midf4 linearSpacePos = mul( inverse( passBuf.viewProj ), midf4( ndcPos, 1.0f  ) );
-	// linearSpacePos /= linearSpacePos.w;
-
-	// finalColour = length(linearSpacePos.z) * midf3(0.001f, 0.0001f, 0.00001f);
-	// finalColour = linearSpacePos.xyz * midf3(0.01f, 0.001f, 0.0001f);
-	// finalColour = inPs.pos.xyz;
-	// finalColour = length(linearSpacePos.xyz) * midf3(0.1f, 0.01f, 0.001f);
-	// finalColour = (inPs.pos.xyz - linearSpacePos.xyz) * midf3(0.1f, 0.01f, 0.001f);
-	// Now linearSpacePos contains the original position (in camera space) at the given xyz pixel
-	// finalColour.z = refractionDepth;  // = 0  ?
 @end
 @end
