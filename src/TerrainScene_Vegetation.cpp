@@ -117,7 +117,7 @@ namespace Demo
                         continue;
 
                     Real wtrDist = pos.y - yWaterHeight;  // water dist
-                    if (mPlanarReflect && wtrDist < lay.waterMax)
+                    if (waterNode && wtrDist < lay.waterMax)
                         continue;
 
                     Real angle = getAngle( pos.x, pos.z, 0.5f );  // terrain angle

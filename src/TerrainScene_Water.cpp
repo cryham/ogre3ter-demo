@@ -106,20 +106,20 @@ namespace Demo
         Ogre::HlmsPbs *hlmsPbs = static_cast<Ogre::HlmsPbs *>( hlmsManager->getHlms( Ogre::HLMS_PBS ) );
 
         //  thin cube
-        Ogre::Item *item = sceneManager->createItem(
+        waterItem = sceneManager->createItem(
             "Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
             Ogre::SCENE_DYNAMIC );
 
-        item->setVisibilityFlags( 0x000000002u );
-        item->setCastShadows( false );
+        waterItem->setVisibilityFlags( 0x000000002u );
+        waterItem->setCastShadows( false );
         //  important: Only Refractive materials must be rendered during the refractive pass
-        item->setRenderQueueGroup( 200u );
+        waterItem->setRenderQueueGroup( 200u );
 
-        Ogre::SceneNode *sceneNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
-                                         ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
-        sceneNode->setPosition( -240, 42.0f, -720 );
-        sceneNode->setScale( 1222.f, 2.f, 1222.f );
-        sceneNode->attachObject( item );
+        waterNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
+                                ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
+        waterNode->setPosition( -240, yWaterHeight, -720 );
+        waterNode->setScale( 1222.f, 2.f, 1222.f );
+        waterNode->attachObject( waterItem );
 
         //  Set material to refractive  ----
         auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock(
@@ -131,7 +131,7 @@ namespace Demo
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
         datablock->setRefractionStrength( 0.8f );  // par+
 
-        item->setDatablock( datablock );
+        waterItem->setDatablock( datablock );
 
         // createRefractivePlaceholder( item, sceneNode, datablock );
     }
@@ -206,11 +206,11 @@ namespace Demo
         waterItem->setDatablock( "WaterDetail" );  // bumpy +
 
 
-    #if 1  // refract buggy  ----
+    #if 1  // refract  bug flips y  ----
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
-            // "Water");  //** test flat
+            "Water");  //** test flat
             // "WaterBump");
-            "WaterBumpDetail");
+            // "WaterBumpDetail");
             // "WaterBumpMax");
         datablock->setTransparency( 0.5f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );

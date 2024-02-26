@@ -187,8 +187,9 @@ namespace Demo
             //------------------------------------------------------------------  Params Text
             switch (param)
             {
-            case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 ) +
-                (yWaterHeight < yWaterVertical ? " | Vertical" : " -");  break;
+            case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 );  break;
+            // case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 ) +
+            //     (yWaterHeight < yWaterVertical ? " | Vertical" : " -");  break;
             
             case 0:   outText += "Fog density  " + toStr( p.fogDensity, d +2 );  break;
             case 1:   outText += "density coeff  " + toStr( p.densityCoeff, d );  break;
@@ -254,7 +255,8 @@ namespace Demo
         case SDL_SCANCODE_C:  DestroyVeget();  break;
 
         //  water
-        case SDL_SCANCODE_N:  CreateWater();  break;
+        // case SDL_SCANCODE_N:  CreateWater();  break;
+        case SDL_SCANCODE_N:  CreateWaterRefract();  break;
         case SDL_SCANCODE_M:  DestroyWater();  break;
 
         //  cars
