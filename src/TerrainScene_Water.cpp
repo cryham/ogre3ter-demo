@@ -110,10 +110,10 @@ namespace Demo
             "Cube_d.mesh", Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
             Ogre::SCENE_DYNAMIC );
 
-        waterItem->setVisibilityFlags( 0x000000002u );
+        waterItem->setVisibilityFlags( 2 );
         waterItem->setCastShadows( false );
         //  important: Only Refractive materials must be rendered during the refractive pass
-        waterItem->setRenderQueueGroup( 200u );
+        waterItem->setRenderQueueGroup( 220 );
 
         waterNode = sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC )
                                 ->createChildSceneNode( Ogre::SCENE_DYNAMIC );
@@ -219,8 +219,8 @@ namespace Demo
     #endif
         // important: Only Refractive materials must be rendered during the refractive pass
         // bad: inverses reflect cam
-        waterItem->setRenderQueueGroup( 200u );
-        waterItem->setVisibilityFlags( 0x000000002u );
+        waterItem->setRenderQueueGroup( 220 );
+        waterItem->setVisibilityFlags( 2 );
 
 
 		waterNode = sceneManager->getRootSceneNode( type )->createChildSceneNode( type );

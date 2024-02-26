@@ -77,11 +77,13 @@
 	midf3 pos = tmp.xyz / tmp.w;
 	
 	midf depth = inPs.worldH - pos.y;
-	// if (depth < 0.0)  depth = 0.0;  // not above
-	// depth = min(40, depth);  // max depth
 	depth = min(40, max(0, depth));  // max depth
-	
 	midf3 deepFade = 1.1 * midf3(0.1, 0.02, 0.01);  // fade
+
+	// depth = midf_c( exp2( depth * 0.06 ) );  // amount
+	// depth = min(1.0, max(0.0, depth));  // max depth
+	// midf3 deepFade = 8.0 * midf3(0.1, 0.02, 0.01);  // fade
+
 	// midf3 deepClr = midf3(0.2, 0.33, 0.4);  // deepest color
 	// refractionCol.x = max(deepClr.x, refractionCol.x - depth * deepFade.x);
 	// refractionCol.y = max(deepClr.y, refractionCol.y - depth * deepFade.y);
