@@ -16,7 +16,6 @@ Showing:
 * **Car** 3 models, with dynamic reflections, **particles**
 
 No real PBR textures yet just values.  
-Specular light is somewhat broken, too much still.  
 Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
 
 
@@ -117,6 +116,7 @@ dev/
         ogre-next-deps
 ```
 
+----
 ### Windows
 
 Tested on Windows 10.
@@ -156,7 +156,6 @@ dev/
             ogre-next-deps
 ```
 
-----
 ## Sources
 
 Some key locations in code are marked with `//**`
@@ -173,6 +172,7 @@ Used compositor workspaces are defined in:
 `/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor`
 
 
+----
 ## Docs
 
 Quick links for Ogre-Next documentation:  
