@@ -141,7 +141,6 @@ For me it failed few times, and I fixed it by adding in VS paths that were wrong
 Open properties for TerrainDemo project.  
 fopr /Wswitch
 
-----
 #### My folder tree
 ```
 dev/
@@ -156,6 +155,7 @@ dev/
             ogre-next-deps
 ```
 
+----
 ## Sources
 
 Some key locations in code are marked with `//**`
@@ -172,7 +172,6 @@ Used compositor workspaces are defined in:
 `/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor`
 
 
-----
 ## Docs
 
 Quick links for Ogre-Next documentation:  
