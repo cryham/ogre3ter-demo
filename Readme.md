@@ -126,20 +126,19 @@ So create a Dependencies dir after pulling this repo.
 Then you can just link to Ogre dir. So: create a symbolic link to Ogre dir, and put inside Dependencies.
 
 Run CMake-Gui, pick this project path for sources, and the same with subir `build\` for build output.  
-Press `Configure``.  
+Press `Configure`.  
 There can be an error that I just fixed by copying that:  
 `OgreBuildSettings.h` (found some file inside Ogre, for Release build if many) into:
 `Ogre\build\ogre-next\build\Release\include\`
 
 After that `Configure` has succeeded for me.  
-Pressing `Generate`` creates `sln` file inside `demo\build\`.  
+Pressing `Generate` creates `sln` file inside `demo\build\`.  
 Open it with Visual Studio (same version as chosen in CMake).  
 Try building.  
 For me it failed few times, and I fixed it by adding in VS paths that were wrong or missing.  
 (this isn't the best way, as you can't press Generate in CMake anymore, it would loose any editing in VS).
 
 Open properties for TerrainDemo project.  
-fopr /Wswitch
 
 #### My folder tree
 ```
