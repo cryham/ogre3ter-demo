@@ -1,6 +1,8 @@
-## Screenshot
+## Screenshots
 
-![](https://github.com/cryham/ogre3ter-demo/blob/main/screen1.jpg?raw=true)
+![](https://github.com/cryham/ogre3ter-demo/blob/main/screens/2.jpg?raw=true)
+
+![](https://github.com/cryham/ogre3ter-demo/blob/main/screens/1.jpg?raw=true)
 
 
 ## Description
@@ -8,6 +10,7 @@
 Ogre-Next demo. Based on Tutorial_Terrain.
 Showing:
 * **Terrain** with 4 layers and triplanar
+* **Water** flat, no animation, with reflection or refraction and depth color shading
 * **Vegetation**, 9 layers: tree, palm, 4 rocks, 2 ferns, plant
 * **Atmosphere** component with fog and adjustable parameters
 * **Car** 3 models, with dynamic reflections, **particles**
@@ -15,6 +18,7 @@ Showing:
 No real PBR textures yet just values.  
 Specular light is somewhat broken, too much still.  
 Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
+
 
 ----
 ## Keys
@@ -53,12 +57,14 @@ To reload *shaders* (after editing):
 Ctrl-F1 - PBS,  Ctrl-F2 - Unlit,  Ctrl-F3 - Compute,  Ctrl-F4 - Terrain  
 Ctrl-F5 - Force device reelection  
 
+
 ## Info on screen
 
 Top line meaning:
 
 **Fps** (frames per second), **f** face (triangles) count [k = 1000], **d** draw count, **i** instances  
 Veget - total vegetation models on scene
+
 
 ----
 ## Building from sources
@@ -151,7 +157,6 @@ dev/
 ```
 
 ----
-
 ## Sources
 
 Some key locations in code are marked with `//**`
@@ -166,6 +171,7 @@ and in (simpler syntax):
 
 Used compositor workspaces are defined in:  
 `/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor`
+
 
 ## Docs
 
