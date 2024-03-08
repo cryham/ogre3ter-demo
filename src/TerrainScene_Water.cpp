@@ -202,13 +202,15 @@ namespace Demo
 		waterItem = sceneManager->createItem( waterMesh, type );
 		waterItem->setCastShadows( false );
 
-        // waterItem->setDatablock( "Water" );  // flat test -
-        waterItem->setDatablock( "WaterDetail" );  // bumpy +
+        //  Tutorial_TerrainWorkspace_NoRefract  works
+        waterItem->setDatablock( "Water" );  // test flat --
+        // waterItem->setDatablock( "WaterDetail" );  // bumpy +
 
 
-    #if 1  // refract  bug flips y  ----
+    #if 0  //  refract  bug flips y  ----
+        //  Tutorial_TerrainWorkspace  needed
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
-            "Water");  //** test flat
+            "Water");  //** test flat --
             // "WaterBump");
             // "WaterBumpDetail");
             // "WaterBumpMax");
@@ -235,7 +237,9 @@ namespace Demo
         // PlanarReflectionActor* actor =
 		mPlanarReflect->addActor( PlanarReflectionActor(
             waterNode->getPosition(), waterSize,
-            waterNode->getOrientation() ) );
+            waterNode->getOrientation()
+            // * Quaternion( Radian( Math::PI ), Vector3::UNIT_Y )
+            ) );
 
         PlanarReflections::TrackedRenderable trackedRenderable(
             waterItem->getSubItem( 0 ), waterItem, Vector3::UNIT_Z, Vector3( 0, 0, 0 ) );

@@ -171,9 +171,10 @@ namespace Demo
                 "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0);
                 // +" b " + toStr( rm.mBatchCount, 0);
 
-            outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
-            outText += "\nCars  " + toStr(iCars,1)+ "  nodes "+toStr(carNodes.size(), 1);
-            outText += "\nWater  " + toStr(mPlanarReflect ? mPlanarReflect->countActiveActors() : 0,1)+"\n";
+            outText += "  Veget all " + toStr(vegetNodes.size(), 5);
+            // outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
+            // outText += "\nCars  " + toStr(iCars,1)+ "  nodes "+toStr(carNodes.size(), 1);
+            // outText += "\nWater  " + toStr(mPlanarReflect ? mPlanarReflect->countActiveActors() : 0,1)+"\n";
 
             outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
             outText += "\n/ *  Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );

@@ -115,7 +115,7 @@ namespace Demo
         #elif 0  // ground
             camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
             camera->lookAt( Ogre::Vector3( 0, 3, 0 ) );
-        #elif 0  // terrain view  from screen
+        #elif 1  // terrain view  from screen
             camera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
             camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
@@ -141,8 +141,8 @@ namespace Demo
         CreateTerrain();
         // CreateVeget();
 
-        // CreateWater();  // reflect ok,  buggy refract
-        CreateWaterRefract();  // refract ok
+        CreateWater();  // reflect ok
+        // CreateWaterRefract();  // refract ok
 
         LogO("---- tutorial createScene");
 

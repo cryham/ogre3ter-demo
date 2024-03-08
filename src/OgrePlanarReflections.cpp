@@ -36,9 +36,11 @@ THE SOFTWARE.
 #include "OgreHlmsDatablock.h"
 #include "OgreLogManager.h"
 #include "OgrePixelFormatGpuUtils.h"
+#include "OgreQuaternion.h"
 #include "OgreSceneManager.h"
 #include "OgreTextureGpuManager.h"
 
+#include "OgreVector3.h"
 #include "Terra/Terra.h"
 
 namespace Ogre
@@ -441,25 +443,31 @@ namespace Ogre
             return _l->mActivationPriority < _r->mActivationPriority;
         }
     };
+
     static bool OrderPlanarReflectionActorsByBindingSlot( const PlanarReflectionActor *_l,
                                                           const PlanarReflectionActor *_r )
     {
         return _l->getCurrentBoundSlot() < _r->getCurrentBoundSlot();
     };
+
+    //-----------------------------------------------------------------------------------
     void PlanarReflections::update(
         Terra *terra, Camera *cameraOld, Camera *camera, Real aspectRatio )
     {
-        /*if( mLockCamera && camera != mLockCamera )
+        /*if( cameraOld && camera != cameraOld )
             return; //This is not the camera we are allowed to work with
 
         if( mLastCamera == camera &&
             mLastAspectRatio == camera->getAspectRatio() &&
-            (!mLockCamera &&
+            (!cameraOld &&
              mLastCameraPos == camera->getDerivedPosition() &&
              mLastCameraRot == camera->getDerivedOrientation()) )
         {
             return;
         }*/
+        LogManager::getSingleton().logMessage(
+            "reflect update:  "+camera->getName()+"  old: "+cameraOld->getName());
+        // return;  // ?
 
         if( mAnyPendingFlushRenderable )
         {
@@ -704,13 +712,22 @@ namespace Ogre
                 {
                     actorData->workspace->setEnabled( true );
                     actorData->reflectionCamera->setPosition( camPos );
-                    actorData->reflectionCamera->setOrientation( camRot );
+                    actorData->reflectionCamera->setOrientation(
+                    #if 0
+                        Quaternion( Radian( Math::PI ), Vector3::UNIT_Z ) * camRot *
+                        Quaternion( Radian( Math::PI ), Vector3::UNIT_Y )
+                    #else
+                        camRot
+                    #endif
+                        );
                     actorData->reflectionCamera->setNearClipDistance( nearPlane );
                     actorData->reflectionCamera->setFarClipDistance( farPlane );
                     actorData->reflectionCamera->setAspectRatio( aspectRatio );
                     actorData->reflectionCamera->setFocalLength( focalLength );
                     actorData->reflectionCamera->setFOVy( fov );
                     actorData->reflectionCamera->enableReflection( actor->mPlane );
+                    // actorData->reflectionCamera->enableReflection( 
+                        // Plane(-Vector3::UNIT_Y, -48.65f ) );
 
                     if( camera->getFrustumExtentsManuallySet() )
                     {
@@ -917,9 +934,14 @@ namespace Ogre
     //-----------------------------------------------------------------------------------
     bool PlanarReflections::cameraMatches( const Camera *camera )
     {
-        return !camera->isReflected() && mLastAspectRatio == camera->getAspectRatio() &&
+        bool ok = !camera->isReflected() && mLastAspectRatio == camera->getAspectRatio() &&
                mLastCameraPos == camera->getDerivedPosition() &&
                mLastCameraRot == camera->getDerivedOrientation();
+        
+        // ok = camera->getName() == "Main Camera";  // new
+        LogManager::getSingleton().logMessage(
+            String("reflect cameraMatches: ") + (ok ? " Y  " : " N  ") + camera->getName() );
+        return ok;
     }
     //-----------------------------------------------------------------------------------
     bool PlanarReflections::_isUpdatingRenderablesHlms() const { return mUpdatingRenderablesHlms; }
