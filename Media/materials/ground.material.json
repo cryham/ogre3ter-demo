@@ -222,7 +222,9 @@
 			},
 			"roughness" :
 			{
-				"value" : 0.35
+				"value" : 1.0,
+				"texture" : "mntn_dark_s.jpg",
+				"sampler" : "wrap"
 			},
             "detail_normal0" :
             {
@@ -237,6 +239,59 @@
                 "mode" : "Multiply",
                 "scale" : [62, 62],
                 "value" : -0.5,
+                "texture" : "jungle_stone_n.jpg",
+                "sampler" : "wrap"
+            }
+		},
+
+        "WaterBumpSoft" :
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"transparency" :
+			{
+				"value" : 0.15,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.1, 0.3, 0.5]
+			},
+			"specular" :
+			{
+				"value" : [0.9, 1.0, 1.0]
+			},
+			"fresnel" :
+			{
+				"value" : [0.4, 0.6, 0.9],
+				"mode" : "coloured"
+			},
+			"normal" :
+			{
+				"value" : 0.2,
+				"texture" : "mntn_dark_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 1.0,
+				"texture" : "jungle_stone_s.jpg",
+				"sampler" : "wrap"
+			},
+            "detail_normal0" :
+            {
+                "mode" : "Multiply",
+                "scale" : [12, 12],
+                "value" : -0.5,
+                "texture" : "mntn_dark_n.jpg",
+                "sampler" : "wrap"
+            },
+            "detail_normal1" :
+            {
+                "mode" : "Multiply",
+                "scale" : [62, 62],
+                "value" : -0.2,
                 "texture" : "jungle_stone_n.jpg",
                 "sampler" : "wrap"
             }

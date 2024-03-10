@@ -96,7 +96,7 @@ namespace Demo
     };
 
 
-    //  Create Water  Refract
+    //  Create Water  Refract only
     //-----------------------------------------------------------------------------------
     void TerrainGame::CreateWaterRefract()
     {
@@ -137,7 +137,7 @@ namespace Demo
     }
 
 
-    //  Create Water  planar Reflect
+    //  Create Water  planar Reflect + Refract
     //-----------------------------------------------------------------------------------
 	void TerrainGame::CreateWater()
 	{
@@ -165,7 +165,7 @@ namespace Demo
         //** water params  ----
 		const Vector2 waterSize( 5000.f, 5000.f );
 		const int size = 2 * 512;
-		const int segments = 64;  //** 1 !  more bad
+		const int segments = 64;  //** 1  more ok
 		const Real tile = 1.0f;
 
         mPlanarReflect->setMaxActiveActors( 1u, "PlanarReflectionsReflectiveWorkspace",
@@ -207,15 +207,17 @@ namespace Demo
         // waterItem->setDatablock( "WaterDetail" );  // bumpy +
 
 
-    #if 0  //  refract  bug flips y  ----
+    #if 1  //  Refract  ----
         //  Tutorial_TerrainWorkspace  needed
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
-            "Water");  //** test flat --
-            // "WaterBump");
-            // "WaterBumpDetail");
-            // "WaterBumpMax");
-        datablock->setTransparency( 0.5f, Ogre::HlmsPbsDatablock::Refractive );
-        datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
+            // "Water");  //** test flat --
+            // "WaterBump");  //-
+            // "WaterBumpDetail");  // strong
+            "WaterBumpSoft");  // nice
+            // "WaterBumpMax");  // par_
+        datablock->setTransparency( 0.12f, Ogre::HlmsPbsDatablock::Refractive );
+        datablock->setFresnel( Ogre::Vector3( 0.31f ), false );
+        // datablock->setFresnel( Ogre::Vector3( 0.1f, 0.4f, 0.9f ), true );  // crash, shader F0?
         datablock->setRefractionStrength( 0.9f );  // par-
         waterItem->setDatablock( datablock );
     #endif

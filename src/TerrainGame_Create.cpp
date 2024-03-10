@@ -120,7 +120,7 @@ namespace Demo
             camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
             yWaterHeight = 43.65f;
-        #elif 0  //** water test bug
+        #elif 0  //** water test
             camera->setPosition( Ogre::Vector3( 1200, 1100, 80 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
             mPitch = 56.f * Math::PI / 180.f;  // sun
@@ -141,8 +141,8 @@ namespace Demo
         CreateTerrain();
         // CreateVeget();
 
-        CreateWater();  // reflect ok
-        // CreateWaterRefract();  // refract ok
+        CreateWater();  // reflect and refract
+        // CreateWaterRefract();  // refract only
 
         LogO("---- tutorial createScene");
 
