@@ -32,10 +32,10 @@
 					//   ( (-inPs.pos.z + 1.0 ) );  // bad close
 					//   ( -inPs.pos.z * 0.5 + 2.0);  // strong- near, no far
 					//  good
-					  ( max(21.0, -inPs.pos.z) * 0.5 + 2.0);  // * big near, no far
+					//   ( max(21.0, -inPs.pos.z) * 0.5 + 2.0);  // * big near, no far
 					//   ( max(31.0, -inPs.pos.z) * 0.5 + 2.0);  // + ok near, no far
 					//   ( max(121.0, -inPs.pos.z) * 0.2 + 2.0);  // ~ soft near, good far
-					//   ( max(21.0, -inPs.pos.z) * 0.2 + 2.0);  // - tiny strong near and far
+					  ( max(21.0, -inPs.pos.z) * 0.2 + 2.0);  // - tiny strong near and far
 					//  old meh
 					//   ( min(-71.0, max(-1.0, -inPs.pos.z)) * 1.0 + 1.0);  // ~ soft near, ok far
 					//   ( min(-21.0, max(-11.0, -inPs.pos.z)) * 0.7 + 1.0);  // *- tiny strong
@@ -71,14 +71,16 @@
 
 	//  depth  ------
 	midf depthValue = OGRE_SampleLevelF16( depthTextureNoMsaa, refractionMapSampler, screenPosUv.xy, 0 ).x;
-	midf4 ndc = midf4( screenPosUv.xy * 2.0 - 1.0, depthValue, 1.0 );  // normal
-	// midf4 ndc = midf4( refractUvOrg.xy * 2.0 - 1.0, depthValue, 1.0 );  // refracted
+	// midf4 ndc = midf4( screenPosUv.xy * 2.0 - 1.0, depthValue, 1.0 );  // normal
+	midf4 ndc = midf4( refractUvOrg.xy * 2.0 - 1.0, depthValue, 1.0 );  // refracted
 	midf4 tmp = mul( ndc, inverse( passBuf.viewProj ) );  // worldViewProj-
 	midf3 pos = tmp.xyz / tmp.w;
 	
 	midf depth = inPs.worldH - pos.y;
-	depth = min(40, max(0, depth));  // max depth
-	midf3 deepFade = 1.1 * midf3(0.1, 0.02, 0.01);  // fade
+	depth = min(40, max(0, depth));  // max depth  blue cyan
+	midf3 deepFade = 1.1 * midf3(0.04, 0.02, 0.01);  // fade
+	// depth = min(20, max(0, depth));  // max depth  cyan green
+	// midf3 deepFade = 1.0 * midf3(0.08, 0.02, 0.01);  // fade
 
 	// depth = midf_c( exp2( depth * 0.06 ) );  // amount
 	// depth = min(1.0, max(0.0, depth));  // max depth
