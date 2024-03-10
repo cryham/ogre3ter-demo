@@ -39,7 +39,7 @@ THE SOFTWARE.
 
 namespace Ogre
 {
-    const IdString PbsTerraProperty::TerraEnabled   = IdString( "terra_enabled" );
+    const IdString PbsTerraProperty::TerraEnabled = IdString( "terra_enabled" );
 
     HlmsPbsTerraShadows::HlmsPbsTerraShadows() :
         mTerra( 0 ),
@@ -86,10 +86,8 @@ namespace Ogre
         if( hlms->_getProperty( HlmsBaseProp::ShadowCaster ) == 0 &&
             hlms->_getProperty( PbsTerraProperty::TerraEnabled ) != 0 )
         {
-			int32 texUnit = hlms->_getProperty( PbsProperty::Set0TextureSlotEnd ) - 1;
-			if( hlms->_getProperty( PbsProperty::HasPlanarReflections ) )
-				--texUnit;
-			hlms->_setTextureReg( VertexShader, "terrainShadows", texUnit );
+            int32 texUnit = hlms->_getProperty( PbsProperty::Set0TextureSlotEnd ) - 1;
+            hlms->_setTextureReg( VertexShader, "terrainShadows", texUnit );
         }
     }
     //-----------------------------------------------------------------------------------
@@ -105,7 +103,7 @@ namespace Ogre
 
             if( mTerra && hlms->_getProperty( HlmsBaseProp::LightsDirNonCaster ) > 0 )
             {
-                //First directional light always cast shadows thanks to our terrain shadows.
+                // First directional light always cast shadows thanks to our terrain shadows.
                 int32 shadowCasterDirectional = hlms->_getProperty( HlmsBaseProp::LightsDirectional );
                 shadowCasterDirectional = std::max( shadowCasterDirectional, 1 );
                 hlms->_setProperty( HlmsBaseProp::LightsDirectional, shadowCasterDirectional );
@@ -120,10 +118,10 @@ namespace Ogre
                                                    bool casterPass, bool dualParaboloid,
                                                    SceneManager *sceneManager ) const
     {
-        return (!casterPass && mTerra) ? 32u : 0u;
+        return ( !casterPass && mTerra ) ? 32u : 0u;
     }
     //-----------------------------------------------------------------------------------
-    float* HlmsPbsTerraShadows::preparePassBuffer( const CompositorShadowNode *shadowNode,
+    float *HlmsPbsTerraShadows::preparePassBuffer( const CompositorShadowNode *shadowNode,
                                                    bool casterPass, bool dualParaboloid,
                                                    SceneManager *sceneManager, float *passBufferPtr )
     {
@@ -153,8 +151,8 @@ namespace Ogre
         {
             Ogre::TextureGpu *terraShadowTex = mTerra->_getShadowMapTex();
 
-            //Bind the shadows' texture. Tex. slot must match with
-            //the one in HlmsPbsTerraShadows::propertiesMergedPreGenerationStep
+            // Bind the shadows' texture. Tex. slot must match with
+            // the one in HlmsPbsTerraShadows::propertiesMergedPreGenerationStep
             *commandBuffer->addCommand<CbTexture>() =
                 CbTexture( (uint16)texUnit++, terraShadowTex, mTerraSamplerblock );
         }
