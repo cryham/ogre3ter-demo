@@ -270,7 +270,7 @@ namespace Demo
 
 		Root *root = mGraphicsSystem->getRoot();
 		Hlms *hlms = root->getHlmsManager()->getHlms( HLMS_PBS );
-		assert( dynamic_cast<HlmsPbs2 *>( hlms ) );
+		assert( dynamic_cast<HlmsPbs *>( hlms ) );
 		HlmsPbs *pbs = static_cast<HlmsPbs *>( hlms );
 		pbs->setPlanarReflections( 0 );  // off
 

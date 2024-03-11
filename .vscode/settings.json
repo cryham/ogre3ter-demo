@@ -4,7 +4,7 @@
   "files.associations": {
     "*.any": "c#",
     "*.glsl": "c",
-    "*.compositor": "json",
+    "*.compositor": "jsonc",
     // "*.material": "json",
     // "*.particle": "c",
     "*.mat": "c",
