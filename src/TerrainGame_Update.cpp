@@ -102,6 +102,7 @@ namespace Demo
         //  Light  sun dir  ----
         Vector3 dir = Quaternion( Radian(mYaw), Vector3::UNIT_Y ) *
             Vector3( cosf( mPitch ), -sinf( mPitch ), 0.0 ).normalisedCopy();
+        sunDir = dir;
         mSunLight->setDirection( dir );
 
         SceneManager *sceneManager = mGraphicsSystem->getSceneManager();

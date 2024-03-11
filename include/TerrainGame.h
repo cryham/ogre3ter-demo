@@ -52,7 +52,7 @@ namespace Demo
         //  vars
         float mPitch;  // sun dir
         float mYaw;
-        Ogre::Vector3 camPos;
+        Ogre::Vector3 camPos, sunDir;
 
         //  input
         int mKeys[4] = {0,0,0,0};  // sun

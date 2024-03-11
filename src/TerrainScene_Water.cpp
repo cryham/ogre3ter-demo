@@ -87,7 +87,8 @@ namespace Demo
 
             //  Note: The Aspect Ratio must match that of the camera we're reflecting.
 			if (mPlanarReflections)
-            	mPlanarReflections->update( mGame->mTerra,
+            	mPlanarReflections->update(
+                    mGame->mTerra, mGame->sunDir,
                     mGame->mGraphicsSystem->getCamera(),
                     camera, camera->getAutoAspectRatio()
                                             ? pass->getViewportAspectRatio( 0u )
