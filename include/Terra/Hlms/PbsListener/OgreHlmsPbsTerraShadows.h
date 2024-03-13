@@ -51,6 +51,8 @@ namespace Ogre
 
         void setTerra( Terra *terra );
 
+        float globalTime;  //** new
+
         uint16 getNumExtraPassTextures( const HlmsPropertyVec &properties,
                                         bool                   casterPass ) const override;
 

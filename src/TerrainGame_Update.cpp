@@ -23,6 +23,8 @@
 #endif
 #include "Compositor/OgreCompositorWorkspace.h"
 
+#include "Terra/Hlms//PbsListener/OgreHlmsPbsTerraShadows.h"
+
 using namespace Demo;
 using namespace Ogre;
 
@@ -37,6 +39,11 @@ namespace Demo
         //  update reflections
         // if (mCubeCamera)
         //     mCubeCamera->setPosition(camPos);
+
+        if (mHlmsPbsTerraShadows)
+        {
+            mHlmsPbsTerraShadows->globalTime += timeSinceLast;
+        }
 
         ++updReflSkip;
         if (updReflSkip > 60)  //** param, rarely
@@ -257,8 +264,8 @@ namespace Demo
         case SDL_SCANCODE_C:  DestroyVeget();  break;
 
         //  water
-        // case SDL_SCANCODE_N:  CreateWater();  break;
-        case SDL_SCANCODE_N:  CreateWaterRefract();  break;
+        case SDL_SCANCODE_N:  CreateWater();  break;
+        // case SDL_SCANCODE_N:  CreateWaterRefract();  break;
         case SDL_SCANCODE_M:  DestroyWater();  break;
 
         //  cars

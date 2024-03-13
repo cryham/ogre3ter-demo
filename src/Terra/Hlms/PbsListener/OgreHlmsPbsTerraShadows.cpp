@@ -44,6 +44,7 @@ namespace Ogre
     HlmsPbsTerraShadows::HlmsPbsTerraShadows() :
         mTerra( 0 ),
         mTerraSamplerblock( 0 )
+        , globalTime(0.f)
 #if OGRE_DEBUG_MODE
         ,
         mSceneManager( 0 )
@@ -118,7 +119,7 @@ namespace Ogre
                                                    bool casterPass, bool dualParaboloid,
                                                    SceneManager *sceneManager ) const
     {
-        return ( !casterPass && mTerra ) ? 32u : 0u;
+        return ( !casterPass && mTerra ) ? 3 *4*4u : 0u;  //** new, old 32u
     }
     //-----------------------------------------------------------------------------------
     float *HlmsPbsTerraShadows::preparePassBuffer( const CompositorShadowNode *shadowNode,
@@ -139,6 +140,11 @@ namespace Ogre
             *passBufferPtr++ = invHeight;
             *passBufferPtr++ = terrainXZInvDim.y;
             *passBufferPtr++ = 1.0f;
+
+            *passBufferPtr++ = globalTime;  //** new adds time to Pbs for water
+            *passBufferPtr++ = 0.f;
+            *passBufferPtr++ = 0.f;
+            *passBufferPtr++ = 0.f;
         }
 
         return passBufferPtr;
