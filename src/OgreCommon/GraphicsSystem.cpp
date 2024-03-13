@@ -47,6 +47,8 @@
 #    include "OgreAtmosphereNpr.h"
 #endif
 
+#include "../HlmsPbs2.h"
+
 #include <fstream>
 
 #if OGRE_USE_SDL2
@@ -813,7 +815,10 @@ namespace Demo
             }
 
             //Create and register
-            hlmsPbs = OGRE_NEW Ogre::HlmsPbs( archivePbs, &archivePbsLibraryFolders );
+            // default
+            // hlmsPbs = OGRE_NEW Ogre::HlmsPbs( archivePbs, &archivePbsLibraryFolders );
+            //** our Pbs2
+            hlmsPbs = OGRE_NEW HlmsPbs2( archivePbs, &archivePbsLibraryFolders );
             Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsPbs );
             hlmsPbs->setDebugOutputPath(true, false, "shaders/");
         }
