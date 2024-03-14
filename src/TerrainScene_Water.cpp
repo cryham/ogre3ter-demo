@@ -142,7 +142,7 @@ namespace Demo
     //-----------------------------------------------------------------------------------
 	void TerrainGame::CreateWater()
 	{
-		if (mPlanarReflect)
+		if (mPlanarReflect || waterItem)
 			return;
         LogO("---- create water");
 
@@ -164,10 +164,11 @@ namespace Demo
         workspace->addListener( mWorkspaceListener );
 
         //** water params  ----
-		const Vector2 waterSize( 5000.f, 5000.f );
+		const Vector2 waterSize( 8000.f, 8000.f );
 		const int size = 2 * 512;
 		const int segments = 64;  //** 1  more ok
-		const Real tile = 1.0f;
+		const Real tile = 5.0f;  // 1
+		// const Real tile = 21.0f;  // 1
 
         mPlanarReflect->setMaxActiveActors( 1u, "PlanarReflectionsReflectiveWorkspace",
 			true, size, size, true, // accurate, with mipmaps
@@ -214,9 +215,10 @@ namespace Demo
             // "Water");  //** test flat --
             // "WaterBump");  //-
             // "WaterBumpDetail");  // strong
-            "WaterBumpSoft");  // nice
+            // "WaterBumpSoft");  // nice
+            "WaterBumpSoftAnim");  // nice anim
             // "WaterBumpMax");  // par_
-        datablock->setTransparency( 0.12f, Ogre::HlmsPbsDatablock::Refractive );
+        datablock->setTransparency( 0.02f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.31f ), false );
         // datablock->setFresnel( Ogre::Vector3( 0.1f, 0.4f, 0.9f ), true );  // crash, shader F0?
         datablock->setRefractionStrength( 0.9f );  // par-

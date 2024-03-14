@@ -10,7 +10,7 @@
 Ogre-Next demo. Based on Tutorial_Terrain.
 Showing:
 * **Terrain** with 4 layers and triplanar
-* **Water** flat, no animation, with reflection or refraction and depth color shading
+* **Water** flat, animated, with reflection, refraction and depth color shading
 * **Vegetation**, 9 layers: tree, palm, 4 rocks, 2 ferns, plant
 * **Atmosphere** component with fog and adjustable parameters
 * **Car** 3 models, with dynamic reflections, **particles**

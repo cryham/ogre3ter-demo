@@ -37,7 +37,12 @@
 
 	float3 planarReflectionS = OGRE_SampleLevel( planarReflectionTex, planarReflectionSampler,
 												 planarReflUVs.xy,
-												 pixelData.perceptualRoughness * passBuf.planarReflNumMips ).xyz;
+											@property( water )
+												 pixelData.perceptualRoughness * 2.2  //** par
+											@else
+												 pixelData.perceptualRoughness
+											@end
+												 * passBuf.planarReflNumMips ).xyz;
 
 	//Fade out as our surface gets away from the reflection plane (planarWeight = 0 means fully faded out)
 	float planarWeight = max( 1.0 - abs( distanceToPlanarReflPlane ) * passBuf.invMaxDistanceToPlanarRefl.x, 0.0 );

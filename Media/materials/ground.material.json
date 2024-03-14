@@ -294,8 +294,98 @@
                 "value" : -0.2,
                 "texture" : "jungle_stone_n.jpg",
                 "sampler" : "wrap"
-            }
+            },
+
+			"detail_diffuse0" :
+			{
+				"value" : 1,
+				"offset" : [0.15, 0.1],
+				"scale" : [0.3, 0.15]
+			},
+			"detail_diffuse1" :
+			{
+				"value" : 1,
+				"offset" : [0.3, 0.3]
+			},
+			"detail_diffuse2" :
+			{
+				"value" : 1,
+				"offset" : [1, 0.15],
+				"scale" : [25, 1.5]
+			},
+			"detail_diffuse3" :
+			{
+				"value" : 1,
+				"offset" : [6, 0.4]
+			}
 		},
+
+		"WaterBumpSoftAnim":
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"transparency" :
+			{
+				"value" : 0.9,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.0261, 0.137, 0.1575],
+				"background" : [1, 1, 1, 1],
+				"sampler" : "wrap"
+			},
+			"specular" :
+			{
+				"value" : [0.427, 0.53, 0.56],
+				"sampler" : "wrap"
+			},
+			"fresnel" :
+			{
+				"value" : [0.2667, 0.2757, 0.285],
+				"mode" : "coloured"
+			},
+			"normal" :
+			{
+				"value" : 0.6,
+                "texture" : "adesert_mntn4_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 0.25,
+				"sampler" : "wrap"
+			},
+
+			"detail_diffuse0" :
+			{
+				"value" : 1,
+				"offset" : [0.15, 0.1],
+				"scale" : [0.3, 0.15],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse1" :
+			{
+				"value" : 1,
+				"offset" : [0.3, 0.3],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse2" :
+			{
+				"value" : 1,
+				"offset" : [1, 0.15],
+				"scale" : [25, 1.5],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse3" :
+			{
+				"value" : 1,
+				"offset" : [6, 0.4],
+				"sampler" : "wrap"
+			}
+		},
+
 
         "WaterBumpMax" :
 		{
