@@ -135,6 +135,13 @@ namespace Demo
             camera->lookAt( camPos + Vector3(0.f, -0.5f, -1.f) );
         #endif
 
+	    //**  shadows par
+        // const float shadow_dist = 1200.f;  // low
+	    // const float shadow_dist = 2200.f;  // far
+	    const float shadow_dist = 4200.f;  // very far
+        sceneManager->setShadowDirectionalLightExtrusionDistance( shadow_dist );
+	    sceneManager->setShadowFarDistance( shadow_dist );
+
 
         //  Init  ------------------------------------------------
         // CreatePlane();  // fastest

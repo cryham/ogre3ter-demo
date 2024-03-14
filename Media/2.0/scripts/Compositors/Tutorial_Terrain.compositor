@@ -158,6 +158,7 @@ compositor_node Tutorial_TerrainRenderingNode
 			load
 			{
 				all				clear
+				// clear_depth  1.0
 				clear_colour	0.2 0.4 0.6 1
 			}
 			store
@@ -283,7 +284,10 @@ compositor_node_shadow Tutorial_TerrainShadowNode
 {
 	technique pssm
 
-	texture atlas 3072 2048 PFG_D32_FLOAT
+	//**  shadows par
+	// texture atlas 3072 2048 PFG_D32_FLOAT  // medium 2k
+	texture atlas 6144 4096 PFG_D32_FLOAT  // high 4k
+	// texture atlas 12288 8192 PFG_D32_FLOAT  // ultra high 8k
 
 	num_splits		3
 	pssm_lambda		0.95
