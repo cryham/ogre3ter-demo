@@ -36,17 +36,20 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::update( float timeSinceLast )
     {
+        if (mHlmsPbsTerraShadows)
+            mHlmsPbsTerraShadows->globalTime += timeSinceLast;
+
+        if (ndSky)
+        {
+        	ndSky->setPosition(mGraphicsSystem->getCamera()->getPosition());
+            ndSky->_getFullTransformUpdated();
+        }
+
         //  update reflections
         // if (mCubeCamera)
         //     mCubeCamera->setPosition(camPos);
-
-        if (mHlmsPbsTerraShadows)
-        {
-            mHlmsPbsTerraShadows->globalTime += timeSinceLast;
-        }
-
         ++updReflSkip;
-        if (updReflSkip > 60)  //** param, rarely
+        if (updReflSkip > 60)  //** param, rarely, once per sec
         {   updReflSkip = 0;
             mDynamicCubemapWorkspace->_beginUpdate( true );
             mDynamicCubemapWorkspace->_update();
@@ -62,11 +65,11 @@ namespace Demo
             AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr*>( sceneManager->getAtmosphere() );
             AtmosphereNpr::Preset p = atmosphere->getPreset();
 
-            float mul1 = 1.f + 0.003f * mul * d;
+            float mul1 = 1.f + 0.004f * mul * d;
             //------------------------------------------------------------------  Params Edit
             switch (param)
             {
-            case -1: yWaterHeight *= mul1;  break;
+            case -1:  yWaterHeight *= mul1;  break;
             
             case 0:  p.fogDensity *= mul1;  break;
             case 1:  p.densityCoeff *= mul1;  break;
