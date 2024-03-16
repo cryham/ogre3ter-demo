@@ -56,9 +56,12 @@ namespace Demo
 
         //  input
         int mKeys[4] = {0,0,0,0};  // sun
-        int param = -1;  // to adjust, fog etc
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
+        
+        int param = -1;  // to adjust, fog etc
+        
+        int preset = 0;  // scene to create
 
         //  Fps info etc
         void generateDebugText( float timeSinceLast, Ogre::String &outText ) override;
@@ -90,8 +93,8 @@ namespace Demo
 
 
         //  water  ----
-		Ogre::Real yWaterHeight = 100.f, yWaterVertical = 20.f;
-       	void CreateWater(), DestroyWater();  // reflect, fixme..
+		Ogre::Real yWaterHeight = 100.f;
+       	void CreateWater(), DestroyWater();
         void CreateWaterRefract();
 
         Ogre::PlanarReflections *mPlanarReflect = 0;
@@ -113,10 +116,10 @@ namespace Demo
 
 
         //  Terrain  ----
-        Ogre::Real sizeXZ = 1000.f;
+        Ogre::Real sizeXZ = 1000.f, sizeY = 100.f, sizeXZ2 = 5000.f, sizeY2 = 100.f;
         void CreateTerrain(), DestroyTerrain();
         Ogre::SceneNode *nodeTerrain = 0;
-        Ogre::Terra *mTerra = 0;
+        Ogre::Terra *mTerra = 0, *mTerra2 = 0;
 
         bool mTriplanarMappingEnabled = true;
         void ToggleTriplanar();
@@ -133,6 +136,8 @@ namespace Demo
         Ogre::Real getHeight( Ogre::Real x, Ogre::Real z ) const;
         Ogre::Real getAngle( Ogre::Real x, Ogre::Real z, Ogre::Real s ) const;
 
+
+        void CreateScene(int pre);
 
         //  sun
         Ogre::Light *mSunLight = 0;
@@ -155,9 +160,9 @@ namespace Demo
 
         //  other
         void CreateManualObj(Ogre::Vector3 camPos);
-        void CreateParticles();
-
-
+        void CreateParticles(); //, DestroyParticles();
+        
+        
         //  cars  ----
         void CreateCar();
         void DestroyCars();

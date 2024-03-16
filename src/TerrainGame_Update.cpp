@@ -179,7 +179,8 @@ namespace Demo
         {
             TutorialGameState::generateDebugText( timeSinceLast, outText );
 
-            outText += "\nF1 toggle Help   CryHam's Terrain demo  using  Ogre-Next 3.0\n\n";
+            outText += "\nF1 toggle Help   CryHam's Terrain demo  using  Ogre-Next 3.0\n";
+            outText += "Load Scenes:  F3 Flat,Car  F4 Foggy Jungle  F5 Vast Forest  F6 Tropic  F7 Tropic,Horizon\n\n";
             // outText += "Reload shaders:\n"
             //            "Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
             
@@ -187,12 +188,12 @@ namespace Demo
             outText += "T Terrain / flat   P triplanar   R wireframe\n";
             outText += "G add next Car   H clear all\n";
             outText += "N add Water  M remove\n";
-            outText += "K next Sky   F add Fire\n\n";
+            outText += "K next Sky / none   F add Fire\n\n";
             
             Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
             outText += "Pos: " + toStr( camPos.x, 4) +" "+ toStr( camPos.y, 4) +" "+ toStr( camPos.z, 4) + "\n\n";
 
-            #if 1  // list all veget cnts
+            #if 0  // list all veget cnts
             for (const auto& lay : vegetLayers)
                 outText += toStr( lay.count, 4 ) + " " + lay.mesh + "\n";
             #endif
@@ -202,7 +203,7 @@ namespace Demo
         //------------------------------------------------------------------
         if( mHelpMode == 1 )
         {
-            
+            outText += "\nF1 Help";
             outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
             outText += "\n/ *  Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
             outText += "\n^ v  Param  " + toStr( param, 0 );
@@ -297,8 +298,11 @@ namespace Demo
             else
             {   switch (iSky)
                 {
-                case 0:  CreateSkyDome("sky-clearday1", 0.f);  ++iSky;  break;
-                case 1:  CreateSkyDome("sky_photo6", 0.f);  iSky = 0;  break;  // clouds
+                case 0:  CreateSkyDome("cloudy_04_blue", 0.f);  ++iSky;  break;
+                case 1:  CreateSkyDome("day_clouds_02_cyan", 0.f);  ++iSky;  break;
+                case 2:  CreateSkyDome("day_clouds_04_blue", 0.f);  ++iSky;  break;
+                case 3:  CreateSkyDome("day_clouds_07", 0.f);  ++iSky;  break;
+                case 4:  CreateSkyDome("day_clouds_08", 0.f);  iSky = 0;  break;
                 }
             }
             break;
@@ -308,6 +312,12 @@ namespace Demo
             // Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
             CreateManualObj(camPos);
         }   break;
+
+        case SDL_SCANCODE_F3:  CreateScene(0);  break;
+        case SDL_SCANCODE_F4:  CreateScene(1);  break;
+        case SDL_SCANCODE_F5:  CreateScene(2);  break;
+        case SDL_SCANCODE_F6:  CreateScene(3);  break;
+        case SDL_SCANCODE_F7:  CreateScene(4);  break;
         }
         
         TutorialGameState::keyPressed( arg );

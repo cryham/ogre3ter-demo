@@ -37,7 +37,6 @@ namespace Demo
         , mIblQuality( MipmapsLowest )
     {
         macroblockWire.mPolygonMode = PM_WIREFRAME;
-        SetupVeget();
     }
 
     
@@ -80,23 +79,6 @@ namespace Demo
     #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
         LogO("---- new Atmosphere");
         mGraphicsSystem->createAtmosphere( mSunLight );
-        OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
-        AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
-        AtmosphereNpr::Preset p = atmosphere->getPreset();
-        p.fogDensity = 0.00012f;  //** par
-        p.densityCoeff = 0.27f;  //0.47f;
-        p.densityDiffusion = 0.75f;  //2.0f;
-        p.horizonLimit = 0.025f;
-        // p.sunPower = 1.0f;
-        // p.skyPower = 1.0f;
-        p.skyColour = Vector3(0.234f, 0.57f, 1.0f);
-        p.fogBreakMinBrightness = 0.25f;
-        p.fogBreakFalloff = 0.1f;
-        // p.linkedLightPower = Math::PI;
-        // p.linkedSceneAmbientUpperPower = 0.1f * Math::PI;
-        // p.linkedSceneAmbientLowerPower = 0.01f * Math::PI;
-        p.envmapScale = 1.0f;
-        atmosphere->setPreset( p );
     #endif
 
         //**  Camera  ------------------------------------------------
@@ -105,30 +87,15 @@ namespace Demo
         camera->setFarClipDistance( 100000.f );  // par far
 
         #if 1  // close to water
-            // camera->setPosition( Ogre::Vector3( -553, 203, -755 ) );
-            // camera->lookAt( Ogre::Vector3( -208, 95, -665 ) );
-            // camera->setPosition( Ogre::Vector3( -241, 62, -755 ) );
-            // camera->lookAt( Ogre::Vector3( -230, 59, -755 ) );
             camera->setPosition( Ogre::Vector3( -489, 73, -715 ) );
             camera->lookAt( Ogre::Vector3( -230, 42, -755 ) );
             yWaterHeight = 48.65f;
-        #elif 0  // ground
-            camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
-            camera->lookAt( Ogre::Vector3( 0, 3, 0 ) );
         #elif 1  // terrain view  from screen
             camera->setPosition( Ogre::Vector3( -979, 407, -912 ) );
             camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
             camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
             yWaterHeight = 43.65f;
-        #elif 0  //** water test
-            camera->setPosition( Ogre::Vector3( 1200, 1100, 80 ) );
-            camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
-            mPitch = 56.f * Math::PI / 180.f;  // sun
-            mYaw  = 206.f * Math::PI / 180.f;
-            yWaterHeight = 33.65f;
         #elif 0
-            //camPos = Vector3(-10.f, 80.f, 10.f );
-            //camPos = Vector3(-2005.f, 40.f, -929.f);
             camPos = Vector3(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
             //camPos.y += mTerra->getHeightAt( camPos );
             camera->setPosition( camPos );
@@ -144,16 +111,99 @@ namespace Demo
 
 
         //  Init  ------------------------------------------------
-        // CreatePlane();  // fastest
-        CreateTerrain();
-        // CreateVeget();
+        CreateScene(1);  //** par
 
-        CreateWater();  // reflect and refract
-        // CreateWaterRefract();  // refract only
+        // CreatePlane();  // fastest
 
         LogO("---- tutorial createScene");
 
         TutorialGameState::createScene01();
+    }
+
+
+    //  Create scene, full setup
+    //-----------------------------------------------------------------------------------
+    void TerrainGame::CreateScene(int pre)
+    {
+        LogO("==== Destroy Scene");
+
+        DestroySkyDome();
+        DestroyCars();
+        DestroyPlane();
+        DestroyTerrain();
+        DestroyWater();
+        DestroyVeget();
+
+        preset = pre;
+        SetupVeget(preset == 2);
+
+        auto* camera = mGraphicsSystem->getCamera();
+        LogO("++++ Create Scene");//+toStr(pre));
+        if (preset == 0)
+        {
+            CreatePlane();  // fastest
+            CreateVeget();
+            camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
+            camera->lookAt( Ogre::Vector3( 0, 6, 0 ) );
+            CreateCar();
+            return;
+        }
+
+        CreateTerrain();
+        CreateWater();
+        
+        int nn = 0;
+        float fogDens = 0.00012f;
+        switch (preset)
+        {
+        case 1:  nn = 2;  CreateSkyDome("day_clouds_02_cyan", 0.f);  // medium jng fog
+            camera->setPosition( Ogre::Vector3( -489, 73, -715 ) );
+            camera->lookAt( Ogre::Vector3( -230, 42, -755 ) );
+            fogDens = 0.00024f;
+            break;
+        case 2:  nn = 12;  CreateSkyDome("day_clouds_07", 0.f);  // vast forest
+            camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
+            camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
+            fogDens = 0.00008f;
+            break;
+        
+        case 3:  nn = 5;  CreateSkyDome("day_clouds_04_blue", 0.f);  // tropic
+            camera->setPosition( Ogre::Vector3( 3048, 118, -1271 ) );
+            camera->lookAt( Ogre::Vector3( 2400, -20, -1200 ) );
+            fogDens = 0.00005f;
+            break;
+        case 4:  nn = 7;  CreateSkyDome("day_clouds_04_blue", 0.f);  // tropic horiz
+            camera->setPosition( Ogre::Vector3( 3048, 118, -1271 ) );
+            camera->lookAt( Ogre::Vector3( 2400, -20, -1200 ) );
+            fogDens = 0.00004f;
+            break;
+        }
+        
+        for (int n=0; n < nn; ++n)
+            CreateVeget();
+
+        //  set fog
+    #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE
+        SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
+        OGRE_ASSERT_HIGH( dynamic_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() ) );
+        AtmosphereNpr *atmosphere = static_cast<AtmosphereNpr *>( sceneManager->getAtmosphere() );
+        AtmosphereNpr::Preset p = atmosphere->getPreset();
+        p.fogDensity = fogDens;  //** par
+        p.densityCoeff = 0.33f;  //0.27f  0.47f
+        p.densityDiffusion = 0.01f;  //0.75f  2.0f
+        p.horizonLimit = 0.025f;
+        p.sunPower = 0.7f;  //1.0f;
+        // p.skyPower  1.0f;
+        p.skyColour = Vector3(0.234f, 0.57f, 1.0f);
+        p.fogBreakMinBrightness = 0.25f;
+        p.fogBreakFalloff = 0.1f;
+        // p.linkedLightPower = Math::PI;
+        // p.linkedSceneAmbientUpperPower = 0.1f * Math::PI;
+        // p.linkedSceneAmbientLowerPower = 0.01f * Math::PI;
+        p.envmapScale = 1.0f;
+        atmosphere->setPreset( p );
+    #endif
+        LogO("---- Created scene");
     }
 
 
