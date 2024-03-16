@@ -65,7 +65,7 @@ namespace Demo
     #else
         //  speeds  ----------
         const Real moveMul = 1000.f, rotMul = 6300.f;
-        const Real mulMove = mShift ? 0.2f : mCtrl ? 6.f : 1.f;
+        const Real mulMove = mShift ? 0.2f : mCtrl ? 4.f : 1.f;
         const Real mulRot  = mShift ? 0.3f : mCtrl ? 2.f : 1.f;
         
         //  inputs

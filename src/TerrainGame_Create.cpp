@@ -141,48 +141,51 @@ namespace Demo
 
         auto* camera = mGraphicsSystem->getCamera();
         LogO("++++ Create Scene");//+toStr(pre));
-        if (preset == 0)
+
+        int nn = 0;
+        float fogDens = 0.00012f;
+        switch (preset)
         {
+        case 0:  CreateSkyDome("day_clouds_08", 0.f);  // medium jng fog
             CreatePlane();  // fastest
             CreateVeget();
             camera->setPosition( Ogre::Vector3( 0, 16, 40 ) );
             camera->lookAt( Ogre::Vector3( 0, 6, 0 ) );
             CreateCar();
-            return;
-        }
+            fogDens = 0.00032f;
+            break;
 
-        CreateTerrain();
-        CreateWater();
-        
-        int nn = 0;
-        float fogDens = 0.00012f;
-        switch (preset)
-        {
         case 1:  nn = 2;  CreateSkyDome("day_clouds_02_cyan", 0.f);  // medium jng fog
             camera->setPosition( Ogre::Vector3( -489, 73, -715 ) );
             camera->lookAt( Ogre::Vector3( -230, 42, -755 ) );
             fogDens = 0.00024f;
             break;
-        case 2:  nn = 12;  CreateSkyDome("day_clouds_07", 0.f);  // vast forest
-            camera->setPosition( Ogre::Vector3( -1089, 448, -815 ) );
-            camera->lookAt( Ogre::Vector3( 0, 20, 0 ) );
+        case 2:  nn = 12;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
+            camera->setPosition( Ogre::Vector3( -950, 231, 615 ) );
+            camera->lookAt( Ogre::Vector3( -950, 210, 450 ) );
             fogDens = 0.00008f;
             break;
         
-        case 3:  nn = 5;  CreateSkyDome("day_clouds_04_blue", 0.f);  // tropic
+        case 3:  nn = 5;  CreateSkyDome("cloudy_04_blue", 0.f);  // tropic
             camera->setPosition( Ogre::Vector3( 3048, 118, -1271 ) );
             camera->lookAt( Ogre::Vector3( 2400, -20, -1200 ) );
             fogDens = 0.00005f;
             break;
-        case 4:  nn = 7;  CreateSkyDome("day_clouds_04_blue", 0.f);  // tropic horiz
+        case 4:  nn = 7;  CreateSkyDome("day_clouds_07", 0.f);  // tropic horiz
             camera->setPosition( Ogre::Vector3( 3048, 118, -1271 ) );
             camera->lookAt( Ogre::Vector3( 2400, -20, -1200 ) );
             fogDens = 0.00004f;
             break;
         }
+
+        if (preset > 0)
+        {
+            CreateTerrain();
+            CreateWater();
         
-        for (int n=0; n < nn; ++n)
-            CreateVeget();
+            for (int n=0; n < nn; ++n)
+                CreateVeget();
+        }
 
         //  set fog
     #ifdef OGRE_BUILD_COMPONENT_ATMOSPHERE

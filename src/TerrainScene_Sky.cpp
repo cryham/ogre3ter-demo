@@ -74,7 +74,8 @@ namespace Demo
     void TerrainGame::CreateSkyDome(String sMater, float yaw)
     {
         if (moSky)  return;
-    	Vector3 scale = 25000 /*view_distance*/ * Vector3::UNIT_SCALE;
+        //** par  view_distance
+    	Vector3 scale = 35000 * Vector3::UNIT_SCALE;
         
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         ManualObject* m = mgr->createManualObject(SCENE_STATIC);

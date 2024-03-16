@@ -26,8 +26,8 @@ namespace Demo
 
         CameraController    *mCameraController = 0;
 
-        Ogre::uint16        mHelpMode = 1;
-        Ogre::uint16        mNumHelpModes = 2;
+        Ogre::uint16        mHelpMode = 0;
+        Ogre::uint16        mNumHelpModes = 3;
 
         Ogre::v1::TextAreaOverlayElement *mDebugText = 0;
         Ogre::v1::TextAreaOverlayElement *mDebugTextShadow = 0;

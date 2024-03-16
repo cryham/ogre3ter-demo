@@ -165,7 +165,7 @@ namespace Demo
         const RenderingMetrics& rm = rs->getMetrics();  //** fps
         const FrameStats *st = mGraphicsSystem->getRoot()->getFrameStats();
 
-        if (mHelpMode == 0)
+        if (mHelpMode == 1)
             outText += "Fps: " + toStr( (int)st->getAvgFps(), 2) +"  "+ //"\n" +
                 "triangles: " + toStr( rm.mFaceCount/1000, 0) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
                 "k  draws: " + toStr( rm.mDrawCount, 0) + "  instances: " + toStr( rm.mInstanceCount, 0) +
@@ -180,12 +180,13 @@ namespace Demo
 
 
         //  create info
-        if( mHelpMode == 0 )
+        if( mHelpMode == 1 )
         {
             TutorialGameState::generateDebugText( timeSinceLast, outText );
 
-            outText += "\nF1 toggle Help   CryHam's Terrain demo  using  Ogre-Next 3.0\n";
-            outText += "Load Scenes:  F3 Flat,Car  F4 Foggy Jungle  F5 Vast Forest  F6 Tropic  F7 Tropic,Horizon\n\n";
+            outText += "\nF1 toggle Help   \nCryHam's Terrain demo  using  Ogre-Next 3.0\n";
+            outText += "Load Scenes (F" + toStr(preset+3) +
+                "):  F3 Flat,Car  F4 Foggy Jungle  F5 Vast Forest  F6 Tropic  F7 Tropic,Horizon\n\n";
             //outText += "Reload shaders:  Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
             
             outText += "V add Vegetation   C clear it\n";
@@ -205,7 +206,7 @@ namespace Demo
 
         //  adjust vars
         //------------------------------------------------------------------
-        if( mHelpMode == 1 )
+        if( mHelpMode == 0 )
         {
             outText += "\nF1 Help";
             outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
