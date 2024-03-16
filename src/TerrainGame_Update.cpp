@@ -69,6 +69,8 @@ namespace Demo
             //------------------------------------------------------------------  Params Edit
             switch (param)
             {
+            case -3:  mCameraController->mSpeed *= mul1;  break;
+            case -2:  mCameraController->mInertia *= mul1;  break;
             case -1:  yWaterHeight *= mul1;  break;
             
             case 0:  p.fogDensity *= mul1;  break;
@@ -218,6 +220,8 @@ namespace Demo
             //------------------------------------------------------------------  Params Text
             switch (param)
             {
+            case -3:  outText += "Camera Speed  " + toStr( mCameraController->mSpeed, 2 );  break;
+            case -2:  outText += "Camera Inertia  " + toStr( mCameraController->mInertia, 2 );  break;
             case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 );  break;
             
             case 0:   outText += "Fog density  " + toStr( p.fogDensity, d +2 );  break;

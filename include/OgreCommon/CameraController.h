@@ -4,33 +4,35 @@
 
 #include "OgrePrerequisites.h"
 #include "TutorialGameState.h"
+#include <OgreVector3.h>
 
 namespace Demo
 {
     class CameraController
     {
-        bool        mUseSceneNode;
-        bool        mSpeed1;
-        bool        mSpeed2;
-        bool        mWASDQE[6];
-        float       mCameraYaw;
-        float       mCameraPitch;
+        // bool    mUseNode = 0;
+        bool    mShift = 0;
+        bool    mCtrl = 0;
+        bool    mWASDQE[6] = {0,0,0,0,0,0};
+        float   mYaw = 0.f;
+        float   mPitch = 0.f;
+
+        //  state vars, are smoothed
+        Ogre::Radian  sYaw{0}, sPitch{0};
+        Ogre::Vector3  sMove{0,0,0};
+        double time = 0.0;
     public:
-        float       mCameraBaseSpeed;
-        float       mCameraSpeed1;
-        float       mCameraSpeed2;
+        float   mSpeed, mInertia;
 
     private:
-        GraphicsSystem      *mGraphicsSystem;
+        GraphicsSystem*  mGraphicsSystem;
 
     public:
         CameraController( GraphicsSystem *graphicsSystem, bool useSceneNode=false );
 
         void update( float timeSinceLast );
 
-        /// Returns true if we've handled the event
         bool keyPressed( const SDL_KeyboardEvent &arg );
-        /// Returns true if we've handled the event
         bool keyReleased( const SDL_KeyboardEvent &arg );
 
         void mouseMoved( const SDL_Event &arg );

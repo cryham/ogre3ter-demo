@@ -1,4 +1,3 @@
-
 #include "CameraController.h"
 #include "GraphicsSystem.h"
 
@@ -6,29 +5,25 @@
 #include "OgreWindow.h"
 
 using namespace Demo;
+using namespace Ogre;
 
 namespace Demo
 {
 
     CameraController::CameraController( GraphicsSystem *graphicsSystem, bool useSceneNode ) :
-        mUseSceneNode( useSceneNode ),
-        mSpeed1( false ),
-        mSpeed2( false ),
-        mCameraYaw( 0 ),
-        mCameraPitch( 0 ),
-        mCameraBaseSpeed( 300 ),
-        mCameraSpeed1( 0.5 ),
-        mCameraSpeed2( 6 ),
+        // mUseNode( useSceneNode ),
+        // mSpeed( 0.5f ), mInertia( 0.9f ),  // slow
+        mSpeed( 0.5f ), mInertia( 0.2f ),
         mGraphicsSystem( graphicsSystem )
     {
-        memset( mWASDQE, 0, sizeof(mWASDQE) );
     }
 
     //-----------------------------------------------------------------------------------
-    void CameraController::update( float timeSinceLast )
+    void CameraController::update( float fDT )
     {
         Ogre::Camera *camera = mGraphicsSystem->getCamera();
 
+    #if 0  //  old no smooth  ----------
         if( mCameraYaw != 0.0f || mCameraPitch != 0.0f )
         {
             if( mUseSceneNode )
@@ -56,7 +51,7 @@ namespace Demo
         {
             Ogre::Vector3 camMovementDir( camMovementX, camMovementY, camMovementZ );
             camMovementDir.normalise();
-            camMovementDir *= timeSinceLast * mCameraBaseSpeed
+            camMovementDir *= fDT * mCameraBaseSpeed
                 * (mSpeed1 ? mCameraSpeed1 : mSpeed2 ? mCameraSpeed2 : 1.f);
 
             if( mUseSceneNode )
@@ -67,17 +62,58 @@ namespace Demo
             else
                 camera->moveRelative( camMovementDir );
         }
+    #else
+        //  speeds  ----------
+        const Real moveMul = 1000.f, rotMul = 6300.f;
+        const Real mulMove = mShift ? 0.2f : mCtrl ? 6.f : 1.f;
+        const Real mulRot  = mShift ? 0.3f : mCtrl ? 2.f : 1.f;
+        
+        //  inputs
+        const Real rotX = mYaw;
+        const Real rotY = mPitch;
+        mYaw   = 0.f;
+        mPitch = 0.f;
+        const Vector3 vTrans(
+            mWASDQE[3] - mWASDQE[1],
+            mWASDQE[5] - mWASDQE[4],
+            mWASDQE[2] - mWASDQE[0]);
+
+        //  const intervals, Fps independent smooth
+        const double ivDT = 0.004;
+        time += fDT;
+        while (time > ivDT)
+        {	time -= ivDT;
+        
+            Real fSmooth = (powf(1.0f - mInertia, 2.2f) * 40.f + 0.1f) * ivDT;
+
+            const Real fMove = mSpeed * mulMove;
+            const Degree fRot = Degree(mSpeed) * mulRot;
+
+            Radian inYaw = rotMul * ivDT * (fRot* rotX);
+            Radian inPth = rotMul * ivDT * (fRot* rotY);
+            Vector3 inMove = moveMul * ivDT * (fMove * vTrans);
+
+            sYaw   += (inYaw - sYaw) * fSmooth;
+            sPitch += (inPth - sPitch) * fSmooth;
+            sMove  += (inMove - sMove) * fSmooth;
+
+            camera->yaw( sYaw );
+            camera->pitch( sPitch );
+            camera->moveRelative( sMove );
+        }
+    #endif
     }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch"
+    //  Input vars
     //-----------------------------------------------------------------------------------
     bool CameraController::keyPressed( const SDL_KeyboardEvent &arg )
     {
         switch (arg.keysym.scancode)
         {
-        case SDL_SCANCODE_LSHIFT:  mSpeed1 = true;  return true;
-        case SDL_SCANCODE_LCTRL:   mSpeed2 = true;  return true;
+        case SDL_SCANCODE_LSHIFT:  mShift = true;  return true;
+        case SDL_SCANCODE_LCTRL:   mCtrl = true;  return true;
 
         case SDL_SCANCODE_W:  mWASDQE[0] = true;  return true;
         case SDL_SCANCODE_A:  mWASDQE[1] = true;  return true;
@@ -94,8 +130,8 @@ namespace Demo
     {
         switch (arg.keysym.scancode)
         {
-        case SDL_SCANCODE_LSHIFT:  mSpeed1 = false;  return true;
-        case SDL_SCANCODE_LCTRL:   mSpeed2 = false;  return true;
+        case SDL_SCANCODE_LSHIFT:  mShift = false;  return true;
+        case SDL_SCANCODE_LCTRL:   mCtrl = false;  return true;
 
         case SDL_SCANCODE_W:  mWASDQE[0] = false;  return true;
         case SDL_SCANCODE_A:  mWASDQE[1] = false;  return true;
@@ -114,7 +150,7 @@ namespace Demo
         float width  = static_cast<float>( mGraphicsSystem->getRenderWindow()->getWidth() );
         float height = static_cast<float>( mGraphicsSystem->getRenderWindow()->getHeight() );
 
-        mCameraYaw   += -arg.motion.xrel / width  *6;
-        mCameraPitch += -arg.motion.yrel / height *6;
+        mYaw   += -arg.motion.xrel / width  *6;
+        mPitch += -arg.motion.yrel / height *6;
     }
 }
