@@ -52,13 +52,26 @@ namespace Demo
             SceneNode* node = rootNode->createChildSceneNode();
             node->attachObject( parSys );
             parSys->setRenderQueueGroup( 225 );  //? after Veget
+            particles.push_back(parSys);
+            //parHit->getEmitter(0)->setEmissionRate(20);
 
             Vector3 objPos = camPos + Vector3( i/2 * 2.f, -5.f + i%2 * 4.f, 0.f);
-            // if (mTerra)
-            //     objPos.y += mTerra->getHeightAt( objPos ) + 5.f;
             node->setPosition( objPos );
-            //parHit->getEmitter(0)->setEmissionRate(20);
+            particleNodes.push_back(node);
         }
+    }
+
+    void TerrainGame::DestroyParticles()
+    {
+        SceneManager *mgr = mGraphicsSystem->getSceneManager();
+		
+		for (auto node : particleNodes)
+			mgr->destroySceneNode(node);
+		particleNodes.clear();
+		
+		for (auto par : particles)
+			mgr->destroyParticleSystem(par);
+		particles.clear();
     }
 
 
@@ -187,7 +200,7 @@ namespace Demo
 	}
 
 
-    //  Manual object
+    //  Manual object test
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::CreateManualObj(Ogre::Vector3 camPos)
 	{

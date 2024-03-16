@@ -187,7 +187,7 @@ namespace Demo
             outText += "T Terrain / flat   P triplanar   R wireframe\n";
             outText += "G add next Car   H clear all\n";
             outText += "N add Water  M remove\n";
-            outText += "K next Sky / none   F add Fire\n\n";
+            outText += "K next Sky / none   F add Fire  I clear all\n\n";
             
             Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
             outText += "Pos: " + toStr( camPos.x, 4) +" "+ toStr( camPos.y, 4) +" "+ toStr( camPos.z, 4) + "\n\n";
@@ -288,9 +288,11 @@ namespace Demo
         //  cars
         case SDL_SCANCODE_G:  CreateCar();  break;
         case SDL_SCANCODE_H:  DestroyCars();  break;
-        //  other
+        //  fire
         case SDL_SCANCODE_F:  CreateParticles();  break;
+        case SDL_SCANCODE_I:  DestroyParticles();  break;
 
+        //  sky
         case SDL_SCANCODE_K:  
             if (ndSky)
                 DestroySkyDome();
@@ -306,7 +308,7 @@ namespace Demo
             }
             break;
         
-        case SDL_SCANCODE_L:  //-
+        case SDL_SCANCODE_L:  // test-
         {
             // Vector3 camPos(-52.f, mTerra ? 735.f : 60.f, mTerra ? 975.f : 517.f);
             CreateManualObj(camPos);

@@ -127,9 +127,11 @@ namespace Demo
     {
         LogO("==== Destroy Scene");
 
-        DestroySkyDome();
         DestroyCars();
         DestroyPlane();
+        DestroyParticles();
+
+        DestroySkyDome();
         DestroyTerrain();
         DestroyWater();
         DestroyVeget();

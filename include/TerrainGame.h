@@ -160,7 +160,10 @@ namespace Demo
 
         //  other
         void CreateManualObj(Ogre::Vector3 camPos);
-        void CreateParticles(); //, DestroyParticles();
+
+        void CreateParticles(), DestroyParticles();
+        std::vector<Ogre::ParticleSystem*> particles;
+        std::vector<Ogre::SceneNode*> particleNodes;
         
         
         //  cars  ----
