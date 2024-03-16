@@ -1,0 +1,73 @@
+//  See documentation of HlmsPbsDatablock for all available settings:
+//https://ogrecave.github.io/ogre-next/api/2.3/class_ogre_1_1_hlms_pbs_datablock.html#add5507880534dc20bf7dcae3435ed66a
+
+hlms AllSettings pbs
+{
+	//  Note: Internally the diffuse colour is divided by PI.
+	diffuse		1 1 1
+	specular	1 1 1
+	emissive    0 0 0
+
+	//  Note: avoid values extremely close to zero  (0; 1] is physically correct.
+	roughness	0.4
+	
+	fresnel		1.33
+	//Fresnel as IOR (index of refraction), seperate per RGB component
+	//fresnel	1.33 1.33 1.2
+
+	//Directly set the "F0" term, instead of using IOR
+	//fresnel_coeff	0.1
+	//fresnel_coeff	0.1 0.1 0.2
+
+	//workflow specular_ogre
+	//workflow specular_fresnel
+	//workflow metallic
+
+	//diffuse_map	Rocks_Diffuse.tga
+	//normal_map	Rocks_Normal.tga
+	//roughness_map	Rocks_Spec.tga
+	//specular_map	Rocks_Diffuse.tga
+
+	//detail_weight_map	nm_up.png
+}
+
+
+//  Particles  old
+//---------------------------------------------
+hlms ParFire unlit
+{
+	diffuse_map boost_red.png
+	depth_write	off
+	scene_blend	add
+}
+
+hlms ParSmoke unlit
+{
+	diffuse_map boost_red.png
+	depth_write	off
+	scene_blend	alpha_blend
+}
+
+
+//  Skies
+//---------------------------------------------
+hlms cloudy_04_blue unlit
+{
+	diffuse_map cloudy_04_blue.jpg
+}
+hlms day_clouds_02_cyan unlit
+{
+	diffuse_map day_clouds_02_cyan.jpg
+}
+hlms day_clouds_04_blue unlit
+{
+	diffuse_map day_clouds_04_blue.jpg
+}
+hlms day_clouds_07 unlit
+{
+	diffuse_map day_clouds_07.jpg
+}
+hlms day_clouds_08 unlit
+{
+	diffuse_map day_clouds_08.jpg
+}

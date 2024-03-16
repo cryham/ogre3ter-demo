@@ -152,7 +152,7 @@ namespace Demo
 
 
         //  vegetation  ----
-        void SetupVeget(), CreateVeget(), DestroyVeget();
+        void SetupVeget(bool pines), CreateVeget(), DestroyVeget();
 
         std::vector<VegetLayer> vegetLayers;
 		std::vector<Ogre::Item*> vegetItems;

@@ -45,9 +45,9 @@ hlms ES_glass pbs
 	roughness 0.2
 	metalness 0.8
 
-    cull_mode none
-    depth_write off
-    transparency 0.5
+	cull_mode none
+	depth_write off
+	transparency 0.5
 	transparency_mode transparent
 }
 
@@ -124,8 +124,8 @@ hlms SX_glass pbs
 	roughness 0.1
 	// metalness 1.0
 
-    cull_mode none
-    depth_write off
+	cull_mode none
+	depth_write off
 
 	transparency 0.5
 	transparency_mode transparent
@@ -185,9 +185,9 @@ hlms HI_glass pbs
 	roughness 0.1
 	metalness 1.0
 
-    cull_mode none
-    depth_write off
-    
+	cull_mode none
+	depth_write off
+	
 	transparency 0.5
 	transparency_mode transparent
 	two_sided true
