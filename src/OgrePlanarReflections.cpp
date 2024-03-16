@@ -452,7 +452,7 @@ namespace Ogre
     
     //-----------------------------------------------------------------------------------
     void PlanarReflections::update(
-        Terra *terra, const Vector3 &lightDir,
+        Terra *terra, Terra *terra2, const Vector3 &lightDir,
         Camera *cameraOld, Camera *camera, Real aspectRatio )
     {
         /*if( cameraOld && camera != cameraOld )
@@ -853,6 +853,11 @@ namespace Ogre
                         terra->setCamera( actorData.reflectionCamera );
                         terra->update( lightDir );
                     }
+                    if (terra2)
+                    {
+                        terra2->setCamera( actorData.reflectionCamera );
+                        terra2->update( lightDir );
+                    }
                     actorData.workspace->_update();
                     actorData.workspace->setEnabled( false );
                 }
@@ -862,6 +867,11 @@ namespace Ogre
             {
                 terra->setCamera( cameraOld );
                 terra->update( lightDir );
+            }
+            if (terra2)
+            {
+                terra2->setCamera( cameraOld );
+                terra2->update( lightDir );
             }
         }
     }

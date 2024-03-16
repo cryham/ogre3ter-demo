@@ -49,6 +49,8 @@ namespace Demo
         HlmsManager *hlmsManager = root->getHlmsManager();
         HlmsDatablock *datablock = 0;
 
+        //  Terrain
+        //------------------------------------------------
         LogO("---- new Terra");
 
         mTerra = new Terra( Id::generateNewId<MovableObject>(),
@@ -59,32 +61,79 @@ namespace Demo
 
         LogO("---- Terra load");
 
-        //  Heightmap  ------------------------------------------------
-        switch (1)
+        //  Heightmap
+        switch (preset)
         {
-        case 1:  //  1k  600 fps  4 tex
+        case 1:  //  1k  med  4km  4tex  600 fps
+            yWaterHeight = 48.65f;
             sizeXZ = 4096.f;
-            mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);  break;
-        case 2:  //  2k
-            sizeXZ = 12096.f;
-            mTerra->load( "Heightmap2c.png", Vector3( 64.0f, 4096.0f * 0.15f, 64.0f), Vector3(sizeXZ, 6096.0f, sizeXZ), false, false);  break;
-        case 3:  //  4k
-            sizeXZ = 2.f* 4096.f;
-            mTerra->load( "Heightmap4.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 2.f* 4096.0f, sizeXZ), false, false);  break;
+            mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);
+            datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
+            break;
+        case 2:  //  1k  big  8km  4tex  380k veget 50fps
+            yWaterHeight = 101.f;
+            sizeXZ = 3.f * 4096.f;
+            mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);
+            datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
+            // datablock = hlmsManager->getDatablock( "TerraExampleMaterial_R_M" );  // maps
+            break;
+                    
+        case 3:  //  tropic
+        case 4:
+            yWaterHeight = -250.f;
+            sizeXZ = 1146.78 * 7.14348;
+            sizeY = 272.328 * 7.14348;
+            mTerra->load( "Jng13-Tropic.png", Vector3( 0.f, 0.f, 0.f), Vector3(sizeXZ, sizeY, sizeXZ), false, false);
+            datablock = hlmsManager->getDatablock( "Jng13-Tropic" );  // coeffs
+            break;
         }
 
         SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
         node->attachObject( mTerra );
 
-        LogO("---- Terra attach");
-
-        datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
-        // datablock = hlmsManager->getDatablock( "TerraExampleMaterial_R_M" );  // maps
         mTerra->setDatablock( datablock );
 
+
+        //  Horizon  far  * * * * *
+        //------------------------------------------------
+        sizeXZ2 = sizeXZ;  sizeY2 = sizeY;
+        if (preset >= 4)
+        {
+            LogO("---- new Terra2");
+
+            mTerra2 = new Terra( Id::generateNewId<MovableObject>(),
+                                &mgr->_getEntityMemoryManager( SCENE_STATIC ),
+                                mgr, 11u, root->getCompositorManager2(),
+                                mGraphicsSystem->getCamera(), false );
+            mTerra2->setCastShadows( false );
+
+            LogO("---- Terra2 load");
+
+            //  Heightmap
+            switch (preset)
+            {
+            case 4:  //  tropic  horiz  ofs-
+                yWaterHeight = -221.f;
+                sizeXZ2 = 10556.2 * 7.14348;
+                sizeY2 = 645.912 * 7.14348;
+                mTerra2->load( "Jng13-Tropic2.png", Vector3( 50.f, 1300.f, 0.f), Vector3(sizeXZ2, sizeY2, sizeXZ2), false, false);
+                datablock = hlmsManager->getDatablock( "Jng13-Tropic2" );  // coeffs
+                break;
+            }
+
+            // SceneNode *node = rootNode->createChildSceneNode( SCENE_STATIC );
+            node->attachObject( mTerra2 );
+
+            LogO("---- Terra2 attach");
+
+            mTerra2->setDatablock( datablock );
+        }
+
+
+        //  shadows only on 1st terrain
         mHlmsPbsTerraShadows = new HlmsPbsTerraShadows();
         mHlmsPbsTerraShadows->setTerra( mTerra );
-        //Set the PBS listener so regular objects also receive terrain shadows
+        //  Set the PBS listener so regular objects also receive terrain shadows
         Hlms *hlmsPbs = root->getHlmsManager()->getHlms( HLMS_PBS );
         hlmsPbs->setListener( mHlmsPbsTerraShadows );
     }
@@ -101,6 +150,8 @@ namespace Demo
             delete mHlmsPbsTerraShadows;  mHlmsPbsTerraShadows = 0;
         }
         delete mTerra;  mTerra = 0;
+
+        delete mTerra2;  mTerra2 = 0;
     }
 
     void TerrainGame::ToggleWireframe()

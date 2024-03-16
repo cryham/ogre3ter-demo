@@ -88,7 +88,7 @@ namespace Demo
             //  Note: The Aspect Ratio must match that of the camera we're reflecting.
 			if (mPlanarReflections)
             	mPlanarReflections->update(
-                    mGame->mTerra, mGame->sunDir,
+                    mGame->mTerra, mGame->mTerra2, mGame->sunDir,
                     mGame->mGraphicsSystem->getCamera(),
                     camera, camera->getAutoAspectRatio()
                                             ? pass->getViewportAspectRatio( 0u )
@@ -164,8 +164,9 @@ namespace Demo
         workspace->addListener( mWorkspaceListener );
 
         //** water params  ----
-		const Vector2 waterSize( 8000.f, 8000.f );
-		const int size = 2 * 512;
+		// const Vector2 waterSize( sizeXZ2, sizeXZ2 );
+		const Vector2 waterSize( sizeXZ * 2, sizeXZ * 2 );
+		const int size = 2 * 512;  // par tex
 		const int segments = 64;  //** 1  more ok
 		const Real tile = 5.0f;  // 1
 		// const Real tile = 21.0f;  // 1
@@ -204,13 +205,7 @@ namespace Demo
 		waterItem = sceneManager->createItem( waterMesh, type );
 		waterItem->setCastShadows( false );
 
-        //  Tutorial_TerrainWorkspace_NoRefract  works
-        waterItem->setDatablock( "Water" );  // test flat --
-        // waterItem->setDatablock( "WaterDetail" );  // bumpy +
-
-
-    #if 1  //  Refract  ----
-        //  Tutorial_TerrainWorkspace  needed
+        //  Tutorial_TerrainWorkspace  needed, refract
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
             // "Water");  //** test flat --
             // "WaterBump");  //-
@@ -223,7 +218,7 @@ namespace Demo
         // datablock->setFresnel( Ogre::Vector3( 0.1f, 0.4f, 0.9f ), true );  // crash, shader F0?
         datablock->setRefractionStrength( 0.9f );  // par-
         waterItem->setDatablock( datablock );
-    #endif
+
         // important: Only Refractive materials must be rendered during the refractive pass
         // bad: inverses reflect cam
         waterItem->setRenderQueueGroup( 220 );
@@ -232,10 +227,10 @@ namespace Demo
 
 		waterNode = sceneManager->getRootSceneNode( type )->createChildSceneNode( type );
         waterNode->setPosition( 0, yWaterHeight, 0 );
-		if (yWaterHeight > yWaterVertical)  //** test |
+		// if (yWaterHeight > yWaterVertical)  //** test |
 			waterNode->setOrientation( Quaternion( Radian( -Math::HALF_PI ), Vector3::UNIT_X ) );  // -- flat
-		else
-        	waterNode->setOrientation( Quaternion( Radian( Math::HALF_PI ), Vector3::UNIT_Y ) );  // | vertical
+		// else
+        // 	waterNode->setOrientation( Quaternion( Radian( Math::HALF_PI ), Vector3::UNIT_Y ) );  // | vertical
         waterNode->attachObject( waterItem );
 
 

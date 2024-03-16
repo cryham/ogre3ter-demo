@@ -148,7 +148,7 @@ namespace Demo
 
         //**  pick compositor,  from  Tutorial_Terrain.compositor
         return compositorManager->addWorkspace( sceneManager, externalChannels, camera,
-            // "Tutorial_TerrainWorkspace_NoRefract", true );  //  reflect, no Refract
+            // "Tutorial_TerrainWorkspace_NoRefract", true );  // old  reflect, no Refract
             "Tutorial_TerrainWorkspace", true );  //  reflect and Refract
     }
     
