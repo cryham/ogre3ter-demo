@@ -66,11 +66,13 @@ namespace Demo
             AtmosphereNpr::Preset p = atmosphere->getPreset();
 
             float mul1 = 1.f + 0.004f * mul * d;
+            auto* cam = mCameraController;
             //------------------------------------------------------------------  Params Edit
             switch (param)
             {
-            case -3:  mCameraController->mSpeed *= mul1;  break;
-            case -2:  mCameraController->mInertia *= mul1;  break;
+            case -3:  cam->mSpeed *= mul1;  break;
+            case -2:  cam->mInertia *= mul1;
+                cam->mInertia = std::min(cam->mInertia, 0.99f);   break;
             case -1:  yWaterHeight *= mul1;  break;
             
             case 0:  p.fogDensity *= mul1;  break;

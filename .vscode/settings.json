@@ -1,12 +1,10 @@
 {
     "files.associations": {
-        "*.any": "c#",
+        "*.any": "csharp",
         "*.glsl": "c",
         "*.compositor": "jsonc",
-        // "*.material": "json",
-        // "*.particle": "c",
         "*.mat": "c",
-        "*.ini": "ruby",
+        "*.ini": "ruby"
     },
     "files.exclude": {
         ".vscode": false,

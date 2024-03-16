@@ -12,7 +12,7 @@ namespace Demo
 
     CameraController::CameraController( GraphicsSystem *graphicsSystem, bool useSceneNode ) :
         // mUseNode( useSceneNode ),
-        // mSpeed( 0.5f ), mInertia( 0.9f ),  // slow
+        // mSpeed( 0.5f ), mInertia( 0.96f ),  // slow
         mSpeed( 0.5f ), mInertia( 0.2f ),
         mGraphicsSystem( graphicsSystem )
     {
@@ -43,24 +43,24 @@ namespace Demo
             mCameraPitch = 0.0f;
         }
 
-        int camMovementZ = mWASDQE[2] - mWASDQE[0];
-        int camMovementX = mWASDQE[3] - mWASDQE[1];
-        int camMovementY = mWASDQE[5] - mWASDQE[4];
+        int camMoveZ = mWASDQE[2] - mWASDQE[0];
+        int camMoveX = mWASDQE[3] - mWASDQE[1];
+        int camMoveY = mWASDQE[5] - mWASDQE[4];
 
-        if( camMovementZ || camMovementX || camMovementY )
+        if( camMoveZ || camMoveX || camMoveY )
         {
-            Ogre::Vector3 camMovementDir( camMovementX, camMovementY, camMovementZ );
-            camMovementDir.normalise();
-            camMovementDir *= fDT * mCameraBaseSpeed
+            Ogre::Vector3 camMoveDir( camMoveX, camMoveY, camMoveZ );
+            camMoveDir.normalise();
+            camMoveDir *= fDT * mCameraBaseSpeed
                 * (mSpeed1 ? mCameraSpeed1 : mSpeed2 ? mCameraSpeed2 : 1.f);
 
             if( mUseSceneNode )
             {
                 Ogre::Node *cameraNode = camera->getParentNode();
-                cameraNode->translate( camMovementDir, Ogre::Node::TS_LOCAL );
+                cameraNode->translate( camMoveDir, Ogre::Node::TS_LOCAL );
             }
             else
-                camera->moveRelative( camMovementDir );
+                camera->moveRelative( camMoveDir );
         }
     #else
         //  speeds  ----------
@@ -69,14 +69,10 @@ namespace Demo
         const Real mulRot  = mShift ? 0.3f : mCtrl ? 2.f : 1.f;
         
         //  inputs
-        const Real rotX = mYaw;
-        const Real rotY = mPitch;
-        mYaw   = 0.f;
-        mPitch = 0.f;
+        const Real rotX = mYaw;    mYaw   = 0.f;
+        const Real rotY = mPitch;  mPitch = 0.f;
         const Vector3 vTrans(
-            mWASDQE[3] - mWASDQE[1],
-            mWASDQE[5] - mWASDQE[4],
-            mWASDQE[2] - mWASDQE[0]);
+            mWASDQE[3] - mWASDQE[1], mWASDQE[5] - mWASDQE[4], mWASDQE[2] - mWASDQE[0]);
 
         //  const intervals, Fps independent smooth
         const double ivDT = 0.004;

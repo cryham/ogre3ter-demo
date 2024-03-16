@@ -47,7 +47,7 @@ namespace Demo
             vegetLayers.emplace_back(VegetLayer("pine2_tall_norm.mesh",
                 1.7f, 4.3f, 10.f,  60.f, 500.f, 1.0f,  -0.1f, 2500, 0 ));
             vegetLayers.emplace_back(VegetLayer("pine3_fat_norm.mesh",
-                1.5f, 4.1f, 10.f,  50.f, 400.f, 1.0f,  -0.1f, 3500, 0 ));
+                1.8f, 4.5f, 10.f,  50.f, 400.f, 1.0f,  -0.1f, 3500, 0 ));
         }else
         {
             vegetLayers.emplace_back(VegetLayer("jungle_tree-lod8.mesh",  //  OgreMeshTool args
