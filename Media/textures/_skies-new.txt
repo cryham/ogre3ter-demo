@@ -1,0 +1,14 @@
+----  NEW skies  ----
+file(s) *.jpg        url  https://..
+
+cloudy_04            https://ambientcg.com/view?id=DaySkyHDRI008B
+day_clouds_02        https://ambientcg.com/view?id=DaySkyHDRI026B
+day_clouds_04        https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky
+day_clouds_07        https://ambientcg.com/view?id=DaySkyHDRI028B
+day_clouds_08        https://ambientcg.com/view?id=DaySkyHDRI029B
+
+License: CC0    https://docs.ambientcg.com/license/
+More:           https://ambientcg.com/list?type=HDRI
+License: CC0    https://polyhaven.com/hdris
+
+Modified, colored by CryHam, same license.
