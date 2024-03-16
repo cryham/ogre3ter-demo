@@ -425,7 +425,7 @@
 				"mode" : "Multiply",
 				"scale" : [12, 12],
 				"value" : -0.9,
-				"texture" : "mntn_dark_n.jpg",
+				"texture" : "jungle_mntn_n.jpg",
 				"sampler" : "wrap"
 			},
 			"detail_normal1" :

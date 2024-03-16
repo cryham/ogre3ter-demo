@@ -181,8 +181,7 @@ namespace Demo
 
             outText += "\nF1 toggle Help   CryHam's Terrain demo  using  Ogre-Next 3.0\n";
             outText += "Load Scenes:  F3 Flat,Car  F4 Foggy Jungle  F5 Vast Forest  F6 Tropic  F7 Tropic,Horizon\n\n";
-            // outText += "Reload shaders:\n"
-            //            "Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
+            //outText += "Reload shaders:  Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
             
             outText += "V add Vegetation   C clear it\n";
             outText += "T Terrain / flat   P triplanar   R wireframe\n";

@@ -98,6 +98,7 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::CreateVeget()
 	{
+        LogO("---- Create Veget");
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         SceneNode *rootNode = mgr->getRootSceneNode( SCENE_STATIC );
 
@@ -176,6 +177,7 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void TerrainGame::DestroyVeget()
 	{
+        LogO("==== destroy Veget");
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
 		
 		for (auto node : vegetNodes)
