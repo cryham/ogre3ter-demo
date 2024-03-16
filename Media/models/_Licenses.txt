@@ -1,9 +1,16 @@
 All are used and got from StuntRally
 	https://stuntrally.tuxfamily.org/
-	https://github.com/stuntrally/stuntrally
+	https://github.com/stuntrally/stuntrally3
 
 
 ---- trees
+
+Models:		pine1_full.mesh  pine2_tall_full  pine3_fat_full
+Url:		https://opengameart.org/content/freebies-mundo-commissions
+Artist:		yughues (OpenGameArt user)
+License:	CC0 (Public Domain)
+Date:		18/08/2012
+
 
 Model:		palm2.mesh
 Url: 		http://opengameart.org/content/palm-tree-v2
@@ -13,7 +20,9 @@ Date:		12/23/2011
 
 Model:		jungle_tree.mesh
 License: 	CC0 (Public domain)
-Link: 		http://www.blendswap.com/blends/plants/bge-tree/
+Link: 		https://www.blendswap.com/blends/plants/bge-tree/
+			https://blendswap.com/blend/2196
+Artist:		Bardes
 Notes:		Bark texture by OpenGameArt user yughues, licensed CC0
 			low-polying, baked textures & normals in blender by scrawl
 
