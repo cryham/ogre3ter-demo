@@ -22,13 +22,7 @@ using namespace Demo;
 
 namespace Demo
 {
-    TutorialGameState::TutorialGameState( const Ogre::String &helpDescription ) :
-        mGraphicsSystem( 0 ),
-        mCameraController( 0 ),
-        mHelpDescription( helpDescription ),
-        mDisplayHelpMode( 1 ),
-        mNumDisplayHelpModes( 2 ),
-        mDebugText( 0 )
+    TutorialGameState::TutorialGameState( const Ogre::String &helpDescription )
     {
     }
     //-----------------------------------------------------------------------------------
@@ -75,19 +69,6 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void TutorialGameState::generateDebugText( float timeSinceLast, Ogre::String &outText )
     {
-        if( mDisplayHelpMode == 0 )
-        {
-            //outText = mHelpDescription;
-            outText = "F1 toggle help   CryHam's Terrain demo  using  Ogre-Next 3.0\n";
-            outText += "Reload shaders:\n"
-                       "Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
-            
-            outText += "V add Vegetation   C clear it\n";
-            outText += "T Terrain / flat   P triplanar   R wireframe\n";
-            outText += "G add next Car   H clear all\n";
-            outText += "N add Water  M remove\n";
-            outText += "K next Sky   F add Fire\n\n";
-        }
     }
     //-----------------------------------------------------------------------------------
     void TutorialGameState::update( float timeSinceLast )
@@ -123,7 +104,7 @@ namespace Demo
     {
         if( arg.keysym.scancode == SDL_SCANCODE_F1 && (arg.keysym.mod & ~(KMOD_NUM|KMOD_CAPS)) == 0 )
         {
-            mDisplayHelpMode = (mDisplayHelpMode + 1) % mNumDisplayHelpModes;
+            mHelpMode = (mHelpMode + 1) % mNumHelpModes;
 
             Ogre::String finalText;
             generateDebugText( 0, finalText );

@@ -151,12 +151,43 @@ namespace Demo
     //-----------------------------------------------------------------------------------------------------------------------------
     void TerrainGame::generateDebugText( float timeSinceLast, String &outText )
     {
-        #define toStr(v, p)  StringConverter::toString(v,p)
+        #define toStr  StringConverter::toString
         outText = "";
 
-        if( mDisplayHelpMode == 0 )
+        //  Fps stats
+        //------------------------------------------------------------------
+        RenderSystem *rs = mGraphicsSystem->getRoot()->getRenderSystem();
+        const RenderingMetrics& rm = rs->getMetrics();  //** fps
+        const FrameStats *st = mGraphicsSystem->getRoot()->getFrameStats();
+
+        if (mHelpMode == 0)
+            outText += "Fps: " + toStr( (int)st->getAvgFps(), 2) +"  "+ //"\n" +
+                "triangles: " + toStr( rm.mFaceCount/1000, 0) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
+                "k  draws: " + toStr( rm.mDrawCount, 0) + "  instances: " + toStr( rm.mInstanceCount, 0) +
+                // +" b " + toStr( rm.mBatchCount, 0);
+                "  vegetation all " + toStr(vegetNodes.size(), 5);
+        else
+            outText += toStr( (int)st->getAvgFps(), 4) +"  "+ //"\n" +
+                "" + toStr( rm.mFaceCount/1000.f, 4) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
+                "k  d " + toStr( rm.mDrawCount, 0) + "  i " + toStr( rm.mInstanceCount, 0) +
+                // +" b " + toStr( rm.mBatchCount, 0);
+                "  v " + toStr(vegetNodes.size(), 5);
+
+
+        //  create info
+        if( mHelpMode == 0 )
         {
             TutorialGameState::generateDebugText( timeSinceLast, outText );
+
+            outText += "\nF1 toggle Help   CryHam's Terrain demo  using  Ogre-Next 3.0\n\n";
+            // outText += "Reload shaders:\n"
+            //            "Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
+            
+            outText += "V add Vegetation   C clear it\n";
+            outText += "T Terrain / flat   P triplanar   R wireframe\n";
+            outText += "G add next Car   H clear all\n";
+            outText += "N add Water  M remove\n";
+            outText += "K next Sky   F add Fire\n\n";
             
             Vector3 camPos = mGraphicsSystem->getCamera()->getPosition();
             outText += "Pos: " + toStr( camPos.x, 4) +" "+ toStr( camPos.y, 4) +" "+ toStr( camPos.z, 4) + "\n\n";
@@ -166,24 +197,12 @@ namespace Demo
                 outText += toStr( lay.count, 4 ) + " " + lay.mesh + "\n";
             #endif
         }
-        else if( mDisplayHelpMode == 1 )
+
+        //  adjust vars
+        //------------------------------------------------------------------
+        if( mHelpMode == 1 )
         {
-            //  Fps stats
-            //------------------------------------------------------------------
-            RenderSystem *rs = mGraphicsSystem->getRoot()->getRenderSystem();
-            const RenderingMetrics& rm = rs->getMetrics();  //** fps
-            const FrameStats *st = mGraphicsSystem->getRoot()->getFrameStats();
             
-            outText += toStr( (int)st->getAvgFps(), 4) +"  "+ //"\n" +
-                "f " + toStr( rm.mFaceCount/1000, 0) + //"k v " + toStr( rm.mVertexCount/1000 ) + 
-                "k d " + toStr( rm.mDrawCount, 0) + " i " + toStr( rm.mInstanceCount, 0);
-                // +" b " + toStr( rm.mBatchCount, 0);
-
-            outText += "  Veget all " + toStr(vegetNodes.size(), 5);
-            // outText += "\nVeget all  " + toStr(vegetNodes.size(), 5);
-            // outText += "\nCars  " + toStr(iCars,1)+ "  nodes "+toStr(carNodes.size(), 1);
-            // outText += "\nWater  " + toStr(mPlanarReflect ? mPlanarReflect->countActiveActors() : 0,1)+"\n";
-
             outText += "\n- +  Sun Pitch  " + toStr( mPitch * 180.f / Math::PI, 3 );
             outText += "\n/ *  Sun Yaw    " + toStr( mYaw * 180.f / Math::PI, 3 );
             outText += "\n^ v  Param  " + toStr( param, 0 );
@@ -197,8 +216,6 @@ namespace Demo
             switch (param)
             {
             case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 );  break;
-            // case -1:  outText += "Water Height  " + toStr( yWaterHeight, 4 ) +
-            //     (yWaterHeight < yWaterVertical ? " | Vertical" : " -");  break;
             
             case 0:   outText += "Fog density  " + toStr( p.fogDensity, d +2 );  break;
             case 1:   outText += "density coeff  " + toStr( p.densityCoeff, d );  break;

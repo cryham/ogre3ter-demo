@@ -18,21 +18,19 @@ namespace Demo
     class GraphicsSystem;
     class CameraController;
 
-    /// Base game state for the tutorials. All it does is show a little text on screen :)
+    ///  Base game state for the tutorials
     class TutorialGameState : public GameState
     {
     protected:
-        GraphicsSystem      *mGraphicsSystem;
+        GraphicsSystem      *mGraphicsSystem = 0;
 
-        /// Optional, for controlling the camera with WASD and the mouse
-        CameraController    *mCameraController;
+        CameraController    *mCameraController = 0;
 
-        Ogre::String        mHelpDescription;
-        Ogre::uint16        mDisplayHelpMode;
-        Ogre::uint16        mNumDisplayHelpModes;
+        Ogre::uint16        mHelpMode = 1;
+        Ogre::uint16        mNumHelpModes = 2;
 
-        Ogre::v1::TextAreaOverlayElement *mDebugText;
-        Ogre::v1::TextAreaOverlayElement *mDebugTextShadow;
+        Ogre::v1::TextAreaOverlayElement *mDebugText = 0;
+        Ogre::v1::TextAreaOverlayElement *mDebugTextShadow = 0;
 
         virtual void createDebugTextOverlay();
         virtual void generateDebugText( float timeSinceLast, Ogre::String &outText );
