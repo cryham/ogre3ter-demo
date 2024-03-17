@@ -445,8 +445,9 @@ uv3 = UV * WAVE_SCALE*2.0 + WIND_DIR *timer* WIND_SPEED*0.7 -(normal4.xy/normal4
 				// pixelData.diffuse.xyz = pixelData.normal;
 				// pixelData.specular.xyz = float3(0.9,0.95,0.99) - float3(0.3,0.4,0.5) * pixelData.normal.z;
 
-				pixelData.perceptualRoughness = max(0.01, 0.15 - 0.8 * n1.x - 0.8 * n1.y);  //** par rough change
-				// pixelData.perceptualRoughness = max(0.02, min(1.0,  0.2 - 1.24 * n1.x - 1.24 * n1.y));  //** par
+				//** par rough change
+				// pixelData.perceptualRoughness = max(0.001,  0.05 * abs(pixelData.normal.x) +
+															// 0.05 * abs(pixelData.normal.y));
 
 				// transparency-
 				// material.F0.w = pixelData.perceptualRoughness;
