@@ -1,4 +1,15 @@
------- Info
+------------
+Track: Jng13-Tropic* data by
+Author: CryHam
+License: CC-BY-SA 4.0
+https://creativecommons.org/licenses/by-sa/4.0/legalcode.en
+
+Converted and relicensed by CryHam
+from Stunt Rally 3 (where tracks are GPLv3)
+https://stuntrally.tuxfamily.org/
+
+
+------ Textures Info ------
 _d - diffuse
 _s - specular amount (not color)
 	if not present, will be black (no specular)
