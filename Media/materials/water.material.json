@@ -88,8 +88,7 @@
 		},
 
 
-
-		"Water" :
+		"WaterFlat" :
 		{
 			"shadow_const_bias" : 0.01,
 			"workflow" : "specular_ogre",
@@ -114,109 +113,33 @@
 			}
 		},
 
-		"WaterDetail" :
+		"IceBumpDetail" :
 		{
 			"shadow_const_bias" : 0.01,
 			"workflow" : "specular_ogre",
-			"diffuse" :
-			{
-				"value" : [0.05, 0.1, 0.16]
-			},
-			"specular" :
-			{
-				"value" : [0.4, 0.7, 0.9]
-			},
-			"roughness" :
-			{
-				"texture" : "GlassRoughness.png",
-				"sampler" : "mirror",
-				"value" : 0.6
-			},
-			"fresnel" :
-			{
-				"value" : [0.6, 0.7, 0.8],
-				"mode" : "coloured"
-			},
-			"detail_normal0" :
-			{
-				"mode" : "Multiply",
-				"scale" : [12, 12],
-				"value" : -0.7,
-				"texture" : "mntn_dark_n.jpg",
-				"sampler" : "wrap"
-			},
-			"detail_normal1" :
-			{
-				"mode" : "Multiply",
-				"scale" : [62, 62],
-				"value" : -0.5,
-				"texture" : "jungle_stone_n.jpg",
-				"sampler" : "wrap"
-			}
-		},
-
-
-		"WaterBump" :
-		{
-			"shadow_const_bias" : 0.01,
-			"workflow" : "specular_ogre",
+			"two_sided" : true,
 			"transparency" :
 			{
-				"value" : 0.25,
+				"value" : 0.3,
 				"mode" : "Refractive",
 				"use_alpha_from_textures" : true
 			},
 			"diffuse" :
 			{
-				"value" : [0.1, 0.3, 0.5]
+				"value" : [0.05, 0.2, 0.3]
 			},
 			"specular" :
 			{
-				"value" : [0.9, 1.0, 1.0]
+				"value" : [0.7, 0.9, 0.9]
 			},
 			"fresnel" :
 			{
-				"value" : [0.4, 0.6, 0.9],
-				"mode" : "coloured"
+				"value" : 0.8,
+				"mode" : "coeff"
 			},
 			"normal" :
 			{
-				"value" : 1.0,
-				"texture" : "mntn_dark_n.jpg",
-				"sampler" : "wrap"
-			},
-			"roughness" :
-			{
-				"value" : 0.35
-			}
-		},
-
-		"WaterBumpDetail" :
-		{
-			"shadow_const_bias" : 0.01,
-			"workflow" : "specular_ogre",
-			"transparency" :
-			{
-				"value" : 0.25,
-				"mode" : "Refractive",
-				"use_alpha_from_textures" : true
-			},
-			"diffuse" :
-			{
-				"value" : [0.1, 0.3, 0.5]
-			},
-			"specular" :
-			{
-				"value" : [0.9, 1.0, 1.0]
-			},
-			"fresnel" :
-			{
-				"value" : [0.4, 0.6, 0.9],
-				"mode" : "coloured"
-			},
-			"normal" :
-			{
-				"value" : 1.0,
+				"value" : 0.5,
 				"texture" : "mntn_dark_n.jpg",
 				"sampler" : "wrap"
 			},
@@ -230,7 +153,7 @@
 			{
 				"mode" : "Multiply",
 				"scale" : [12, 12],
-				"value" : -0.7,
+				"value" : -0.4,
 				"texture" : "mntn_dark_n.jpg",
 				"sampler" : "wrap"
 			},
@@ -238,13 +161,132 @@
 			{
 				"mode" : "Multiply",
 				"scale" : [62, 62],
-				"value" : -0.5,
+				"value" : -0.3,
 				"texture" : "jungle_stone_n.jpg",
 				"sampler" : "wrap"
 			}
 		},
 
-		"WaterBumpSoft" :
+		"IceBlurMax" :
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"two_sided" : true,
+			"transparency" :
+			{
+				"value" : 0.4,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.1, 0.3, 0.5]
+			},
+			"specular" :
+			{
+				"value" : [0.7, 0.9, 0.9]
+			},
+			"fresnel" :
+			{
+				"value" : 0.8,
+				"mode" : "coeff"
+			},
+			"normal" :
+			{
+				"value" : 1.0,
+				"texture" : "mntn_dark_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 0.35
+			},
+			"detail_normal0" :
+			{
+				"mode" : "Multiply",
+				"scale" : [12, 12],
+				"value" : -0.9,
+				"texture" : "jungle_mntn_n.jpg",
+				"sampler" : "wrap"
+			},
+			"detail_normal1" :
+			{
+				"mode" : "Multiply",
+				"scale" : [162, 162],
+				"value" : -0.8,
+				"texture" : "jungle_stone_n.jpg",
+				"sampler" : "wrap"
+			}
+		},
+
+
+		"WaterClear":
+		{
+			"shadow_const_bias" : 0.01,
+			"workflow" : "specular_ogre",
+			"transparency" :
+			{
+				"value" : 0.05,
+				"mode" : "Refractive",
+				"use_alpha_from_textures" : true
+			},
+			"diffuse" :
+			{
+				"value" : [0.026, 0.037, 0.057],
+				"background" : [1, 1, 1, 1],
+				"sampler" : "wrap"
+			},
+			"specular" :
+			{
+				"value" : [0.83, 0.9, 0.96],
+				"sampler" : "wrap"
+			},
+			"fresnel" :
+			{
+				"value" : 0.6,
+				"mode" : "coeff"
+			},
+			"normal" :
+			{
+				"value" : 0.6,
+				"texture" : "mntn_dark_n.jpg",
+				"sampler" : "wrap"
+			},
+			"roughness" :
+			{
+				"value" : 0.31,
+				"sampler" : "wrap"
+			},
+
+			"detail_diffuse0" :
+			{
+				"value" : 1,
+				"offset" : [0.15, 0.1],
+				"scale" : [0.3, 0.15],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse1" :
+			{
+				"value" : 1,
+				"offset" : [0.3, 0.3],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse2" :
+			{
+				"value" : 1,
+				"offset" : [1, 0.15],
+				"scale" : [25, 1.5],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse3" :
+			{
+				"value" : 1,
+				"offset" : [6, 0.4],
+				"sampler" : "wrap"
+			}
+		},
+
+		"WaterBlue":
 		{
 			"shadow_const_bias" : 0.01,
 			"workflow" : "specular_ogre",
@@ -256,99 +298,23 @@
 			},
 			"diffuse" :
 			{
-				"value" : [0.1, 0.3, 0.5]
-			},
-			"specular" :
-			{
-				"value" : [0.9, 1.0, 1.0]
-			},
-			"fresnel" :
-			{
-				"value" : [0.4, 0.6, 0.9],
-				"mode" : "coloured"
-			},
-			"normal" :
-			{
-				"value" : 0.2,
-				"texture" : "mntn_dark_n.jpg",
-				"sampler" : "wrap"
-			},
-			"roughness" :
-			{
-				"value" : 1.0,
-				"texture" : "jungle_stone_s.jpg",
-				"sampler" : "wrap"
-			},
-			"detail_normal0" :
-			{
-				"mode" : "Multiply",
-				"scale" : [12, 12],
-				"value" : -0.5,
-				"texture" : "mntn_dark_n.jpg",
-				"sampler" : "wrap"
-			},
-			"detail_normal1" :
-			{
-				"mode" : "Multiply",
-				"scale" : [62, 62],
-				"value" : -0.2,
-				"texture" : "jungle_stone_n.jpg",
-				"sampler" : "wrap"
-			},
-
-			"detail_diffuse0" :
-			{
-				"value" : 1,
-				"offset" : [0.15, 0.1],
-				"scale" : [0.3, 0.15]
-			},
-			"detail_diffuse1" :
-			{
-				"value" : 1,
-				"offset" : [0.3, 0.3]
-			},
-			"detail_diffuse2" :
-			{
-				"value" : 1,
-				"offset" : [1, 0.15],
-				"scale" : [25, 1.5]
-			},
-			"detail_diffuse3" :
-			{
-				"value" : 1,
-				"offset" : [6, 0.4]
-			}
-		},
-
-		"WaterBumpSoftAnim":
-		{
-			"shadow_const_bias" : 0.01,
-			"workflow" : "specular_ogre",
-			"transparency" :
-			{
-				"value" : 0.9,
-				"mode" : "Refractive",
-				"use_alpha_from_textures" : true
-			},
-			"diffuse" :
-			{
-				"value" : [0.0261, 0.137, 0.1575],
+				"value" : [0.026, 0.037, 0.057],
 				"background" : [1, 1, 1, 1],
 				"sampler" : "wrap"
 			},
 			"specular" :
 			{
-				"value" : [0.427, 0.53, 0.56],
+				"value" : [0.5, 0.55, 0.59],
 				"sampler" : "wrap"
 			},
 			"fresnel" :
 			{
-				"value" : [0.2667, 0.2757, 0.285],
-				"mode" : "coloured"
+				"value" : 0.4,
+				"mode" : "coeff"
 			},
 			"normal" :
 			{
-				"value" : 0.6,
+				"value" : 0.5,
 				"texture" : "mntn_black_n.jpg",
 				"sampler" : "wrap"
 			},
@@ -386,54 +352,68 @@
 			}
 		},
 
-
-		"WaterBumpMax" :
+		"WaterDarkSoft":
 		{
 			"shadow_const_bias" : 0.01,
 			"workflow" : "specular_ogre",
 			"transparency" :
 			{
-				"value" : 0.25,
+				"value" : 0.7,
 				"mode" : "Refractive",
 				"use_alpha_from_textures" : true
 			},
 			"diffuse" :
 			{
-				"value" : [0.1, 0.3, 0.5]
+				"value" : [0.01, 0.017, 0.01],
+				"background" : [1, 1, 1, 1],
+				"sampler" : "wrap"
 			},
 			"specular" :
 			{
-				"value" : [0.9, 1.0, 1.0]
+				"value" : [0.32, 0.37, 0.33],
+				"sampler" : "wrap"
 			},
 			"fresnel" :
 			{
-				"value" : [0.4, 0.6, 0.9],
-				"mode" : "coloured"
+				"value" : 0.7,
+				"mode" : "coeff"
 			},
 			"normal" :
 			{
-				"value" : 1.0,
+				"value" : 0.5,
 				"texture" : "mntn_dark_n.jpg",
 				"sampler" : "wrap"
 			},
 			"roughness" :
 			{
-				"value" : 0.35
-			},
-			"detail_normal0" :
-			{
-				"mode" : "Multiply",
-				"scale" : [12, 12],
-				"value" : -0.9,
-				"texture" : "jungle_mntn_n.jpg",
+				"value" : 0.2,
 				"sampler" : "wrap"
 			},
-			"detail_normal1" :
+
+			"detail_diffuse0" :
 			{
-				"mode" : "Multiply",
-				"scale" : [162, 162],
-				"value" : -0.8,
-				"texture" : "jungle_stone_n.jpg",
+				"value" : 1,
+				"offset" : [0.15, 0.1],
+				"scale" : [0.3, 0.15],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse1" :
+			{
+				"value" : 1,
+				"offset" : [0.3, 0.3],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse2" :
+			{
+				"value" : 1,
+				"offset" : [1, 0.15],
+				"scale" : [25, 1.5],
+				"sampler" : "wrap"
+			},
+			"detail_diffuse3" :
+			{
+				"value" : 1,
+				"offset" : [6, 0.4],
 				"sampler" : "wrap"
 			}
 		}

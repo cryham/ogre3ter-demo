@@ -94,6 +94,7 @@ namespace Demo
 
         //  water  ----
 		Ogre::Real yWaterHeight = 100.f;
+        Ogre::String waterMaterial{"WaterBlue"};
        	void CreateWater(), DestroyWater();
         void CreateWaterRefract();
 

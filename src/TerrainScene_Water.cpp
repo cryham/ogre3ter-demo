@@ -124,10 +124,8 @@ namespace Demo
 
         //  Set material to refractive  ----
         auto* datablock = (HlmsPbsDatablock*)hlmsPbs->getDatablock(
-            // "Water");  //** test flat
-            // "WaterBump");
-            "WaterBumpDetail");
-            // "WaterBumpMax");
+            waterMaterial);
+            // "Water");  // test flat
         datablock->setTransparency( 0.15f, Ogre::HlmsPbsDatablock::Refractive );
         datablock->setFresnel( Ogre::Vector3( 0.5f ), false );
         datablock->setRefractionStrength( 0.8f );  // par+
@@ -207,16 +205,17 @@ namespace Demo
 
         //  Tutorial_TerrainWorkspace  needed, refract
         auto* datablock = (HlmsPbsDatablock*)pbs->getDatablock(
-            // "Water");  //** test flat --
-            // "WaterBump");  //-
-            // "WaterBumpDetail");  // strong
-            // "WaterBumpSoft");  // nice
-            "WaterBumpSoftAnim");  // nice anim
-            // "WaterBumpMax");  // par_
-        datablock->setTransparency( 0.02f, Ogre::HlmsPbsDatablock::Refractive );
-        datablock->setFresnel( Ogre::Vector3( 0.31f ), false );
+            waterMaterial);
+            // "WaterFlat");  // test flat --
+            // "IceBumpDetail");  // cyan, clear, strong
+            // "IceBlurMax");  // cyan, blur, strong
+            // "WaterBlue");  // anim refl
+            // "WaterDarkSoft");  // anim dark soft
+        
+        // datablock->setTransparency( 0.82f, Ogre::HlmsPbsDatablock::Refractive );
+        // datablock->setFresnel( Ogre::Vector3( 0.2f ), false );
         // datablock->setFresnel( Ogre::Vector3( 0.1f, 0.4f, 0.9f ), true );  // crash, shader F0?
-        datablock->setRefractionStrength( 0.9f );  // par-
+        datablock->setRefractionStrength( 0.9f );  // par+  not in json-
         waterItem->setDatablock( datablock );
 
         // important: Only Refractive materials must be rendered during the refractive pass
