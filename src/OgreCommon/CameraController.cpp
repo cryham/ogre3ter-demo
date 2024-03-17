@@ -12,7 +12,7 @@ namespace Demo
 
     CameraController::CameraController( GraphicsSystem *graphicsSystem, bool useSceneNode ) :
         // mUseNode( useSceneNode ),
-        // mSpeed( 0.5f ), mInertia( 0.96f ),  // slow
+        // mSpeed( 0.5f ), mInertia( 0.98f ),  //** slow
         mSpeed( 0.5f ), mInertia( 0.2f ),
         mGraphicsSystem( graphicsSystem )
     {

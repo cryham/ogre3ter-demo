@@ -1,15 +1,20 @@
-## Videos
+## 🏞️Videos
 
-[First video](https://www.youtube.com/watch?v=A3kijKBvJ3k)
+[Part 2](https://www.youtube.com/watch?v=ku_V4CUZhFM) with water reflections  
+[Part 1](https://www.youtube.com/watch?v=A3kijKBvJ3k) older, refractions only
 
-## Screenshots
+## 🖼️Screenshots
 
-![](https://github.com/cryham/ogre3ter-demo/blob/main/screens/2.jpg?raw=true)
+[Gallery here](https://photos.app.goo.gl/JcvuJQQNGZFktJce6)
 
-![](https://github.com/cryham/ogre3ter-demo/blob/main/screens/1.jpg?raw=true)
+![](https://github.com/cryham/ogre3ter-demo/blob/main/screens/3.jpg?raw=true)
+
+[older screen 2](https://github.com/cryham/ogre3ter-demo/blob/main/screens/2.jpg?raw=true)
+
+[oldest screen 1](https://github.com/cryham/ogre3ter-demo/blob/main/screens/1.jpg?raw=true)
 
 
-## Description
+## 📊Description
 
 Demo using Ogre-Next 3.0 rendering engine for nature scenes.  
 Featuring:
@@ -27,7 +32,7 @@ Models and textures from [Stunt Rally 3](https://github.com/stuntrally/stuntrall
 
 
 ----
-## Keys
+## ⌨️Keys
 
 F1 - Help text cycle  
 F3..F8 - Load scene  
@@ -67,7 +72,7 @@ Ctrl-F1 - PBS,  Ctrl-F2 - Unlit,  Ctrl-F3 - Compute,  Ctrl-F4 - Terrain
 Ctrl-F5 - Force device reelection  
 
 
-## Info on screen
+## ❔Info on screen
 
 Top line meaning:
 
@@ -76,7 +81,7 @@ Veget - total vegetation models on scene
 
 
 ----
-## Building from sources
+## 🛠️Building from sources
 
 ### Linux
 
@@ -165,27 +170,21 @@ dev/
 ```
 
 ----
-## Sources
+## 📂Sources
 
-Some key locations in code are marked with `//**`
+Some key locations in code are marked with `//**` also for crucial changes in code from OgreNext.
 
-Materials are in:  
-`/Media/materials/ground.material.json`  
-`/Media/2.0/scripts/materials/Tutorial_Terrain/Terra.material.json`  
+Materials are in [Media/materials](/Media/materials/),  
+e.g. for: [water](/Media/materials/water.material.json), [vegetation](/Media/materials/vegetation.material.json), [terrain](/Media/materials/terrain.material.json) and (in simpler syntax) for [cars](/Media/materials/cars.material)  
 
-and in (simpler syntax):  
-`/Media/materials/vegetation.material`  
-`/Media/materials/cars.material`  
-
-Used compositor workspaces are defined in:  
-`/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor`
+Used compositor workspaces are defined in: [compositor file](/Media/2.0/scripts/Compositors/Tutorial_Terrain.compositor)
 
 
-## Docs
+## 📑Docs
 
-Quick links for Ogre-Next documentation:  
+Quick links for [Ogre-Next](https://github.com/OGRECave/ogre-next) documentation:  
 - [Manual](https://ogrecave.github.io/ogre-next/api/latest/manual.html) - need to read it when beginning.
 - [Compositor](https://ogrecave.github.io/ogre-next/api/latest/compositor.html) - for effects, RTTs, reflections, etc.
 - [HLMS doc](https://ogrecave.github.io/ogre-next/api/latest/hlms.html) - long read, explains all.
-- [HLMS shaders](https://ogrecave.github.io/ogre-next/api/latest/hlms.html#HlmsCreationOfShaders).
+- [HLMS shaders](https://ogrecave.github.io/ogre-next/api/latest/hlms.html#HlmsCreationOfShaders)
 - [Terrain](https://ogrecave.github.io/ogre-next/api/latest/_terra_system.html)

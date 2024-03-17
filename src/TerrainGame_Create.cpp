@@ -181,7 +181,7 @@ namespace Demo
             camera->lookAt( Ogre::Vector3( 2994, 93, -1190 ) );
             break;
 
-        case 5:  nn = 2;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
+        case 5:  nn = 12;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
             fogDens = 0.00008f;  waterMaterial = "WaterDarkSoft";
             camera->setPosition( Ogre::Vector3( -950, 231, 615 ) );
             camera->lookAt( Ogre::Vector3( -920, 225, 600 ) );

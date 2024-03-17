@@ -59,7 +59,7 @@ namespace Demo
         bool left = false, right = false;  // arrows
         bool shift = false, ctrl = false;
         
-        int param = -1;  // to adjust, fog etc
+        int param = 0;  // to adjust, fog etc
         
         int preset = 0;  // scene to create
 
