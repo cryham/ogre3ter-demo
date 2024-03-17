@@ -1,6 +1,6 @@
-All are used and got from StuntRally
+All are used and got from Stunt Rally 3
 	https://stuntrally.tuxfamily.org/
-	https://github.com/stuntrally/stuntrally
+	https://github.com/stuntrally/stuntrally3
 
 
 ---- cars

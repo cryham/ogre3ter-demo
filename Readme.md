@@ -1,3 +1,7 @@
+## Videos
+
+[First video](https://www.youtube.com/watch?v=A3kijKBvJ3k)
+
 ## Screenshots
 
 ![](https://github.com/cryham/ogre3ter-demo/blob/main/screens/2.jpg?raw=true)
@@ -7,22 +11,26 @@
 
 ## Description
 
-Ogre-Next demo. Based on Tutorial_Terrain.
-Showing:
-* **Terrain** with 4 layers and triplanar
-* **Water** flat, animated, with reflection, refraction and depth color shading
-* **Vegetation**, 9 layers: tree, palm, 4 rocks, 2 ferns, plant
-* **Atmosphere** component with fog and adjustable parameters
-* **Car** 3 models, with dynamic reflections, **particles**
+Demo using Ogre-Next 3.0 rendering engine for nature scenes.  
+Featuring:
+* **Scene** - 5 presets
+* **Terrain** - with 4 layers and triplanar. Possible 2nd terrain for horizon.
+* **Water** - flat, animated, with reflection, refraction and depth color shading
+* **Vegetation** - 9 models: tree, palm, plant or (3 pines), 4 rocks, 2 ferns
+* **Atmosphere** - with fog, sun, sky and adjustable parameters. Few static **skies** with clouds.
+* **Cars** - 3 models, with dynamic reflections
+* particles - basic fire with smoke
+* camera - with inertia
 
-No real PBR textures yet just values.  
-Models and textures from [StuntRally](https://github.com/stuntrally/stuntrally), details in: [_Licenses.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/models/_Licenses.txt), [_terrain.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/2.0/scripts/materials/Tutorial_Terrain/_terrain.txt) and [_sky_readme.txt](https://github.com/cryham/ogre3ter-demo/blob/main/Media/textures/_sky_readme.txt).
+Based on Tutorial_Terrain. No real PBR textures yet just values.  
+Models and textures from [Stunt Rally 3](https://github.com/stuntrally/stuntrally3), details in: [_Licenses.txt](Media/models/_Licenses.txt), [_Licenses.txt](Media/vehicles/_Licenses.txt), [_terrain.txt](Media/terrain/_terrain.txt) and [_skies-new.txt](Media/textures/_skies-new.txt).
 
 
 ----
 ## Keys
 
-F1 - Toggle Help text  
+F1 - Help text cycle  
+F3..F8 - Load scene  
 
 W,S, A,D, Q,E - move camera: forward,backward, left,right, down,up
 
@@ -36,15 +44,17 @@ C - remove all vegetation
 G - Add **Car** in front, next model  
 H - remove all cars
 
-T - toggle **Terrain** / flat plane. _Note:_ terrain loads in 5 sec.  
+T - toggle **Terrain** / flat plane.  
 P - terrain triplanar toggle  
 R - terrain wireframe toggle  
 
-N - Add water, at set height (param -1)  
+N - Add **Water**, at set height (param -1)  
 M - remove water  
 
 K - Add / remove **Sky** dome, next texture  
+
 F - Add fire with smoke particles  
+I - remove all particles
 
 Up,Down - previous / next **parameter** e.g. Fog (at param 0)  
 Left,Right - dec / increase parameter  

@@ -12,3 +12,7 @@ More:           https://ambientcg.com/list?type=HDRI
 License: CC0    https://polyhaven.com/hdris
 
 Modified, colored by CryHam, same license.
+
+All are used and got from Stunt Rally 3
+	https://stuntrally.tuxfamily.org/
+	https://github.com/stuntrally/stuntrally3
