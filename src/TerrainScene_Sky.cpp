@@ -71,7 +71,7 @@ namespace Demo
 
     //  Sky dome
     //-----------------------------------------------------------------------------------------------------------------------------
-    void TerrainGame::CreateSkyDome(String sMater, float yaw)
+    void TerrainGame::CreateSkyDome(String sMtr, float yaw)
     {
         if (moSky)  return;
         //** par  view_distance
@@ -79,7 +79,7 @@ namespace Demo
         
         SceneManager *mgr = mGraphicsSystem->getSceneManager();
         ManualObject* m = mgr->createManualObject(SCENE_STATIC);
-        m->begin(sMater, OT_TRIANGLE_LIST);
+        m->begin(sMtr, OT_TRIANGLE_LIST);
 
         //  divisions- quality
         int ia = 32*2, ib = 24,iB = 24 +1/*below_*/, i=0;
@@ -132,9 +132,18 @@ namespace Demo
         sb.mU = TAM_MIRROR;  sb.mV = TAM_MIRROR;  sb.mW = TAM_MIRROR;
 
         HlmsUnlit* hlms = (HlmsUnlit*) Ogre::Root::getSingleton().getHlmsManager()->getHlms( HLMS_UNLIT );
-        HlmsUnlitDatablock* db = (HlmsUnlitDatablock*) hlms->getDatablock(sMater);
+        HlmsUnlitDatablock* db = (HlmsUnlitDatablock*) hlms->getDatablock(sMtr);
 	
         db->setSamplerblock( 0, sb );
+    
+
+        //  set sun pitch, yaw for sky  ------
+        const float d2r = Math::PI / 180.f;
+        if (sMtr=="cloudy_04_blue"    ){  mPitch = 33 * d2r;  mYaw = d2r * 10;  } else
+        if (sMtr=="day_clouds_02_blue"){  mPitch = 32 * d2r;  mYaw = d2r * -1;  } else
+        if (sMtr=="day_clouds_04_blue"){  mPitch = 48 * d2r;  mYaw = d2r * -35;  } else
+        if (sMtr=="day_clouds_07"     ){  mPitch = 34 * d2r;  mYaw = d2r * 0;  } else
+        if (sMtr=="day_clouds_08"     ){  mPitch = 33 * d2r;  mYaw = d2r * 0;  }
     }
 
     void TerrainGame::DestroySkyDome()

@@ -188,7 +188,7 @@ namespace Demo
 
             outText += "\nF1 toggle Help   \nCryHam's Terrain demo  using  Ogre-Next 3.0\n";
             outText += "Load Scenes (F" + toStr(preset+3) +
-                "):  F3 Flat,Car  F4 Foggy Jungle  F5 Vast Forest  F6 Tropic  F7 Tropic,Horizon\n\n";
+                "):  F3 Flat,Car  F4 Fog sunset  F5 Foggy Jungle  F6 Tropic  F7 Tropic,Horizon  F8 Vast Forest\n\n";
             //outText += "Reload shaders:  Ctrl+F1 PBS  Ctrl+F2 Unlit  Ctrl+F3 Compute  Ctrl+F4 Terra\n\n";
             
             outText += "V add Vegetation   C clear it\n";
@@ -329,6 +329,7 @@ namespace Demo
         case SDL_SCANCODE_F5:  CreateScene(2);  break;
         case SDL_SCANCODE_F6:  CreateScene(3);  break;
         case SDL_SCANCODE_F7:  CreateScene(4);  break;
+        case SDL_SCANCODE_F8:  CreateScene(5);  break;
         }
         
         TutorialGameState::keyPressed( arg );

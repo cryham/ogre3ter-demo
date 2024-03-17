@@ -137,13 +137,16 @@ namespace Demo
         DestroyVeget();
 
         preset = pre;
-        SetupVeget(preset == 2);
+        SetupVeget(preset == 5);  // pines
 
         auto* camera = mGraphicsSystem->getCamera();
         LogO("++++ Create Scene");//+toStr(pre));
 
-        int nn = 0;
+        int nn = 0;  // defaults
         float fogDens = 0.00012f;
+        const float d2r = Math::PI / 180.f;
+        mPitch = 50.f * d2r;  // par
+        mYaw = 102 * d2r;
         switch (preset)
         {
         case 0:  CreateSkyDome("day_clouds_08", 0.f);  // medium jng fog
@@ -155,27 +158,34 @@ namespace Demo
             fogDens = 0.00032f;
             break;
 
-        case 1:  nn = 2;  CreateSkyDome("day_clouds_02_cyan", 0.f);  // medium jng fog
+        case 1:  nn = 2;  // medium fog sunset
+            mPitch = 0.94f * d2r;  mYaw = 160.f * d2r;
+            fogDens = 0.00014f;  waterMaterial = "WaterClear";
+            camera->setPosition( Ogre::Vector3( -452, 113, -945 ) );
+            camera->lookAt( Ogre::Vector3( -386, 110, -928 ) );
+            break;
+        case 2:  nn = 2;  CreateSkyDome("day_clouds_02_cyan", 0.f);  // medium jng fog
             fogDens = 0.00024f;  waterMaterial = "WaterClear";
             camera->setPosition( Ogre::Vector3( -489, 73, -715 ) );
             camera->lookAt( Ogre::Vector3( -230, 42, -755 ) );
             break;
-        case 2:  nn = 2;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
-            fogDens = 0.00008f;  waterMaterial = "WaterDarkSoft";
-            camera->setPosition( Ogre::Vector3( -950, 231, 615 ) );
-            camera->lookAt( Ogre::Vector3( -950, 210, 450 ) );
-            break;
-        
+
         case 3:  nn = 5;  CreateSkyDome("cloudy_04_blue", 0.f);  // tropic
             fogDens = 0.00005f;  waterMaterial = "WaterBlue";
             camera->setPosition( Ogre::Vector3( 3048, 118, -1271 ) );
-            camera->lookAt( Ogre::Vector3( 2400, -20, -1200 ) );
+            camera->lookAt( Ogre::Vector3( 2994, 93, -1190 ) );
             break;
         case 4:  nn = 7;  CreateSkyDome("day_clouds_07", 0.f);  // tropic horiz
             fogDens = 0.00004f;  waterMaterial = "WaterBlue";
             camera->setPosition( Ogre::Vector3( 3048, 118, -1271 ) );
-            camera->lookAt( Ogre::Vector3( 2400, -20, -1200 ) );
+            camera->lookAt( Ogre::Vector3( 2994, 93, -1190 ) );
             break;
+
+        case 5:  nn = 12;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
+            fogDens = 0.00008f;  waterMaterial = "WaterDarkSoft";
+            camera->setPosition( Ogre::Vector3( -950, 231, 615 ) );
+            camera->lookAt( Ogre::Vector3( -950, 210, 450 ) );
+            break;        
         }
 
         if (preset > 0)

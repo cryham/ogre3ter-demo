@@ -51,18 +51,12 @@ namespace Demo
         //  Heightmap
         switch (preset)
         {
-        case 1:  //  1k  med  4km  4tex  600 fps
+        case 1:  //  med jng  1k  4km  4tex  600 fps
+        case 2:
             yWaterHeight = 48.65f;
             sizeXZ = 4096.f;
             mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);
             datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
-            break;
-        case 2:  //  1k  big  8km  4tex  380k veget 50fps
-            yWaterHeight = 101.f;
-            sizeXZ = 3.f * 4096.f;
-            mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);
-            datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
-            // datablock = hlmsManager->getDatablock( "TerraExampleMaterial_R_M" );  // maps
             break;
                     
         case 3:  //  tropic
@@ -72,6 +66,14 @@ namespace Demo
             sizeY = 272.328 * 7.14348;
             mTerra->load( "Jng13-Tropic.png", Vector3( 0.f, 0.f, 0.f), Vector3(sizeXZ, sizeY, sizeXZ), false, false);
             datablock = hlmsManager->getDatablock( "Jng13-Tropic" );  // coeffs
+            break;
+
+        case 5:  //  vast forest  12km
+            yWaterHeight = 101.f;
+            sizeXZ = 3.f * 4096.f;
+            mTerra->load( "Heightmap.png", Vector3( 64.0f, 4096.0f * 0.5f, 64.0f), Vector3(sizeXZ, 4096.0f, sizeXZ), false, false);
+            datablock = hlmsManager->getDatablock( "TerraExampleMaterial" );  // coeffs
+            // datablock = hlmsManager->getDatablock( "TerraExampleMaterial_R_M" );  // maps
             break;
         }
 
@@ -84,7 +86,7 @@ namespace Demo
         //  Horizon  far  * * * * *
         //------------------------------------------------
         sizeXZ2 = sizeXZ;  sizeY2 = sizeY;
-        if (preset >= 4)
+        if (preset == 4)
         {
             LogO("---- new Terra2");
 
@@ -103,7 +105,7 @@ namespace Demo
                 yWaterHeight = -221.f;
                 sizeXZ2 = 10556.2 * 7.14348;
                 sizeY2 = 645.912 * 7.14348;
-                mTerra2->load( "Jng13-Tropic2.png", Vector3( 50.f, 1300.f, 0.f), Vector3(sizeXZ2, sizeY2, sizeXZ2), false, false);
+                mTerra2->load( "Jng13-Tropic2.png", Vector3( 80.f, 1280.f, 80.f), Vector3(sizeXZ2, sizeY2, sizeXZ2), false, false);
                 datablock = hlmsManager->getDatablock( "Jng13-Tropic2" );  // coeffs
                 break;
             }
