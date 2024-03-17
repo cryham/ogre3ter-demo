@@ -34,11 +34,12 @@
 	float3 pointInPlane = inPs.pos.xyz - pixelData.normal * distanceToPlanarReflPlane;
 	float3 projPointInPlane = mul( float4( pointInPlane.xyz, 1.0 ), passBuf.planarReflProjectionMat ).xyw;
 	float2 planarReflUVs = projPointInPlane.xy / projPointInPlane.z;
+	planarReflUVs += pixelData.normal.xz * 0.02f;  //** par distortion
 
 	float3 planarReflectionS = OGRE_SampleLevel( planarReflectionTex, planarReflectionSampler,
 												 planarReflUVs.xy,
 											@property( water )
-												 pixelData.perceptualRoughness * 2.2  //** par
+												 pixelData.perceptualRoughness * 0.02  //** par
 											@else
 												 pixelData.perceptualRoughness
 											@end
@@ -58,7 +59,8 @@
 	//	(x - cos20) / (1-cos20);
 	//	x/(1-cos20) - cos20/(1-cos20);
 	//	x * 16.581718739 - 15.581718739;
-	planarWeight *= saturate( dot( planarReflection.xyz, pixelData.normal.xyz ) * 16.581718739 - 15.581718739 );
+	//** no, more refl
+	//planarWeight *= saturate( dot( planarReflection.xyz, pixelData.normal.xyz ) * 16.581718739 - 15.581718739 );
 	@property( hlms_use_ssr || vct_num_probes || ((envprobe_map && envprobe_map != target_envprobe_map) || parallax_correct_cubemaps) )
 		pixelData.envColourS = lerp( pixelData.envColourS, planarReflectionS, planarWeight );
 	@else

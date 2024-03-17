@@ -111,7 +111,7 @@ namespace Demo
 
 
         //  Init  ------------------------------------------------
-        CreateScene(1);  //** par
+        CreateScene(2);  //** par
 
         // CreatePlane();  // fastest
 
@@ -166,8 +166,8 @@ namespace Demo
             break;
         case 2:  nn = 2;  CreateSkyDome("day_clouds_02_cyan", 0.f);  // medium jng fog
             fogDens = 0.00024f;  waterMaterial = "WaterClear";
-            camera->setPosition( Ogre::Vector3( -489, 73, -715 ) );
-            camera->lookAt( Ogre::Vector3( -230, 42, -755 ) );
+            camera->setPosition( Ogre::Vector3( -493, 112, -922 ) );
+            camera->lookAt( Ogre::Vector3( -436, 101, -899 ) );
             break;
 
         case 3:  nn = 5;  CreateSkyDome("cloudy_04_blue", 0.f);  // tropic
@@ -181,10 +181,10 @@ namespace Demo
             camera->lookAt( Ogre::Vector3( 2994, 93, -1190 ) );
             break;
 
-        case 5:  nn = 12;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
+        case 5:  nn = 2;  CreateSkyDome("day_clouds_04_blue", 0.f);  // vast forest
             fogDens = 0.00008f;  waterMaterial = "WaterDarkSoft";
             camera->setPosition( Ogre::Vector3( -950, 231, 615 ) );
-            camera->lookAt( Ogre::Vector3( -950, 210, 450 ) );
+            camera->lookAt( Ogre::Vector3( -920, 225, 600 ) );
             break;        
         }
 
