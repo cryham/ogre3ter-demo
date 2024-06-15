@@ -219,7 +219,6 @@ namespace Demo
         waterItem->setDatablock( datablock );
 
         // important: Only Refractive materials must be rendered during the refractive pass
-        // bad: inverses reflect cam
         waterItem->setRenderQueueGroup( 220 );
         waterItem->setVisibilityFlags( 2 );
 

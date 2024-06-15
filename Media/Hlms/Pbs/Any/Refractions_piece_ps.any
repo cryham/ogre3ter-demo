@@ -19,7 +19,8 @@
 	@property( !fresnel_scalar )
 		midf refractF0 = pixelData.F0;
 	@else
-		midf refractF0 = max( pixelData.F0.x, pixelData.F0.y, pixelData.F0.z );
+		// midf refractF0 = max( pixelData.F0.x, pixelData.F0.y, pixelData.F0.z );  //-
+		midf refractF0 = max( pixelData.F0.y, pixelData.F0.z );
 	@end
 
 	// refractNormal must be in view space, and we ignore .z component
@@ -88,6 +89,7 @@
 	midf3 pos = tmp.xyz / tmp.w;
 	
 	midf depth = inPs.worldH - pos.y;
+	midf diff = depth;
 	// depth = min(40, max(0, depth));  // max depth
 	// depth = min(20, max(0, depth));  // max depth
 	depth = min(40, max(0, 6.0 + depth * 0.6));  // max depth
@@ -117,6 +119,13 @@
 	@end
 
 	finalColour += refractionCol.xyz * (_h( 1.0 ) - refractionAlpha);
+	// finalColour = midf3( inPs.worldH * 0.001, inPs.worldH * 0.002, 0.01 * inPs.worldH);
+	// finalColour = midf3( depthValue * 300.0, depthValue * 1000.0, 20.0 * inPs.worldH);
+
+	//  fade out on border
+	midf3 originalCol = OGRE_SampleLevelF16( refractionMap, refractionMapSampler, screenPosUv.xy, 0 ).xyz;
+	midf alpha = min(1.0, abs(diff) * 2.1);
+	finalColour = lerp( originalCol, finalColour, alpha );
 
 @end
 @end
